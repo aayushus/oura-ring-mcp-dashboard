@@ -28,6 +28,13 @@ import {
   type OuraMcpOAuthProviderOptions,
 } from "../auth/mcp-oauth-provider.js";
 import type { OuraClient } from "../client.js";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { getHistory } from "../db.js";
+import { syncData, startSyncScheduler } from "../sync.js";
+import { getToday, getDaysAgo } from "../utils/index.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -70,6 +77,10 @@ export async function startHttpServer(
   const secret = options.secret ?? process.env.MCP_SECRET;
   const stateless = options.stateless ?? true;
   const ouraClient = options.ouraClient;
+
+  if (ouraClient) {
+    startSyncScheduler(ouraClient);
+  }
 
   const baseUrl = resolveBaseUrl(port);
 
@@ -208,6 +219,59 @@ export async function startHttpServer(
           </body></html>`
         );
       }
+    });
+
+    // ── Oura Health Dashboard API Routes ──────────────────────
+
+    // Get health summary history (last 30 days)
+    app.get("/api/dashboard/summary", async (req: Request, res: Response) => {
+      try {
+        let history = await getHistory(30);
+
+        // Auto-sync if DB is empty and client is available
+        const isEmpty = history.sleep.length === 0 && history.readiness.length === 0;
+        if (isEmpty && ouraClient) {
+          console.error("[HTTP] Database empty, triggering auto-sync...");
+          const syncResult = await syncData(ouraClient, getDaysAgo(30), getToday());
+          if (syncResult.success) {
+            history = await getHistory(30);
+          }
+        }
+
+        res.json(history);
+      } catch (err) {
+        console.error("Dashboard summary API error:", err);
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    // Manually trigger sync from dashboard UI
+    app.post("/api/dashboard/sync", async (req: Request, res: Response) => {
+      try {
+        if (!ouraClient) {
+          res.status(400).json({ error: "Oura client not initialized" });
+          return;
+        }
+
+        const syncResult = await syncData(ouraClient, getDaysAgo(7), getToday());
+        if (!syncResult.success) {
+          res.status(500).json({ error: syncResult.error || "Sync failed" });
+          return;
+        }
+
+        const history = await getHistory(30);
+        res.json({ success: true, history });
+      } catch (err) {
+        console.error("Dashboard sync API error:", err);
+        res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+      }
+    });
+
+    // Serve Dashboard Static Files at /dashboard
+    const publicPath = join(__dirname, "..", "public");
+    app.use("/dashboard", express.static(publicPath));
+    app.get("/dashboard/*", (req: Request, res: Response) => {
+      res.sendFile(join(publicPath, "index.html"));
     });
 
     // Protect MCP endpoint with bearer auth

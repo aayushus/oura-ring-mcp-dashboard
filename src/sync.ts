@@ -1,0 +1,127 @@
+/**
+ * Data Sync Coordinator for Oura Ring API -> SQLite
+ */
+
+import cron from "node-cron";
+import type { OuraClient } from "./client.js";
+import {
+  upsertSleep,
+  upsertReadiness,
+  upsertActivity,
+  upsertStress,
+  getHistory,
+} from "./db.js";
+import { getToday, getDaysAgo } from "./utils/index.js";
+
+/**
+ * Fetch data for a date range from Oura API and store in SQLite
+ */
+export async function syncData(
+  client: OuraClient,
+  startDate: string,
+  endDate: string
+): Promise<{ success: boolean; syncedDays: number; error?: string }> {
+  try {
+    console.log(`[Sync] Syncing Oura data from ${startDate} to ${endDate}...`);
+
+    // Fetch endpoints in parallel
+    const [sleepScores, sleepSessions, readiness, activity, stress] =
+      await Promise.all([
+        client.getDailySleep(startDate, endDate),
+        client.getSleep(startDate, endDate),
+        client.getDailyReadiness(startDate, endDate),
+        client.getDailyActivity(startDate, endDate),
+        client.getDailyStress(startDate, endDate),
+      ]);
+
+    const days = new Set<string>();
+
+    // 1. Process Sleep
+    const sessionsByDay = new Map(sleepSessions.data.map((s) => [s.day, s]));
+    for (const score of sleepScores.data) {
+      days.add(score.day);
+      const session = sessionsByDay.get(score.day);
+
+      await upsertSleep({
+        day: score.day,
+        score: score.score ?? 0,
+        duration: session?.total_sleep_duration ?? 0,
+        deep: session?.deep_sleep_duration ?? 0,
+        rem: session?.rem_sleep_duration ?? 0,
+        light: session?.light_sleep_duration ?? 0,
+        efficiency: session?.efficiency ?? score.contributors?.efficiency ?? 0,
+      });
+    }
+
+    // 2. Process Readiness
+    for (const read of readiness.data) {
+      days.add(read.day);
+      const session = sessionsByDay.get(read.day);
+
+      await upsertReadiness({
+        day: read.day,
+        score: read.score ?? 0,
+        hrv: session?.average_hrv ?? 0,
+        rhr: session?.lowest_heart_rate ?? 0,
+        temperature_deviation: read.temperature_deviation ?? 0,
+      });
+    }
+
+    // 3. Process Activity
+    for (const act of activity.data) {
+      days.add(act.day);
+      await upsertActivity({
+        day: act.day,
+        score: act.score ?? 0,
+        steps: act.steps ?? 0,
+        active_calories: act.active_calories ?? 0,
+        total_calories: act.total_calories ?? 0,
+      });
+    }
+
+    // 4. Process Stress
+    for (const str of stress.data) {
+      days.add(str.day);
+      await upsertStress({
+        day: str.day,
+        stress_duration: str.stress_high ?? 0,
+        recovery_duration: str.recovery_high ?? 0,
+      });
+    }
+
+    console.log(`[Sync] Completed sync successfully. Synced ${days.size} days.`);
+    return { success: true, syncedDays: days.size };
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[Sync] Failed to sync data:`, errorMsg);
+    return { success: false, syncedDays: 0, error: errorMsg };
+  }
+}
+
+/**
+ * Initialize background cron scheduler to sync data automatically
+ */
+export function startSyncScheduler(client: OuraClient): cron.ScheduledTask {
+  console.log("[Sync] Initializing background sync scheduler (4-hour intervals)...");
+
+  // Perform initial backfill of past 30 days
+  const backfillStart = getDaysAgo(30);
+  const today = getToday();
+  
+  if (process.env.NODE_ENV !== "test") {
+    // Start backfill asynchronously
+    syncData(client, backfillStart, today).catch((err) => {
+      console.error("[Sync] Initial backfill failed:", err);
+    });
+  }
+
+  // Schedule cron job: every 4 hours (at minute 0)
+  // Pattern: 0 */4 * * *
+  const task = cron.schedule("0 */4 * * *", async () => {
+    const start = getDaysAgo(2); // pull last 2 days to capture revisions/late syncs
+    const end = getToday();
+    await syncData(client, start, end);
+  });
+
+  return task;
+}

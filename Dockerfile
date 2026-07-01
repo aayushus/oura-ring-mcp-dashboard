@@ -12,6 +12,10 @@ COPY package.json pnpm-lock.yaml ./
 # Install dependencies (--ignore-scripts skips husky prepare hook; no .git in Docker)
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
+# Copy dashboard package files and install dashboard dependencies
+COPY dashboard/package.json dashboard/package-lock.json* ./dashboard/
+RUN npm --prefix dashboard install
+
 # Copy source and build
 COPY . .
 RUN pnpm build
