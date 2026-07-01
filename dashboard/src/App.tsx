@@ -82,9 +82,12 @@ function App() {
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Set dark theme by default
+  // Set dark theme by default if not set
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", "dark");
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    if (!currentTheme) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
   }, []);
 
   const fetchData = async () => {
@@ -306,29 +309,20 @@ function App() {
       </Sidebar>
 
       <Main>
-        {/* Top Header Row */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "24px",
-          borderBottom: "1px solid var(--divider)",
-          paddingBottom: "16px"
-        }}>
-          <div>
-            <h1 style={{ fontSize: "24px", fontWeight: 600, color: "var(--text-default)" }}>
+        <header className="topnav">
+          <div className="topnav-left">
+            <span style={{ fontWeight: 600, color: "var(--text-default)", fontSize: "13px" }}>Oura Ring Dashboard</span>
+            <span style={{ color: "var(--text-4)" }}>/</span>
+            <span style={{ color: "var(--text-2)", fontSize: "13px" }}>
               {activeTab === "home" && "Home Dashboard"}
-              {activeTab === "sleep" && "Sleep & Sleep Stages"}
-              {activeTab === "readiness" && "Readiness & Autonomic Nervous System"}
-              {activeTab === "activity" && "Activity & Daily Cardio"}
-              {activeTab === "insights" && "Autonmous AI health Insights"}
-            </h1>
-            <div style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "4px" }}>
-              Oura API v2 Sync Engine • {metrics ? `Last sync date: ${metrics.day}` : "Loading..."}
-            </div>
+              {activeTab === "sleep" && "Sleep & Bedtime"}
+              {activeTab === "readiness" && "Readiness & Recovery"}
+              {activeTab === "activity" && "Activity & Workouts"}
+              {activeTab === "insights" && "AI Insights"}
+            </span>
           </div>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {syncing && <span style={{ color: "var(--text-3)", fontSize: "13px" }}>Syncing with Oura Cloud...</span>}
+          <div className="topnav-right">
+            {syncing && <span style={{ color: "var(--text-3)", fontSize: "12px" }}>Syncing with Oura...</span>}
             <Button
               variant={syncing ? "secondary" : "ai"}
               onClick={handleSync}
@@ -336,24 +330,25 @@ function App() {
               {syncing ? "Syncing..." : "Sync Oura Now"}
             </Button>
           </div>
-        </div>
+        </header>
 
-        {error && (
-          <Alert variant="warn" title="Sync / Load Error">
-            {error}
-          </Alert>
-        )}
+        <div className="workspace">
+          {error && (
+            <Alert variant="warn" title="Sync / Load Error">
+              {error}
+            </Alert>
+          )}
 
-        {loading && !data ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "var(--text-3)" }}>
-            Loading dashboard data from SQLite DB...
-          </div>
-        ) : !data ? (
-          <Callout variant="info" icon="⚠️">
-            No health data available. Click "Sync Oura Now" to pull data.
-          </Callout>
-        ) : (
-          <>
+          {loading && !data ? (
+            <div style={{ padding: "40px", textAlign: "center", color: "var(--text-3)" }}>
+              Loading dashboard data from SQLite DB...
+            </div>
+          ) : !data ? (
+            <Callout variant="info" icon="⚠️">
+              No health data available. Click "Sync Oura Now" to pull data.
+            </Callout>
+          ) : (
+            <>
             {/* 🏠 HOME TAB */}
             {activeTab === "home" && metrics && (
               <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -679,8 +674,9 @@ function App() {
                 </div>
               </div>
             )}
-          </>
-        )}
+            </>
+          )}
+        </div>
       </Main>
     </AppShell>
   );
