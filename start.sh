@@ -15,5 +15,6 @@ docker compose -f compose.yaml up -d --build
 echo ""
 echo "✅ Server is up. MCP endpoint: http://localhost:${PORT:-3000}/mcp"
 echo "   Health check:               http://localhost:${PORT:-3000}/health"
+echo "   Dashboard:                  http://localhost:${PORT:-3000}/dashboard"
 echo ""
 echo "   Logs: ./logs.sh  |  Stop: ./stop.sh  |  Restart: ./restart.sh"

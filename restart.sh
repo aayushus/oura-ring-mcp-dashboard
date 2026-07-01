@@ -15,3 +15,4 @@ docker compose -f compose.yaml up -d --build
 
 echo ""
 echo "✅ Server restarted. MCP endpoint: http://localhost:${PORT:-3000}/mcp"
+echo "                  Dashboard:    http://localhost:${PORT:-3000}/dashboard"

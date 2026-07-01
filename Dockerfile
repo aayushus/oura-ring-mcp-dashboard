@@ -11,6 +11,7 @@ COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies (--ignore-scripts skips husky prepare hook; no .git in Docker)
 RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm rebuild sqlite3
 
 # Copy dashboard package files and install dashboard dependencies
 COPY dashboard/package.json dashboard/package-lock.json* ./dashboard/
@@ -33,6 +34,7 @@ COPY package.json pnpm-lock.yaml ./
 
 # Install production dependencies only (--ignore-scripts skips husky prepare hook)
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+RUN pnpm rebuild sqlite3
 
 # Copy built files
 COPY --from=builder /app/dist ./dist
