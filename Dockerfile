@@ -3,15 +3,17 @@ FROM node:20.19-slim AS builder
 
 WORKDIR /app
 
-# Install pnpm (npm install avoids corepack interactive prompts in Docker)
+# Install pnpm
 RUN npm install -g pnpm
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
-# Install dependencies (--ignore-scripts skips husky prepare hook; no .git in Docker)
-RUN pnpm install --frozen-lockfile --ignore-scripts
-RUN pnpm rebuild sqlite3
+# Strip prepare script to bypass husky on docker installs
+RUN node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json')); delete pkg.scripts.prepare; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+
+# Install dependencies (runs postinstall scripts to build/download sqlite3 binary)
+RUN pnpm install --frozen-lockfile
 
 # Copy dashboard package files and install dashboard dependencies
 COPY dashboard/package.json dashboard/package-lock.json* ./dashboard/
@@ -30,11 +32,13 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
-# Install production dependencies only (--ignore-scripts skips husky prepare hook)
-RUN pnpm install --prod --frozen-lockfile --ignore-scripts
-RUN pnpm rebuild sqlite3
+# Strip prepare script to bypass husky on docker installs
+RUN node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json')); delete pkg.scripts.prepare; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
 
 # Copy built files
 COPY --from=builder /app/dist ./dist

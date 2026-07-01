@@ -270,7 +270,7 @@ export async function startHttpServer(
     // Serve Dashboard Static Files at /dashboard
     const publicPath = join(__dirname, "..", "public");
     app.use("/dashboard", express.static(publicPath));
-    app.get("/dashboard/*", (req: Request, res: Response) => {
+    app.get("/dashboard/{*splat}", (req: Request, res: Response) => {
       res.sendFile(join(publicPath, "index.html"));
     });
 
