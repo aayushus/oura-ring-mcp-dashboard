@@ -1,107 +1,131 @@
 # Oura MCP Server
 
-[![npm version](https://img.shields.io/npm/v/oura-ring-mcp.svg)](https://www.npmjs.com/package/oura-ring-mcp)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 [![CI](https://github.com/mitchhankins01/oura-ring-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/mitchhankins01/oura-ring-mcp/actions/workflows/ci.yml)
 
-An MCP server that connects your Oura Ring to Claude and other AI assistants. Get human-readable insights about your sleep, readiness, and activity—not just raw JSON.
+An MCP server that connects your Oura Ring to Claude and other AI assistants. Get human-readable insights about your sleep, readiness, and activity — not just raw JSON.
+
+> **Fork of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp)** — updated for self-hosted Docker deployments and the latest Oura API (v1.35).
+
+---
 
 ## Features
 
-<img src="docs/outputs/demo.gif" width="500" alt="Demo">
+- **Smart formatting** — Durations in hours/minutes, scores with context ("85 - Optimal")
+- **Sleep analysis** — Sleep stages, efficiency, HRV, and biometrics
+- **Readiness tracking** — Recovery scores and contributor breakdown
+- **Activity data** — Steps, calories, and intensity breakdown
+- **Health metrics** — Heart rate, SpO2, stress, cardiovascular age
+- **Smart analysis** — Anomaly detection, correlations, trend analysis
+- **Tags support** — Compare metrics with/without conditions
 
-- **Smart formatting** - Durations in hours/minutes, scores with context ("85 - Optimal")
-- **Sleep analysis** - Sleep stages, efficiency, HRV, and biometrics
-- **Readiness tracking** - Recovery scores and contributor breakdown
-- **Activity data** - Steps, calories, and intensity breakdown
-- **Health metrics** - Heart rate, SpO2, stress, cardiovascular age
-- **Smart analysis** - Anomaly detection, correlations, trend analysis
-- **Tags support** - Compare metrics with/without conditions
+[See example outputs](docs/outputs/EXAMPLES.md)
 
-[See example outputs](docs/outputs/EXAMPLES.md) — what Claude returns for sleep, readiness, weekly summaries, and smart analysis
+---
 
-## Quick Start
+## Quick Start (Docker)
 
-### 1. Install
+### 1. Clone the repo
 
 ```bash
-npm install -g oura-ring-mcp
+git clone https://github.com/aayushus/oura-ring-mcp-dashboard.git
+cd oura-ring-mcp-dashboard
 ```
 
-Or use directly with npx (no install needed):
+### 2. Set up credentials
+
 ```bash
-npx oura-ring-mcp
+cp .env.example .env
 ```
 
-### 2. Authenticate with Oura
+Then fill in your OAuth credentials (see [Authentication](#authentication) below).
 
-**Option A: Personal Access Token (simpler)**
+### 3. Start the server
 
-1. Go to [cloud.ouraring.com/personal-access-tokens](https://cloud.ouraring.com/personal-access-tokens)
-2. Create a new token
-3. Set `OURA_ACCESS_TOKEN` in your Claude Desktop config (see below)
+```bash
+./start.sh
+```
 
-**Option B: OAuth CLI Flow**
+The MCP server will be available at `http://localhost:3000/mcp`.
 
-1. Create an OAuth app at [developer.ouraring.com](https://developer.ouraring.com/applications)
-   - Set Redirect URI to `http://localhost:3000/callback`
-2. Run the auth flow:
-   ```bash
-   export OURA_CLIENT_ID=your_client_id
-   export OURA_CLIENT_SECRET=your_client_secret
-   npx oura-ring-mcp auth
-   ```
-3. Credentials are saved to `~/.oura-mcp/credentials.json`
+```bash
+./stop.sh      # stop the server
+./restart.sh   # rebuild and restart
+```
 
-### 3. Configure Claude Desktop
+---
 
-Add to `claude_desktop_config.json`:
+## Authentication
 
-**With Personal Access Token:**
+> ⚠️ **Personal Access Tokens (PATs) were deprecated by Oura in December 2025 and are no longer available.** OAuth2 is now the only supported authentication method.
+
+### Setting up OAuth2
+
+**Step 1 — Create an Oura OAuth application**
+
+1. Go to **[developer.ouraring.com/applications](https://developer.ouraring.com/applications)**
+2. Click **"Create New Application"**
+3. Fill in the following:
+   - **Name**: anything you like (e.g. `My MCP Server`)
+   - **Redirect URI**: `http://localhost:3000/callback`
+4. Hit save — you'll receive a **Client ID** and **Client Secret**
+
+**Step 2 — Add credentials to your `.env`**
+
+```env
+OURA_CLIENT_ID=your_client_id_here
+OURA_CLIENT_SECRET=your_client_secret_here
+```
+
+**Step 3 — Run the auth flow (first time only)**
+
+Start the server, then run the one-time OAuth authorization:
+
+```bash
+./start.sh
+docker compose run --rm oura-mcp node dist/index.js auth
+```
+
+This opens a browser window where you authorize access to your Oura data. Credentials are saved to a persistent Docker volume and automatically refreshed — you only need to do this once.
+
+---
+
+## Connecting to Claude
+
+### Claude Desktop
+
+Add to your `claude_desktop_config.json`:
+
 ```json
 {
   "mcpServers": {
     "oura": {
-      "command": "npx",
-      "args": ["oura-ring-mcp"],
-      "env": {
-        "OURA_ACCESS_TOKEN": "your_token_here"
-      }
+      "url": "http://localhost:3000/mcp"
     }
   }
 }
 ```
 
-**With OAuth (after running `npx oura-ring-mcp auth`):**
-```json
-{
-  "mcpServers": {
-    "oura": {
-      "command": "npx",
-      "args": ["oura-ring-mcp"]
-    }
-  }
-}
-```
+On macOS, the config file is at:
+`~/Library/Application Support/Claude/claude_desktop_config.json`
 
-The server reads credentials from `~/.oura-mcp/credentials.json`. To enable automatic token refresh, add your OAuth credentials:
+Restart Claude Desktop after saving.
+
+### Claude.ai (remote deployment)
+
+If you've deployed remotely (e.g. Railway), use the public URL:
 
 ```json
 {
   "mcpServers": {
     "oura": {
-      "command": "npx",
-      "args": ["oura-ring-mcp"],
-      "env": {
-        "OURA_CLIENT_ID": "your_client_id",
-        "OURA_CLIENT_SECRET": "your_client_secret"
-      }
+      "url": "https://your-app.railway.app/mcp"
     }
   }
 }
 ```
 
-Restart Claude Desktop. Requires Node >=18.
+---
 
 ## What Can I Ask?
 
@@ -129,6 +153,8 @@ Restart Claude Desktop. Requires Node >=18.
 - "Are there any unusual readings in my data?"
 - "Why was my readiness so low yesterday?"
 - "Find days where my metrics were off"
+
+---
 
 ## Available Tools
 
@@ -179,93 +205,47 @@ Restart Claude Desktop. Requires Node >=18.
 | `compare-weeks` | This week vs last week comparison |
 | `tag-analysis` | How a specific tag affects your health |
 
+---
+
 ## Remote Deployment (Railway)
 
-Deploy the MCP server for remote access. The server proxies OAuth through Oura, so users authenticate directly with their Oura account — no PAT needed.
+Deploy for remote access. Users authenticate directly with their own Oura account via OAuth.
 
-### 1. Create an Oura OAuth App
+**1. Create an Oura OAuth app** at [developer.ouraring.com/applications](https://developer.ouraring.com/applications) with redirect URI: `https://your-app.railway.app/oauth/callback`
 
-1. Go to [Oura OAuth Applications](https://cloud.ouraring.com/oauth/applications)
-2. Create a new application
-3. Set the **Redirect URI** to: `https://your-app.railway.app/oauth/callback`
-4. Note the **Client ID** and **Client Secret**
-
-### 2. Deploy
+**2. Deploy:**
 
 ```bash
-# Install Railway CLI
 npm install -g @railway/cli
-
-# Login, init, and deploy
-railway login
-railway init
-railway up
+railway login && railway init && railway up
 ```
 
-### 3. Set Environment Variables
-
-In the Railway dashboard, add:
+**3. Set environment variables in Railway dashboard:**
 
 | Variable | Description |
 |----------|-------------|
 | `OURA_CLIENT_ID` | From your Oura OAuth app |
 | `OURA_CLIENT_SECRET` | From your Oura OAuth app |
 | `NODE_ENV` | `production` |
-| `MCP_SECRET` | *(Optional)* Static bearer token for Claude Desktop (`openssl rand -base64 32`) |
-| `OURA_ACCESS_TOKEN` | *(Optional)* PAT fallback if not using OAuth (`MCP_SECRET` required) |
+| `MCP_SECRET` | *(Optional)* Static bearer token — `openssl rand -base64 32` |
 
 Railway automatically sets `PORT` and `RAILWAY_PUBLIC_DOMAIN`.
 
-### 4. Connect from Claude.ai
+**4. Connect from Claude.ai:**
 
-Use the **connector** in Claude.ai:
-1. Go to Settings > MCP Connectors > Add
-2. Enter your server URL: `https://your-app.railway.app` (without `/mcp`)
-3. Leave OAuth Client ID and Secret empty (dynamic registration handles it)
-4. You'll be redirected to Oura to authorize access to your data
+1. Go to Settings → MCP Connectors → Add
+2. Enter your server URL: `https://your-app.railway.app`
+3. Authorize via Oura when prompted
 
-### 5. Connect from Claude Desktop
-
-For Claude Desktop, use `MCP_SECRET` + `OURA_ACCESS_TOKEN`:
-
-```json
-{
-  "mcpServers": {
-    "oura-remote": {
-      "url": "https://your-app.railway.app/mcp",
-      "headers": {
-        "Authorization": "Bearer your_mcp_secret_here"
-      }
-    }
-  }
-}
-```
-
-### Local Testing
-
-```bash
-# With Oura OAuth (full flow)
-OURA_CLIENT_ID=your_id OURA_CLIENT_SECRET=your_secret pnpm start:http
-
-# With static secret only (requires OURA_ACCESS_TOKEN)
-OURA_ACCESS_TOKEN=your_pat MCP_SECRET=test-secret pnpm start:http
-
-# Verify health endpoint
-curl http://localhost:3000/health
-
-# Check OAuth metadata (only available when OURA_CLIENT_ID is set)
-curl http://localhost:3000/.well-known/oauth-authorization-server
-
-# Test authenticated request (with static secret)
-curl -X POST http://localhost:3000/mcp \
-  -H "Authorization: Bearer test-secret" \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","method":"initialize","params":{"capabilities":{}},"id":1}'
-```
+---
 
 ## Contributing
 
 See [CLAUDE.md](CLAUDE.md) for architecture details and development guidelines.
+
+## Credits
+
+Based on the excellent work of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp).
 
 ## License
 

@@ -1,5 +1,5 @@
 # Oura MCP Server - Production Dockerfile
-FROM node:20-slim AS builder
+FROM node:20.19-slim AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY . .
 RUN pnpm build
 
 # Production stage
-FROM node:20-slim
+FROM node:20.19-slim
 
 WORKDIR /app
 

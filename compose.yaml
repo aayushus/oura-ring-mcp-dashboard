@@ -1,0 +1,40 @@
+services:
+  oura-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oura-mcp
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - OURA_ACCESS_TOKEN=${OURA_ACCESS_TOKEN:-}
+      - OURA_CLIENT_ID=${OURA_CLIENT_ID:-}
+      - OURA_CLIENT_SECRET=${OURA_CLIENT_SECRET:-}
+      - PORT=3000
+    volumes:
+      # Persist OAuth credentials across restarts
+      - oura_credentials:/root/.oura-mcp
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  oura_credentials:
