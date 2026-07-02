@@ -245,7 +245,19 @@ export function SettingsView() {
               />
             </div>
 
-            <Button onClick={handleSubmit} variant="primary" disabled={submitting} style={{ marginTop: "8px" }}>
+            <Button
+              onClick={handleSubmit}
+              variant="primary"
+              disabled={submitting}
+              style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: "10px",
+                marginTop: "12px",
+                fontWeight: "600",
+                fontSize: "0.95rem",
+              }}
+            >
               {submitting ? "Saving..." : "Save & Recalculate"}
             </Button>
           </div>

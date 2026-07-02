@@ -24,6 +24,7 @@ import {
   SleepIcon,
   SettingsIcon,
   HeartIcon,
+  Warn,
 } from "./components/Icons";
 
 import type { HistorySummary, TabKey, SleepRecord, ReadinessRecord, ActivityRecord } from "./types";
@@ -643,7 +644,7 @@ function App() {
     { key: "workouts", label: "Workouts", hue: "var(--hue-activity)", icon: <ActivityIcon size={20} /> },
     { key: "correlation", label: "Correlations", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
     { key: "experiments", label: "Experiments", hue: "var(--optimal)", icon: <InsightsIcon size={20} /> },
-    { key: "anomalies", label: "Anomalies", hue: "var(--low)", icon: <SettingsIcon size={20} /> },
+    { key: "anomalies", label: "Anomalies", hue: "var(--low)", icon: <Warn size={20} /> },
     { key: "insights", label: "Insights", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
     { key: "daystrip", label: "24h Timeline", hue: "var(--accent)", icon: <ActivityIcon size={20} /> },
     { key: "settings", label: "Settings", hue: "var(--divider-strong)", icon: <SettingsIcon size={20} /> },
