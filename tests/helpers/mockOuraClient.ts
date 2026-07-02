@@ -41,6 +41,9 @@ export function createMockOuraClient(overrides?: Partial<MockOuraClient>): MockO
     getDailyResilience: vi.fn().mockResolvedValue({ data: [], next_token: null }),
     getDailyCardiovascularAge: vi.fn().mockResolvedValue({ data: [], next_token: null }),
     getEnhancedTags: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getRingConfiguration: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getRestModePeriods: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getTags: vi.fn().mockResolvedValue({ data: [], next_token: null }),
   };
 
   // Apply any overrides
@@ -79,5 +82,8 @@ export function createErrorClient(errorMessage: string): MockOuraClient {
     getDailyResilience: vi.fn().mockRejectedValue(error),
     getDailyCardiovascularAge: vi.fn().mockRejectedValue(error),
     getEnhancedTags: vi.fn().mockRejectedValue(error),
+    getRingConfiguration: vi.fn().mockRejectedValue(error),
+    getRestModePeriods: vi.fn().mockRejectedValue(error),
+    getTags: vi.fn().mockRejectedValue(error),
   };
 }

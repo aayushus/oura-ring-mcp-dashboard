@@ -11,6 +11,7 @@ import {
   upsertStress,
   upsertRawDocument,
   getHistory,
+  upsertUserProfile,
 } from "./db.js";
 import { getToday, getDaysAgo } from "./utils/index.js";
 
@@ -25,6 +26,7 @@ export async function syncData(
   try {
     console.log(`[Sync] Syncing Oura data from ${startDate} to ${endDate}...`);
 
+    // Fetch endpoints in parallel
     // Fetch endpoints in parallel
     const [
       sleepScores,
@@ -41,6 +43,9 @@ export async function syncData(
       dailyResilience,
       dailyCardiovascularAge,
       enhancedTags,
+      ringConfigs,
+      restModes,
+      personalInfo,
     ] = await Promise.all([
       client.getDailySleep(startDate, endDate),
       client.getSleep(startDate, endDate),
@@ -56,12 +61,16 @@ export async function syncData(
       client.getDailyResilience(startDate, endDate),
       client.getDailyCardiovascularAge(startDate, endDate),
       client.getEnhancedTags(startDate, endDate),
+      client.getRingConfiguration().catch(() => ({ data: [] })),
+      client.getRestModePeriods(startDate, endDate).catch(() => ({ data: [] })),
+      client.getPersonalInfo().catch(() => null),
     ]);
 
     const days = new Set<string>();
 
     // Helper to store raw docs
     const saveRawDocs = async (endpoint: string, dataArray: any[]) => {
+      if (!dataArray) return;
       for (const doc of dataArray) {
         const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
         const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
@@ -85,10 +94,24 @@ export async function syncData(
       saveRawDocs("daily_resilience", dailyResilience.data),
       saveRawDocs("daily_cardiovascular_age", dailyCardiovascularAge.data),
       saveRawDocs("enhanced_tag", enhancedTags.data),
+      saveRawDocs("ring_configuration", ringConfigs.data),
+      saveRawDocs("rest_mode_period", restModes.data),
     ]);
 
+    if (personalInfo) {
+      await upsertUserProfile({
+        age: personalInfo.age ?? 30,
+        weight_kg: personalInfo.weight ?? 70,
+        height_cm: personalInfo.height ?? 175,
+        biological_sex: personalInfo.biological_sex ?? "unknown",
+        target_wake_time: "07:00:00",
+        goal: "general_health",
+        training_days: 3,
+      });
+    }
+
     // 1. Process Sleep
-    const sessionsByDay = new Map(sleepSessions.data.map((s) => [s.day, s]));
+    const sessionsByDay = new Map<string, any>(sleepSessions.data.map((s: any) => [s.day, s]));
     for (const score of sleepScores.data) {
       days.add(score.day);
       const session = sessionsByDay.get(score.day);
