@@ -33,9 +33,10 @@ export function ReadinessView({
   };
 
   const getScoreBandColor = (score: number) => {
-    if (score >= 85) return "var(--optimal)";
-    if (score >= 70) return "var(--stress)";
-    return "var(--low)";
+    if (score >= 85) return "var(--score-optimal)";
+    if (score >= 70) return "var(--score-good)";
+    if (score >= 60) return "var(--score-fair)";
+    return "var(--score-low)";
   };
 
   return (
@@ -47,12 +48,6 @@ export function ReadinessView({
         <span className="rule" />
         <p>Overnight recovery indexes, heart rate variability patterns, resting pulse, and body temperature fluctuations.</p>
       </div>
-
-      {illnessWarning && (
-        <Alert variant="warn" title="Early Illness Infection Detected">
-          Warning: Your body temperature deviation is elevated above standard thresholds or RHR/HRV indicate acute systemic strain. Consider pausing workouts and prioritizing sleep.
-        </Alert>
-      )}
 
       {/* Trailing 14-Day Heatmap Grid */}
       <Card>
@@ -197,7 +192,7 @@ export function ReadinessView({
                   {
                     dataKey: "temperature",
                     label: "Temp Drift (°C)",
-                    color: "var(--stress)",
+                    color: hues.stress,
                     showMark: true,
                   },
                 ]}
@@ -206,8 +201,8 @@ export function ReadinessView({
             </div>
             {/* Legend for temperature drift guidelines */}
             <div style={{ display: "flex", gap: "16px", justifyContent: "center", fontSize: "0.8rem", opacity: 0.7, marginTop: "8px" }}>
-              <div><span style={{ color: "var(--low)", fontWeight: 700 }}>&gt; +0.5°C</span> Critical Drift Threshold</div>
-              <div><span style={{ color: "var(--stress)", fontWeight: 700 }}>&gt; +0.3°C</span> Cautionary Drift Threshold</div>
+              <div><span style={{ color: "var(--score-low)", fontWeight: 700 }}>&gt; +0.5°C</span> Critical Drift Threshold</div>
+              <div><span style={{ color: "var(--score-fair)", fontWeight: 700 }}>&gt; +0.3°C</span> Cautionary Drift Threshold</div>
             </div>
           </CardContent>
         </Card>
