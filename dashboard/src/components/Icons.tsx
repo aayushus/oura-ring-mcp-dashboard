@@ -284,3 +284,67 @@ export function HeartIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps
     </svg>
   );
 }
+
+export function StressIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* Calm wavy balance pattern */}
+      <path d="M1 7c2-3 4-3 6 0s4 3 6 0" />
+      <path d="M1 7.5c2 3 4 3 6 0s4-3 6 0" opacity={0.5} />
+      <circle cx="7" cy="7" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function CardioIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* Heart outline with pulse inside */}
+      <path d="M7 12.5S2 9.5 2 6a2.5 2.5 0 014.3-1.8L7 5l.7-.8A2.5 2.5 0 0112 6c0 3.5-5 6.5-5 6.5z" />
+      <path d="M4.5 6.5h1.2l.8-2 1 4 1-3.5 1 1.5" strokeWidth={1.3} />
+    </svg>
+  );
+}
+
+export function WorkoutsIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* Premium dumbbell */}
+      <path d="M1.5 7h11M3.5 4h1v6h-1zm7 0h1v6h-1zm-9 1.5h1v4h-1zm10 0h1v4h-1z" />
+    </svg>
+  );
+}
+
+export function CorrelationIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* Two connected overlapping nodes or scatter charts */}
+      <circle cx="4" cy="10" r="2.5" />
+      <circle cx="10" cy="4" r="2.5" />
+      <path d="M6 8.5L8 5.5" />
+      <path d="M1.5 12.5l1.5-1M12.5 1.5l-1 1" opacity={0.5} />
+    </svg>
+  );
+}
+
+export function ExperimentsIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* Test tube/flask chemistry */}
+      <path d="M5 2h4M6 2v7.5L3.5 12h7L8 9.5V2" />
+      <path d="M4.5 10.5h5" opacity={0.6} />
+    </svg>
+  );
+}
+
+export function TimelineIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* Horizon timeline / clock tick marks */}
+      <path d="M1 7h12M1 4.5V7M7 4.5V7M13 4.5V7" />
+      <circle cx="4" cy="7" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+

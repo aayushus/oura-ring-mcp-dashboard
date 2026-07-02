@@ -25,6 +25,12 @@ import {
   SettingsIcon,
   HeartIcon,
   Warn,
+  StressIcon,
+  CardioIcon,
+  WorkoutsIcon,
+  CorrelationIcon,
+  ExperimentsIcon,
+  TimelineIcon,
 } from "./components/Icons";
 
 import type { HistorySummary, TabKey, SleepRecord, ReadinessRecord, ActivityRecord } from "./types";
@@ -639,14 +645,14 @@ function App() {
     { key: "readiness", label: "Readiness", hue: "var(--hue-readiness)", icon: <ReadinessIcon size={20} /> },
     { key: "activity", label: "Activity", hue: "var(--hue-activity)", icon: <ActivityIcon size={20} /> },
     { key: "heart", label: "Heart Rate", hue: "var(--hue-heart)", icon: <HeartIcon size={20} /> },
-    { key: "stress", label: "Stress", hue: "var(--stress)", icon: <ActivityIcon size={20} /> },
-    { key: "cardio", label: "Cardio Age", hue: "var(--hue-heart)", icon: <HeartIcon size={20} /> },
-    { key: "workouts", label: "Workouts", hue: "var(--hue-activity)", icon: <ActivityIcon size={20} /> },
-    { key: "correlation", label: "Correlations", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
-    { key: "experiments", label: "Experiments", hue: "var(--optimal)", icon: <InsightsIcon size={20} /> },
+    { key: "stress", label: "Stress", hue: "var(--stress)", icon: <StressIcon size={20} /> },
+    { key: "cardio", label: "Cardio Age", hue: "var(--hue-heart)", icon: <CardioIcon size={20} /> },
+    { key: "workouts", label: "Workouts", hue: "var(--hue-activity)", icon: <WorkoutsIcon size={20} /> },
+    { key: "correlation", label: "Correlations", hue: "var(--ai)", icon: <CorrelationIcon size={20} /> },
+    { key: "experiments", label: "Experiments", hue: "var(--optimal)", icon: <ExperimentsIcon size={20} /> },
     { key: "anomalies", label: "Anomalies", hue: "var(--low)", icon: <Warn size={20} /> },
     { key: "insights", label: "Insights", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
-    { key: "daystrip", label: "24h Timeline", hue: "var(--accent)", icon: <ActivityIcon size={20} /> },
+    { key: "daystrip", label: "24h Timeline", hue: "var(--accent)", icon: <TimelineIcon size={20} /> },
     { key: "settings", label: "Settings", hue: "var(--divider-strong)", icon: <SettingsIcon size={20} /> },
   ];
 
