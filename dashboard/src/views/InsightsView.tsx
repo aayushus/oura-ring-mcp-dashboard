@@ -130,6 +130,13 @@ export function InsightsView({
               <Kpi
                 key={entry.label}
                 label={entry.label}
+                metricId={
+                  entry.label === "Sleep score" ? "sleep_score" :
+                  entry.label === "Readiness" ? "readiness_score" :
+                  entry.label === "HRV" ? "hrv" :
+                  entry.label === "Resting HR" ? "rhr" :
+                  entry.label === "Steps" ? "steps" : undefined
+                }
                 value={entry.cur ? entry.format(entry.cur) : "—"}
                 unit={entry.unit}
                 note={

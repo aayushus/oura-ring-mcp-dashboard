@@ -115,6 +115,7 @@ export function HomeView({
       <section className="halo-vitals" aria-label="Vitals">
         <Kpi
           label="Resting HR"
+          metricId="rhr"
           value={latestReadiness?.rhr || "—"}
           unit="bpm"
           note={
@@ -130,6 +131,7 @@ export function HomeView({
         />
         <Kpi
           label="HRV"
+          metricId="hrv"
           value={latestReadiness?.hrv || "—"}
           unit="ms"
           note={
@@ -142,6 +144,7 @@ export function HomeView({
         />
         <Kpi
           label="Temp"
+          metricId="temperature_deviation"
           value={
             latestReadiness ? (
               <span className={tempFlag ? "tone-fair" : undefined}>

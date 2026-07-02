@@ -3,6 +3,7 @@
  * icon rail. See DESIGN.md at repo root for the spec each implements.
  */
 import { useEffect, useState, type ReactNode } from "react";
+import { METRIC_REGISTRY } from "../constants";
 
 /* ── Score bands (REQ B4) ─────────────────────────────────── */
 
@@ -189,22 +190,99 @@ export function Kpi({
   unit,
   note,
   children,
+  metricId,
 }: {
   label: string;
   value: ReactNode;
   unit?: string;
   note?: ReactNode;
   children?: ReactNode;
+  metricId?: string;
 }) {
+  const [showPopover, setShowPopover] = useState(false);
+  const info = metricId ? METRIC_REGISTRY[metricId] : null;
+
   return (
-    <div className="halo-kpi">
-      <span className="halo-kpi-label">{label}</span>
+    <div className="halo-kpi" style={{ position: "relative" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%", justifyContent: "space-between" }}>
+        <span className="halo-kpi-label">{label}</span>
+        {info && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPopover(!showPopover);
+            }}
+            onMouseEnter={() => setShowPopover(true)}
+            onMouseLeave={() => setShowPopover(false)}
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--text-3)",
+              fontSize: "0.85rem",
+              padding: "2px",
+              opacity: 0.6,
+              display: "inline-flex",
+              alignItems: "center",
+              transition: "opacity 100ms ease, color 100ms ease",
+            }}
+            onFocus={() => setShowPopover(true)}
+            onBlur={() => setShowPopover(false)}
+            className="info-button"
+            title="How is this calculated?"
+          >
+            ⓘ
+          </button>
+        )}
+      </div>
+
       <span className="halo-kpi-value halo-num">
         {value}
         {unit && <span className="unit">{unit}</span>}
       </span>
       {note && <span className="halo-kpi-note">{note}</span>}
       {children}
+
+      {/* Floating Info Popover details card */}
+      {showPopover && info && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "calc(100% + 8px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "260px",
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--divider-strong)",
+            borderRadius: "12px",
+            padding: "16px",
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.4)",
+            zIndex: 1000,
+            pointerEvents: "none",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            backdropFilter: "blur(8px)",
+            textAlign: "left",
+          }}
+        >
+          <div style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--text-default)", borderBottom: "1px solid var(--divider)", paddingBottom: "4px" }}>
+            {info.label} Details
+          </div>
+          <div style={{ fontSize: "0.75rem", color: "var(--text-3)", lineHeight: "1.3" }}>
+            {info.explain}
+          </div>
+          {info.formula && (
+            <div style={{ fontSize: "0.7rem", color: "var(--accent)", background: "rgba(0, 0, 0, 0.2)", padding: "4px 8px", borderRadius: "6px", fontFamily: "monospace" }}>
+              <strong>Formula:</strong> {info.formula}
+            </div>
+          )}
+          <div style={{ fontSize: "0.65rem", color: "var(--text-4)" }}>
+            <strong>Source:</strong> {info.source}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
