@@ -144,7 +144,7 @@ export function HeartRateView({
                   {
                     dataKey: "hrv",
                     label: "HRV",
-                    color: "var(--optimal)",
+                    color: hues.optimal,
                     showMark: true,
                   },
                 ]}
@@ -163,7 +163,7 @@ export function HeartRateView({
                   {
                     dataKey: "rhr",
                     label: "RHR",
-                    color: "var(--low)",
+                    color: hues.low,
                     showMark: true,
                   },
                 ]}

@@ -147,6 +147,7 @@ export function SleepView({
                     label: "Stage",
                     color: hues.rem,
                     showMark: false,
+                    curve: "stepAfter",
                   },
                 ]}
                 height={260}

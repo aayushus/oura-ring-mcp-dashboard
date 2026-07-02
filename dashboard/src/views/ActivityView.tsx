@@ -34,7 +34,8 @@ export function ActivityView({
     last7Days.reduce((sum, row) => sum + row.active_calories * 1.25, 0)
   );
   const metTarget = 750; // WHO recommended minimum 500-1000 MET-minutes/week
-  const metPercentage = Math.min(100, Math.round((weeklyMetMinutes / metTarget) * 100));
+  const metPercentage = Math.round((weeklyMetMinutes / metTarget) * 100);
+  const metProgressPercent = Math.min(100, metPercentage);
 
   // 2. Calculate ACWR Status (C4.5)
   const latestAcwrRecord = acwr && acwr.length > 0 ? acwr[acwr.length - 1] : null;
@@ -87,7 +88,7 @@ export function ActivityView({
     if (intensity === 0) return "rgba(255, 255, 255, 0.05)"; // rest
     if (intensity === 1) return "var(--hue-readiness)"; // light
     if (intensity === 2) return "var(--accent)"; // moderate
-    return "var(--activity)"; // high/active
+    return "var(--hue-activity)"; // high/active
   };
 
   // Format ACWR Trend Chart Data
@@ -122,14 +123,14 @@ export function ActivityView({
           <CardContent>
             <div style={{ padding: "12px 0" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
-                <span style={{ fontSize: "2rem", fontWeight: 700, color: "var(--activity)" }}>
+                <span style={{ fontSize: "2rem", fontWeight: 700, color: "var(--hue-activity)" }}>
                   {weeklyMetMinutes.toLocaleString()}
                 </span>
                 <span style={{ fontSize: "0.85rem", opacity: 0.6 }}>target: {metTarget} MET-mins</span>
               </div>
               
               <div style={{ height: "12px", width: "100%", background: "var(--divider)", borderRadius: "6px", overflow: "hidden", marginBottom: "8px" }}>
-                <div style={{ height: "100%", width: `${metPercentage}%`, background: "var(--activity)", borderRadius: "6px" }} />
+                <div style={{ height: "100%", width: `${metProgressPercent}%`, background: "var(--hue-activity)", borderRadius: "6px" }} />
               </div>
               <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>
                 You have completed <strong>{metPercentage}%</strong> of your recommended weekly physical activity target.

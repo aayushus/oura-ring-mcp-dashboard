@@ -42,7 +42,12 @@ export function WorkoutsView({
       key: "duration",
       label: "Duration",
       align: "right",
-      render: (row) => `${Math.round((row.duration || 0) / 60)} min`,
+      render: (row) => {
+        const secs = row.duration || (row.start_datetime && row.end_datetime
+          ? (new Date(row.end_datetime).getTime() - new Date(row.start_datetime).getTime()) / 1000
+          : 0);
+        return `${Math.round((secs || 0) / 60)} min`;
+      },
     },
     {
       key: "intensity",
