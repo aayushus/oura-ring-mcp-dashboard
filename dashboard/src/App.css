@@ -582,14 +582,16 @@
 }
 
 .chart-frame {
-  height: 260px;
+  height: auto;
+  min-height: 260px;
   border-radius: var(--r-lg);
-  overflow: hidden;
+  overflow: visible;
   padding-top: 8px;
 }
 
 .chart-frame.feature {
-  height: 380px;
+  height: auto;
+  min-height: 380px;
   padding: 0 12px 12px;
 }
 
@@ -598,7 +600,8 @@
 }
 
 .chart-frame.tall {
-  height: 320px;
+  height: auto;
+  min-height: 320px;
 }
 
 .dashboard-chart .MuiChartsAxis-line,

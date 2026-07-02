@@ -52,21 +52,47 @@ export function DayStripView({ hues }: DayStripViewProps) {
 
   // Parse raw data if loaded
   if (data) {
-    // Helper to map a Date object to interval index (21:00 D-1 to 21:00 D)
-    const getIntervalIndex = (dateObj: Date): number => {
-      const h = dateObj.getHours();
-      const m = dateObj.getMinutes();
+    // Helper to map a Date object or ISO string to interval index (21:00 D-1 to 21:00 D)
+    const getIntervalIndex = (input: Date | string): number => {
+      let dateStr = "";
+      let h = 0;
+      let m = 0;
+
+      if (input instanceof Date) {
+        const year = input.getFullYear();
+        const month = String(input.getMonth() + 1).padStart(2, "0");
+        const dayVal = String(input.getDate()).padStart(2, "0");
+        const hour = String(input.getHours()).padStart(2, "0");
+        const minute = String(input.getMinutes()).padStart(2, "0");
+        dateStr = `${year}-${month}-${dayVal}`;
+        h = parseInt(hour, 10);
+        m = parseInt(minute, 10);
+      } else if (typeof input === "string") {
+        const match = input.match(/^(\d{4}-\d{2}-\d{2})[T\s](\d{2}):(\d{2})/);
+        if (match) {
+          dateStr = match[1];
+          h = parseInt(match[2], 10);
+          m = parseInt(match[3], 10);
+        } else {
+          return -1;
+        }
+      } else {
+        return -1;
+      }
+
       const totalMins = h * 60 + m;
-      
-      // Determine if date belongs to prevDay (D-1) or day (D)
-      const dateStr = dateObj.toLocaleDateString("sv-SE");
       const isD1 = dateStr === data.prevDay;
-      
+      const isD = dateStr === data.day;
+
+      if (!isD1 && !isD) {
+        return -1;
+      }
+
       let relativeMins = 0;
       if (isD1) {
         relativeMins = totalMins - 21 * 60;
       } else {
-        relativeMins = totalMins + 3 * 60; // hours past midnight D-1 21:00
+        relativeMins = totalMins + 3 * 60; // D day starts past midnight
       }
 
       const idx = Math.floor(relativeMins / 15);
@@ -98,8 +124,7 @@ export function DayStripView({ hues }: DayStripViewProps) {
       const hrBuckets: Record<number, number[]> = {};
       data.heartrate.forEach((sample: any) => {
         if (sample.timestamp) {
-          const time = new Date(sample.timestamp);
-          const idx = getIntervalIndex(time);
+          const idx = getIntervalIndex(sample.timestamp);
           if (idx >= 0) {
             if (!hrBuckets[idx]) hrBuckets[idx] = [];
             hrBuckets[idx].push(sample.bpm);
@@ -139,11 +164,11 @@ export function DayStripView({ hues }: DayStripViewProps) {
     // 4. Populate Events Row (workouts & sessions)
     const activeEvents: any[] = [...(data.workouts || []), ...(data.sessions || [])];
     activeEvents.forEach((evt: any) => {
-      const start = new Date(evt.start_datetime || evt.start_time);
-      const end = evt.end_datetime ? new Date(evt.end_datetime) : new Date(start.getTime() + 30 * 60 * 1000);
+      const startStr = evt.start_datetime || evt.start_time;
+      const endStr = evt.end_datetime || (startStr ? new Date(new Date(startStr).getTime() + 30 * 60 * 1000).toISOString() : "");
 
-      const startIdx = getIntervalIndex(start);
-      const endIdx = getIntervalIndex(end);
+      const startIdx = startStr ? getIntervalIndex(startStr) : -1;
+      const endIdx = endStr ? getIntervalIndex(endStr) : -1;
 
       if (startIdx >= 0) {
         const endLoop = endIdx >= 0 ? endIdx : 95;
