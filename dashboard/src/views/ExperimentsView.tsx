@@ -108,8 +108,17 @@ export function ExperimentsView() {
   }
 
   return (
-    <div className="dashboard-stack" style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px" }}>
-      
+    <div className="dashboard-stack">
+      <div
+        className="halo-module-head"
+        style={{ "--hue": "var(--optimal)" } as React.CSSProperties}
+      >
+        <span className="halo-module-overline">Scientific Protocol</span>
+        <h1 className="halo-module-title">Self-Experiments</h1>
+        <span className="rule" />
+        <p>Run controlled N-of-1 self-experiments to scientifically measure the impact of habits on sleep or recovery.</p>
+      </div>
+
       {error && (
         <Alert variant="warn" title="Experiment Error">
           {error}

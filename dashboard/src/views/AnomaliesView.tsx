@@ -35,13 +35,15 @@ export function AnomaliesView() {
   }
 
   return (
-    <div className="dashboard-stack" style={{ maxWidth: "800px", margin: "0 auto", padding: "24px" }}>
+    <div className="dashboard-stack">
       <div
         className="halo-module-head"
-        style={{ "--hue": "var(--score-low)" } as React.CSSProperties}
+        style={{ "--hue": "var(--low)" } as React.CSSProperties}
       >
+        <span className="halo-module-overline">Alerts Feed</span>
+        <h1 className="halo-module-title">Biometric Anomalies</h1>
         <span className="rule" />
-        <p>Systemic biometric deviations and z-score warning feeds.</p>
+        <p>Systemic biometric deviations and rolling standard deviation z-score warning feeds.</p>
       </div>
 
       {error && (

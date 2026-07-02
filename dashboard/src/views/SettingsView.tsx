@@ -136,7 +136,17 @@ export function SettingsView() {
   };
 
   return (
-    <div className="settings-view-container" style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div className="dashboard-stack">
+      <div
+        className="halo-module-head"
+        style={{ "--hue": "var(--divider-strong)" } as React.CSSProperties}
+      >
+        <span className="halo-module-overline">User Configuration</span>
+        <h1 className="halo-module-title">Settings & Targets</h1>
+        <span className="rule" />
+        <p>Configure age, gender, weight, training days, and sleep latency preferences to seed targets.</p>
+      </div>
+
       {error && (
         <Alert variant="warn" title="Settings Issue">
           {error}
