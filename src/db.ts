@@ -1,9 +1,10 @@
 /**
- * SQLite Database Manager for Oura Ring health history
+ * Dual Database Manager (PostgreSQL / SQLite) for Oura Ring health history
  */
 
-import { open, Database } from "sqlite";
+import { open } from "sqlite";
 import sqlite3 from "sqlite3";
+import pg from "pg";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { promises as fs } from "node:fs";
@@ -11,7 +12,16 @@ import { promises as fs } from "node:fs";
 const CONFIG_DIR = join(homedir(), ".oura-mcp");
 const DB_FILE = process.env.NODE_ENV === "test" ? ":memory:" : join(CONFIG_DIR, "oura-health.db");
 
-let dbInstance: Database | null = null;
+export interface DatabaseWrapper {
+  exec(sql: string): Promise<void>;
+  all<T = any>(sql: string, params?: any[]): Promise<T>;
+  get<T = any>(sql: string, params?: any[]): Promise<T | undefined>;
+  run(sql: string, params?: any[]): Promise<{ changes?: number; lastID?: number }>;
+  close(): Promise<void>;
+}
+
+let dbInstance: DatabaseWrapper | null = null;
+let isPostgres = false;
 
 /**
  * Ensure the config directory exists
@@ -20,24 +30,86 @@ async function ensureConfigDir(): Promise<void> {
   await fs.mkdir(CONFIG_DIR, { recursive: true });
 }
 
+function translateQuery(sql: string): string {
+  let index = 1;
+  return sql.replace(/\?/g, () => `$${index++}`);
+}
+
 /**
  * Initialize and open the database, creating tables if they do not exist
  */
-export async function getDb(): Promise<Database> {
+export async function getDb(): Promise<DatabaseWrapper> {
   if (dbInstance) {
     return dbInstance;
   }
 
-  await ensureConfigDir();
+  const dbUrl = process.env.DATABASE_URL;
+  if (dbUrl) {
+    console.log("[DB] Connecting to PostgreSQL database...");
+    const pool = new pg.Pool({ connectionString: dbUrl });
 
-  // Open the database using sqlite3 driver
-  dbInstance = await open({
-    filename: DB_FILE,
-    driver: sqlite3.Database,
-  });
+    // Test connection
+    const client = await pool.connect();
+    client.release();
+
+    isPostgres = true;
+    dbInstance = {
+      async exec(sql: string) {
+        let pgSql = sql
+          .replace(/INTEGER PRIMARY KEY AUTOINCREMENT/gi, "SERIAL PRIMARY KEY")
+          .replace(/CHECK\s*\(\s*id\s*=\s*1\s*\)/gi, "") // Postgres check constraint difference fallback
+          .replace(/PRIMARY KEY\s*\(\s*day\s*,\s*endpoint\s*,\s*doc_id\s*\)/gi, "PRIMARY KEY (day, endpoint, doc_id)");
+        
+        await pool.query(pgSql);
+      },
+      async all<T = any>(sql: string, params: any[] = []) {
+        const pgSql = translateQuery(sql);
+        const res = await pool.query(pgSql, params);
+        return res.rows as unknown as T;
+      },
+      async get<T = any>(sql: string, params: any[] = []) {
+        const pgSql = translateQuery(sql);
+        const res = await pool.query(pgSql, params);
+        return (res.rows[0] ?? undefined) as unknown as T | undefined;
+      },
+      async run(sql: string, params: any[] = []) {
+        const pgSql = translateQuery(sql);
+        const res = await pool.query(pgSql, params);
+        return { changes: res.rowCount ?? undefined, lastID: 0 };
+      },
+      async close() {
+        await pool.end();
+      }
+    };
+  } else {
+    console.log("[DB] Connecting to SQLite database...");
+    await ensureConfigDir();
+    const sqliteDb = await open({
+      filename: DB_FILE,
+      driver: sqlite3.Database,
+    });
+    isPostgres = false;
+    dbInstance = {
+      async exec(sql: string) {
+        await sqliteDb.exec(sql);
+      },
+      async all<T = any>(sql: string, params: any[] = []) {
+        return sqliteDb.all(sql, params) as Promise<T>;
+      },
+      async get<T = any>(sql: string, params: any[] = []) {
+        return sqliteDb.get(sql, params) as Promise<T | undefined>;
+      },
+      async run(sql: string, params: any[] = []) {
+        return sqliteDb.run(sql, params);
+      },
+      async close() {
+        await sqliteDb.close();
+      }
+    };
+  }
 
   // Create tables
-  await dbInstance.exec(`
+  await dbInstance!.exec(`
     CREATE TABLE IF NOT EXISTS sleep_history (
       day TEXT PRIMARY KEY,
       score INTEGER,
@@ -71,7 +143,7 @@ export async function getDb(): Promise<Database> {
     );
 
     CREATE TABLE IF NOT EXISTS user_profile (
-      id INTEGER PRIMARY KEY CHECK (id = 1), -- Single-user enforcement
+      id INTEGER PRIMARY KEY,
       age INTEGER,
       weight_kg REAL,
       height_cm REAL,
@@ -82,7 +154,7 @@ export async function getDb(): Promise<Database> {
     );
 
     CREATE TABLE IF NOT EXISTS user_targets (
-      id INTEGER PRIMARY KEY CHECK (id = 1), -- Single-user enforcement
+      id INTEGER PRIMARY KEY,
       sleep_need_seconds INTEGER,
       recommended_bedtime TEXT,
       step_goal INTEGER,
@@ -91,7 +163,7 @@ export async function getDb(): Promise<Database> {
     );
 
     CREATE TABLE IF NOT EXISTS target_history (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       target_id TEXT,
       old_value TEXT,
       new_value TEXT,
@@ -103,7 +175,7 @@ export async function getDb(): Promise<Database> {
       day TEXT,
       endpoint TEXT,
       doc_id TEXT,
-      data TEXT, -- JSON payload string
+      data TEXT,
       PRIMARY KEY (day, endpoint, doc_id)
     );
 
@@ -122,9 +194,8 @@ export async function getDb(): Promise<Database> {
     CREATE TABLE IF NOT EXISTS experiment_days (
       experiment_id TEXT,
       day TEXT,
-      adherent INTEGER, -- 0 or 1
-      PRIMARY KEY (experiment_id, day),
-      FOREIGN KEY (experiment_id) REFERENCES experiments(id) ON DELETE CASCADE
+      adherent INTEGER,
+      PRIMARY KEY (experiment_id, day)
     );
 
     CREATE TABLE IF NOT EXISTS anomalies (
@@ -149,7 +220,7 @@ export async function getDb(): Promise<Database> {
     );
   `);
 
-  return dbInstance;
+  return dbInstance!;
 }
 
 /**
@@ -503,7 +574,7 @@ export async function getRawDocuments(
 
   query += ` ORDER BY day ASC`;
   const rows = await db.all<{ data: string }[]>(query, params);
-  return rows.map((row) => JSON.parse(row.data));
+  return rows.map((row: any) => JSON.parse(row.data));
 }
 
 // ─────────────────────────────────────────────────────────────

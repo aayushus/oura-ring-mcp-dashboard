@@ -155,6 +155,16 @@ registerPrompts(server);
 
 async function main() {
   if (useHttpTransport) {
+    // Automatically run database migrations if PostgreSQL is active
+    if (process.env.DATABASE_URL) {
+      console.log("[DB] PostgreSQL configuration active. Running migration check...");
+      try {
+        await import("./scripts/migrate-db.js");
+      } catch (err) {
+        console.error("[DB] Migration check failed or skipped:", err);
+      }
+    }
+
     // HTTP transport for remote deployment
     const { startHttpServer } = await import("./transports/http.js");
     const { startDigestScheduler } = await import("./utils/digest.js");

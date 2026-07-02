@@ -1,4 +1,22 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: oura-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=oura_health
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d oura_health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   oura-mcp:
     build:
       context: .
@@ -7,20 +25,24 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       - NODE_ENV=production
       - OURA_ACCESS_TOKEN=${OURA_ACCESS_TOKEN:-}
       - OURA_CLIENT_ID=${OURA_CLIENT_ID:-}
       - OURA_CLIENT_SECRET=${OURA_CLIENT_SECRET:-}
       - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/oura_health
     volumes:
-      # Persist OAuth credentials across restarts
-      - oura_credentials:/root/.oura-mcp
+      # Persist OAuth credentials locally on the host
+      - ./oura_credentials:/root/.oura-mcp
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
       interval: 30s
       timeout: 5s
-      start_period: 10s
+      start_period: 15s
       retries: 3
     deploy:
       resources:
@@ -35,6 +57,3 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-volumes:
-  oura_credentials:
