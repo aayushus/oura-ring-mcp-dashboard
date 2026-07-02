@@ -1,25 +1,35 @@
-# Oura MCP Server
+# Oura Ring MCP Server & Health Dashboard
 
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
-[![CI](https://github.com/mitchhankins01/oura-ring-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/mitchhankins01/oura-ring-mcp/actions/workflows/ci.yml)
+[![Docker Build & Publish to GHCR](https://github.com/aayushus/oura-ring-mcp-dashboard/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/aayushus/oura-ring-mcp-dashboard/actions/workflows/docker-publish.yml)
 
-An MCP server that connects your Oura Ring to Claude and other AI assistants. Get human-readable insights about your sleep, readiness, and activity — not just raw JSON.
+An all-in-one personal health dashboard and Model Context Protocol (MCP) server that connects your Oura Ring data to local web charts and AI assistants like Claude. Get premium interactive visual tracking, self-experiments, weekly narrative reports, and human-readable insights about your sleep, readiness, and activity — stored locally in PostgreSQL forever.
 
-> **Fork of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp)** — updated for self-hosted Docker deployments and the latest Oura API (v1.35).
+> **Fork of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp)** — extended with a full responsive React dashboard UI, local PostgreSQL persistence, automated year-long historical syncing, and pre-built GHCR Docker images.
 
 ---
 
-## Features
+## Key Features
 
-- **Smart formatting** — Durations in hours/minutes, scores with context ("85 - Optimal")
-- **Sleep analysis** — Sleep stages, efficiency, HRV, and biometrics
-- **Readiness tracking** — Recovery scores and contributor breakdown
-- **Activity data** — Steps, calories, and intensity breakdown
-- **Health metrics** — Heart rate, SpO2, stress, cardiovascular age
-- **Smart analysis** — Anomaly detection, correlations, trend analysis
-- **Tags support** — Compare metrics with/without conditions
+### 📊 Health Dashboard UI
+- **Interactive Web UI** — Responsive charts, dark/light theme, and sorted contributor donut metrics for Sleep, Readiness, and Activity.
+- **Unified Day-Strip** — Stack sleep stages, overnight heart rate (HR/HRV), daytime movement, workouts, and tags on a shared 24h timeline.
+- **Year-View Heatmaps** — GitHub-contribution-style calendar grids showing sleep and recovery seasonality.
+- **Fuzzy Command Palette (`⌘K`)** — Navigate tabs, jump to dates (e.g. `yesterday`, `last monday`), export data, and execute actions instantly.
+- **Keyboard Time Travel** — Quick date navigation with left/right arrows (`←` / `→`) and deep-link date parameters (`?day=YYYY-MM-DD`).
 
-[See example outputs](docs/outputs/EXAMPLES.md)
+### 🤖 AI-Powered Health Assistance
+- **Chat with your data** — Direct LLM conversational panel embedded in the dashboard, powered by your local Oura MCP tool suite.
+- **Self-Experiments (N-of-1 Lab)** — Pre-register hypotheses (e.g., "No caffeine after 2 PM") and track performance with Cohen's $d$ effect sizes.
+- **Weekly Narrative Reports** — Auto-generated health review summaries with print-optimized A4 stylesheets (`?report=weekly`).
+- **Auto-Annotated Trends** — Automatically flags anomalies ($z$-score $|z| \geq 2$) and period min/max peaks on trend charts.
+
+### 💾 Local Database & Sync
+- **PostgreSQL Persistence** — Persists raw API responses and history files forever (bypassing Oura's 30-day API limit).
+- **Auto-Migrator** — Automatically detects and ports existing local SQLite databases into PostgreSQL on start.
+- **Historical Backfill** — Auto-backfills a full 365 days of historical Oura biometrics.
+- **Server-to-Local Profile Sync** — Automatically synchronizes Oura personal information with local goal targets.
+- **Morning Digest Alert** — Standard email/file delivery showing recovery scores, delta targets, and action tips on wake-up.
 
 ---
 
