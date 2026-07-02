@@ -533,7 +533,7 @@ Common heavy offenders and their lighter alternatives:
 | Full `react-icons` | Individual icon imports, or custom SVG set |
 | `jquery` | Modern DOM APIs (0KB) |
 | `immutable.js` | Native `structuredClone` or `immer` (smaller) |
-| Full charting libraries | `chart.js` modules, or lightweight like `recharts` submodules |
+| Full charting libraries | Modular chart packages such as `@mui/x-charts`, or other tree-shakable chart modules |
 
 ### 6.5 Compression
 

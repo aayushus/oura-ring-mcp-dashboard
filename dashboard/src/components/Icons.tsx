@@ -189,10 +189,81 @@ export function ArrowLeft({ size = 14, className, strokeWidth = 1.6 }: IconProps
   );
 }
 
-export function Upload({ size = 14, className, strokeWidth = 1.6, style, onClick }: IconProps) {
+export function Upload({ size = 14, className, strokeWidth = 1.6 }: IconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" {...svgBase} strokeWidth={strokeWidth} className={className} style={style} onClick={onClick}>
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M7 9V3M4 6l3-3 3 3M3 11h8" />
+    </svg>
+  );
+}
+
+/* ── Domain-specific nav icons ─────────────────────────────── */
+
+export function HomeIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M2 6.5L7 2l5 4.5V12H9V9H5v3H2z" />
+    </svg>
+  );
+}
+
+export function SleepIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M7 2a5 5 0 1 0 5 5A4 4 0 0 1 7 2z" />
+      <path d="M7 5v2.5l1.5 1" />
+    </svg>
+  );
+}
+
+export function ReadinessIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M1 7c1-3 2.5-4.5 4-4.5S8 5 9 5s2-2.5 4-2" />
+      <path d="M1 7c1 3 2.5 4.5 4 4.5S8 9 9 9s2 2.5 4 2" />
+    </svg>
+  );
+}
+
+export function ActivityIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M1 7h2.5l2-4 2 8 2-5 1.5 1H13" />
+    </svg>
+  );
+}
+
+export function InsightsIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M7 1.5L8.5 5l3.5.5-2.5 2.5.5 3.5L7 9.5 4.5 11.5l.5-3.5L2.5 5.5 6 5z" />
+    </svg>
+  );
+}
+
+export function TrendUp({ size = 14, className, strokeWidth = 1.6 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M1 10l4-4 3 2.5L12 3" />
+      <path d="M9 3h3v3" />
+    </svg>
+  );
+}
+
+export function TrendDown({ size = 14, className, strokeWidth = 1.6 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M1 4l4 4 3-2.5L12 11" />
+      <path d="M9 11h3V8" />
+    </svg>
+  );
+}
+
+export function TrendFlat({ size = 14, className, strokeWidth = 1.6 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M2 7h10" />
+      <path d="M9 4.5l2.5 2.5-2.5 2.5" />
     </svg>
   );
 }

@@ -124,6 +124,17 @@ Pre-defined templates that guide Claude through common health analysis tasks:
 - **`monthly-trends`** - 30-day trend analysis with correlations and anomaly detection
 - **`quick-status`** - Brief daily status check for quick decisions
 
+## Dashboard UI — Halo design system
+
+The `dashboard/` Vite app uses the **Halo** design system (spec: `DESIGN.md` in the parent `ouraring/` planning folder, alongside `DASHBOARD-REQUIREMENTS.md` and `FEATURES.md`). Key facts:
+
+- **Dark-first**: `:root` in `dashboard/src/styles/tokens.css` IS the dark theme; `[data-theme="light"]` overrides it. Both themes ship; toggle persists to localStorage.
+- **Token architecture**: legacy Prism variable names are kept as aliases with Halo values, so `components.css` still works. New tokens: `--hue-*` (one per health domain), `--score-*` (Oura score bands), `--r-card/inner/control/chip`, `--t-*` type scale.
+- **Halo layer**: `dashboard/src/styles/halo.css` (imported last, wins cascade) + `dashboard/src/components/halo.tsx` (`ScoreRing`, `RingCard`, `Kpi`, `DeltaChip`, `RailItem`, `MetricTable`).
+- **Shell**: 76px icon rail (bottom tab bar on mobile) — the old Notion-style sidebar tree components still exist in `components.tsx` but are unused.
+- **Charts**: `@mui/x-charts` themed via CSS overrides on `.dashboard-chart` (axis lines hidden, horizontal hairlines only, 2.5px lines, 14% area fills). `@mui/x-data-grid` is no longer used (replaced by `MetricTable`) — the dependency can be dropped from `dashboard/package.json` in a cleanup pass.
+- **Rules**: no hardcoded colors/radii in components — tokens only; score-band colors only on score data; one domain hue per module; numerals use `tabular-nums`.
+
 ## Notes
 
 - When using cURL, load the token in .env

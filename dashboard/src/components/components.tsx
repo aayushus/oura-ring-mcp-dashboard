@@ -895,12 +895,12 @@ export function AIVerdict({
     <div className="ai-review-card verdict-card">
       <div className="ai-review-head">
         <div className="ai-avatar">
-          <Sparkle size={18} />
+          <AIGlyph size={18} strokeWidth={1.8} />
         </div>
         <div>
           <div className="ai-review-title">{label}</div>
           {title && <div className="ai-review-subtitle">{title}</div>}
-          <div className="ai-review-sub">Reviewed {timestamp} · powered by Claude</div>
+          <div className="ai-review-sub">Reviewed {timestamp} · AI-assisted summary</div>
         </div>
       </div>
 
@@ -1021,11 +1021,36 @@ export function FloatingActionBar({ status, children }: FloatingActionBarProps) 
  */
 export function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof document === 'undefined') return 'light';
-    return (document.documentElement.getAttribute('data-theme') as 'light' | 'dark') || 'light';
+    if (typeof document === 'undefined') return 'dark';
+    const savedTheme = localStorage.getItem('oura-dashboard-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+
+    return (document.documentElement.getAttribute('data-theme') as 'light' | 'dark') || 'dark';
   });
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const syncTheme = () => {
+      const current =
+        (document.documentElement.getAttribute('data-theme') as 'light' | 'dark' | null) || 'dark';
+      localStorage.setItem('oura-dashboard-theme', current);
+      setTheme(current);
+    };
+
+    syncTheme();
+
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const apply = (t: 'light' | 'dark') => {
+    localStorage.setItem('oura-dashboard-theme', t);
     document.documentElement.setAttribute('data-theme', t);
     setTheme(t);
   };
@@ -1255,8 +1280,10 @@ export function WorkspaceSwitcher({ name, role, avatarText, onSwitch }: {
   avatarText?: string;
   onSwitch?: () => void;
 }) {
+  const Wrapper = onSwitch ? 'button' : 'div';
+
   return (
-    <div className="ws" onClick={onSwitch}>
+    <Wrapper className={`ws ${onSwitch ? 'is-actionable' : 'is-static'}`} onClick={onSwitch}>
       <div className="ws-bar">
         <div className="ws-avatar">{avatarText ?? name[0]}</div>
         <div className="ws-meta">
@@ -1264,10 +1291,12 @@ export function WorkspaceSwitcher({ name, role, avatarText, onSwitch }: {
           {role && <span className="role-pill">{role}</span>}
         </div>
       </div>
-      <button className="ws-caret" aria-label="Switch workspace">
-        <Caret direction="down" size={12} />
-      </button>
-    </div>
+      {onSwitch && (
+        <span className="ws-caret" aria-hidden="true">
+          <Caret direction="down" size={12} />
+        </span>
+      )}
+    </Wrapper>
   );
 }
 
@@ -1310,10 +1339,8 @@ export function TreeItem({ icon, label, count, active, onClick, children }: {
         className={`tree-item${active ? ' active' : ''}`}
         onClick={handleToggle}
       >
-        {hasChildren ? (
+        {hasChildren && (
           <Chevron direction={isOpen ? 'down' : 'right'} size={10} className="chevron" />
-        ) : (
-          <div style={{ width: 10 }} className="chevron" />
         )}
         <span className="tree-icon">{icon}</span>
         <span className="tree-label">{label}</span>
@@ -2211,55 +2238,6 @@ export function InputOTP({ value, length = 6, onChange }: { value: string; lengt
           {value[i] || ""}
         </div>
       ))}
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   ChartPlaceholder
-   ═══════════════════════════════════════════════════════════ */
-
-export function ChartPlaceholder({ type = "bar" }: { type?: "bar" | "line" }) {
-  return (
-    <div className="chart-wrap">
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: '120px' }}>
-        {[40, 70, 45, 90, 65, 80].map((h, i) => (
-          <div key={i} className={`chart-bar ${i === 3 ? 'ai' : ''}`} style={{ height: `${h}%` }} />
-        ))}
-      </div>
-      <div className="typo-muted" style={{ position: 'absolute', bottom: 8 }}>Visualizing {type} data...</div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   Charts (Layout Components)
-   ═══════════════════════════════════════════════════════════ */
-
-/**
- * Container for charts. Provides standard aspect ratio and typography.
- * Integrate with Recharts or other libraries by using var(--chart-N) colors.
- */
-export function ChartContainer({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`chart-container ${className}`}>{children}</div>;
-}
-
-/**
- * Standard Prism chart tooltip.
- */
-export function ChartTooltip({ label, items }: { label: string; items: { name: string; value: string | number; color: string }[] }) {
-  return (
-    <div className="chart-tooltip">
-      <div className="chart-tooltip-label">{label}</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        {items.map((it, i) => (
-          <div key={i} className="chart-tooltip-item">
-            <div className="chart-tooltip-swatch" style={{ background: it.color }} />
-            <span style={{ flex: 1 }}>{it.name}</span>
-            <span style={{ fontWeight: 600, color: 'var(--text-default)' }}>{it.value}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

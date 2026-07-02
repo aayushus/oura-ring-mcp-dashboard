@@ -67,7 +67,7 @@ The MCP server will be available at `http://localhost:3000/mcp`.
 2. Click **"Create New Application"**
 3. Fill in the following:
    - **Name**: anything you like (e.g. `My MCP Server`)
-   - **Redirect URI**: `http://localhost:3000/callback`
+   - **Redirect URI**: `http://localhost:3000/oauth/callback`
 4. Hit save — you'll receive a **Client ID** and **Client Secret**
 
 **Step 2 — Add credentials to your `.env`**

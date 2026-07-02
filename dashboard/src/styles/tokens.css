@@ -1,78 +1,107 @@
 /**
- * Prism Design Tokens — WCAG 2.2 AA verified
- * v1.1 · Last updated 16 April 2026
+ * Halo Design Tokens — see DESIGN.md at repo root
+ * Dark-first: :root IS the dark theme; [data-theme="light"] overrides.
  *
- * Import this file ONCE at your app root:
- *   import './tokens.css';
+ * Import this file ONCE at your app root. Everything else references
+ * tokens via var(--name). Do not hardcode colours, radii, or font names
+ * in components.
  *
- * Everything else in the app references tokens via var(--name).
- * Do not hardcode colours, radii, or font names in components.
- *
- * Role is optional (for two-persona apps):
- *   <html data-role="role-a" | "role-b">
- * Theme: <html data-theme="light" | "dark">
+ * Legacy Prism variable names are kept as aliases (mapped to Halo
+ * values) so existing component CSS keeps working.
  */
 
 :root {
-  /* ── Surfaces ──────────────────────────────────────────── */
-  --bg-app: #FFFFFF;
-  --bg-sidebar: #F7F7F5;
-  --bg-sidebar-deep: #F2F1EE;
-  --bg-preview: #FBFBFA;
-  --bg-hover: rgba(55, 53, 47, 0.04);
-  --bg-hover-2: rgba(55, 53, 47, 0.08);
-  --bg-active: rgba(55, 53, 47, 0.08);
-  --bg-input-h: rgba(55, 53, 47, 0.03);
+  /* ── Surfaces — elevation = lightness step, never shadows ── */
+  --bg-app: #0B0C10;
+  --bg-card: #14161D;
+  --bg-elevated: #1C1F28;
+  --bg-wall: #000000;
+  --bg-hover: rgba(255, 255, 255, 0.045);
+  --bg-hover-2: rgba(255, 255, 255, 0.08);
+  --bg-active: rgba(255, 255, 255, 0.08);
+  --bg-input-h: rgba(255, 255, 255, 0.04);
+
+  /* legacy surface aliases */
+  --bg-sidebar: #0B0C10;
+  --bg-sidebar-deep: #14161D;
+  --bg-preview: #14161D;
 
   /* ── Tinted surfaces ──────────────────────────────────── */
-  --bg-gray: rgba(241, 241, 239, 0.9);
-  --bg-blue: rgba(231, 243, 248, 0.7);
-  --bg-green: rgba(219, 237, 219, 0.55);
-  --bg-yellow: rgba(251, 236, 221, 0.6);
-  --bg-purple: rgba(232, 222, 238, 0.55);
+  --bg-gray: rgba(235, 240, 248, 0.08);
+  --bg-blue: rgba(124, 158, 248, 0.12);
+  --bg-green: rgba(48, 209, 88, 0.12);
+  --bg-yellow: rgba(255, 214, 10, 0.12);
+  --bg-purple: rgba(191, 122, 240, 0.12);
 
-  /* ── Text — AA-verified ────────────────────────────────── */
-  --text-default: rgb(55, 53, 47);
-  --text-2: rgba(55, 53, 47, 0.72);
-  --text-3: rgba(55, 53, 47, 0.62);        /* AA: 4.56:1 */
-  --text-4: rgba(55, 53, 47, 0.36);        /* decorative only */
-  --text-placeholder: rgba(55, 53, 47, 0.45);  /* AA-Large: 3.65:1 */
+  /* ── Text ─────────────────────────────────────────────── */
+  --text-default: #F2F4F8;
+  --text-2: rgba(235, 240, 248, 0.66);
+  --text-3: rgba(235, 240, 248, 0.44);
+  --text-4: rgba(235, 240, 248, 0.28);
+  --text-placeholder: rgba(235, 240, 248, 0.32);
 
-  /* ── Dividers ─────────────────────────────────────────── */
-  --divider: rgba(55, 53, 47, 0.08);
-  --divider-strong: rgba(55, 53, 47, 0.16);
+  /* ── Hairlines ────────────────────────────────────────── */
+  --divider: rgba(255, 255, 255, 0.06);
+  --divider-strong: rgba(255, 255, 255, 0.12);
 
-  /* ── Product accent — role A default (AA-verified) ──── */
-  --accent: #1B70C5;                       /* AA: 5.02:1 on white */
-  --accent-h: #0B6BCB;
-  --accent-bg: rgba(27, 112, 197, 0.08);
-  --accent-bg-s: rgba(27, 112, 197, 0.14);
-  --accent-text: #FFFFFF;                  /* light mode: white text on dark accent (#1B70C5) */
+  /* ── Score bands (REQ B4) — the only loud colours ─────── */
+  --score-optimal: #30D158;
+  --score-good: #66D4A8;
+  --score-fair: #FFD60A;
+  --score-low: #FF6B5E;
+  --score-none: rgba(235, 240, 248, 0.20);
 
-  /* ── AI layer ─────────────────────────────────────────── */
-  --ai: #8B5CF6;
-  --ai-2: #A78BFA;                          /* reserved — available but unused in base components */
-  --ai-bg: rgba(139, 92, 246, 0.08);
-  --ai-bg-s: rgba(139, 92, 246, 0.14);
-  --ai-border: rgba(139, 92, 246, 0.2);
-  --ai-border-s: rgba(139, 92, 246, 0.32);
-  --ai-grad: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  /* ── Domain hues — one per module ─────────────────────── */
+  --hue-sleep: #8A93F8;
+  --hue-sleep-deep: #5B66E8;
+  --hue-readiness: #2DD4BF;
+  --hue-activity: #FF9F0A;
+  --hue-heart: #FF6482;
+  --hue-stress: #FBBF24;
+  --hue-spo2: #38BDF8;
+  --hue-cardio: #BF7AF0;
+
+  /* ── Interactive accent ───────────────────────────────── */
+  --accent: #7C9EF8;
+  --accent-h: #93AFFA;
+  --accent-bg: rgba(124, 158, 248, 0.10);
+  --accent-bg-s: rgba(124, 158, 248, 0.18);
+  --accent-text: #0B0C10;
+
+  /* ── AI layer (chat / insights) ───────────────────────── */
+  --ai: #BF7AF0;
+  --ai-2: #D0A0F5;
+  --ai-bg: rgba(191, 122, 240, 0.10);
+  --ai-bg-s: rgba(191, 122, 240, 0.18);
+  --ai-border: rgba(191, 122, 240, 0.24);
+  --ai-border-s: rgba(191, 122, 240, 0.36);
+  --ai-grad: linear-gradient(135deg, #BF7AF0 0%, #FF6482 100%);
   --ai-grad-soft: linear-gradient(135deg,
-                                   rgba(139, 92, 246, 0.1) 0%,
-                                   rgba(236, 72, 153, 0.08) 100%);
-  --ai-text: #FFFFFF;                      /* for AI button text */
+                                   rgba(191, 122, 240, 0.12) 0%,
+                                   rgba(255, 100, 130, 0.08) 100%);
+  --ai-text: #0B0C10;
 
-  /* ── Semantic — AA-verified ───────────────────────────── */
-  --green: #448361;                        /* AA: 4.50:1 */
-  --red: #B93A35;                          /* AA: 5.67:1 */
-  --yellow: #95651A;                       /* AA: 4.98:1 */
-  --purple: #6940A5;                        /* reserved — available but unused in base components */
+  /* ── Semantic ─────────────────────────────────────────── */
+  --green: #30D158;
+  --red: #FF6B5E;
+  --yellow: #FFD60A;
+  --purple: #BF7AF0;
 
-  /* ── Typography — The Voice ────────────────────────────── */
-  --f-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --f-mono: "IBM Plex Mono", "SF Mono", ui-monospace, monospace;
+  /* ── Typography ───────────────────────────────────────── */
+  --f-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter",
+            "Segoe UI", sans-serif;
+  --f-mono: ui-monospace, "SF Mono", "Menlo", monospace;
 
-  /* ── Optical Spacing — The Rhythm ──────────────────────── */
+  /* type scale (DESIGN.md 3.2) */
+  --t-hero: 64px;
+  --t-display: 40px;
+  --t-title: 26px;
+  --t-headline: 19px;
+  --t-body: 15px;
+  --t-caption: 13px;
+  --t-micro: 11px;
+
+  /* ── Spacing — 8pt grid ───────────────────────────────── */
   --s-4: 4px;
   --s-8: 8px;
   --s-12: 12px;
@@ -80,96 +109,118 @@
   --s-24: 24px;
   --s-32: 32px;
   --s-48: 48px;
-  --s-64: 64px; /* The Tension Gap */
+  --s-64: 64px;
 
-  /* ── Motion — one curve for the whole system ─────────── */
+  /* ── Motion ───────────────────────────────────────────── */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 300ms;
+  --dur-data: 600ms;
 
-  /* ── Radii ────────────────────────────────────────────── */
-  --r-xs: 3px;
-  --r-sm: 4px;
-  --r-md: 5px;
-  --r-lg: 8px;
-  --r-xl: 10px;
+  /* ── Radii — soft geometry ────────────────────────────── */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-card: 20px;
+  --r-inner: 14px;
+  --r-control: 10px;
+  --r-chip: 999px;
 
-  /* ── Shadows — only 4 allowed uses ────────────────────── */
-  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.06),
-                   0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-avatar: 0 1px 2px rgba(0, 0, 0, 0.1);
-  /* ── Chart Colors ──────────────────────────────────────── */
-  --chart-1: #1B70C5;      /* Accent Blue */
-  --chart-2: #448361;      /* Semantic Green */
-  --chart-3: #95651A;      /* Semantic Yellow */
-  --chart-4: #B93A35;      /* Semantic Red */
-  --chart-5: #6940A5;      /* Semantic Purple */
-  --chart-ai: #8B5CF6;     /* AI Purple */
+  /* ── Shadows — dark mode has none; popovers use elevation ─ */
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.45),
+                   0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-avatar: none;
+
+  /* ── Chart colours (legacy aliases → domain hues) ─────── */
+  --chart-1: #8A93F8;
+  --chart-2: #2DD4BF;
+  --chart-3: #FF9F0A;
+  --chart-4: #FF6482;
+  --chart-5: #FBBF24;
+  --chart-ai: #BF7AF0;
 }
 
-/* ── Dark mode ──────────────────────────────────────────── */
-[data-theme="dark"] {
-  /* ── Dark Chart Colors ────────────────────────────────── */
-  --chart-1: #529CCA;
-  --chart-2: #529E72;
-  --chart-3: #CA9849;
-  --chart-4: #DF5452;
-  --chart-5: #9A7ECA;
-  --chart-ai: #A78BFA;
+/* ── Light theme ("lite mode") ──────────────────────────── */
+[data-theme="light"] {
+  --bg-app: #F5F6F8;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-wall: #FFFFFF;
+  --bg-hover: rgba(15, 18, 28, 0.04);
+  --bg-hover-2: rgba(15, 18, 28, 0.07);
+  --bg-active: rgba(15, 18, 28, 0.07);
+  --bg-input-h: rgba(15, 18, 28, 0.03);
 
-  --bg-app: #191919;
-  --bg-sidebar: #202020;
-  --bg-sidebar-deep: #181818;
-  --bg-preview: #1C1C1C;
-  --bg-hover: rgba(255, 255, 255, 0.055);
-  --bg-hover-2: rgba(255, 255, 255, 0.09);
-  --bg-active: rgba(255, 255, 255, 0.08);
-  --bg-input-h: rgba(255, 255, 255, 0.04);
+  --bg-sidebar: #F5F6F8;
+  --bg-sidebar-deep: #EDEFF2;
+  --bg-preview: #FFFFFF;
 
-  --bg-gray: rgba(47, 47, 47, 0.8);
-  --bg-blue: rgba(17, 57, 84, 0.45);
-  --bg-green: rgba(36, 61, 48, 0.55);
-  --bg-yellow: rgba(89, 70, 40, 0.55);
-  --bg-purple: rgba(60, 45, 90, 0.5);
+  --bg-gray: rgba(20, 22, 29, 0.06);
+  --bg-blue: rgba(59, 111, 224, 0.10);
+  --bg-green: rgba(30, 158, 80, 0.10);
+  --bg-yellow: rgba(176, 120, 0, 0.12);
+  --bg-purple: rgba(124, 58, 237, 0.10);
 
-  --text-default: rgba(255, 255, 255, 0.92);
-  --text-2: rgba(255, 255, 255, 0.70);
-  --text-3: rgba(255, 255, 255, 0.55);     /* AA in dark */
-  --text-4: rgba(255, 255, 255, 0.30);
-  --text-placeholder: rgba(255, 255, 255, 0.28);
+  --text-default: #14161D;
+  --text-2: rgba(20, 22, 29, 0.68);
+  --text-3: rgba(20, 22, 29, 0.46);
+  --text-4: rgba(20, 22, 29, 0.28);
+  --text-placeholder: rgba(20, 22, 29, 0.36);
 
-  --divider: rgba(255, 255, 255, 0.08);
-  --divider-strong: rgba(255, 255, 255, 0.14);
+  --divider: rgba(15, 18, 28, 0.07);
+  --divider-strong: rgba(15, 18, 28, 0.14);
 
-  --accent: #529CCA;
-  --accent-h: #6FB0DC;
-  --accent-bg: rgba(82, 156, 202, 0.13);
-  --accent-bg-s: rgba(82, 156, 202, 0.22);
-  --accent-text: #191919;                  /* dark text on light accent */
+  --score-optimal: #1E9E50;
+  --score-good: #0E8A6C;
+  --score-fair: #B07800;
+  --score-low: #D6453A;
+  --score-none: rgba(20, 22, 29, 0.20);
 
-  --ai: #A78BFA;
-  --ai-2: #C4B5FD;
-  --ai-bg: rgba(167, 139, 250, 0.1);
-  --ai-bg-s: rgba(167, 139, 250, 0.18);
-  --ai-border: rgba(167, 139, 250, 0.24);
-  --ai-border-s: rgba(167, 139, 250, 0.36);
+  --hue-sleep: #5B66E8;
+  --hue-sleep-deep: #4048C8;
+  --hue-readiness: #0D9488;
+  --hue-activity: #D97706;
+  --hue-heart: #E11D48;
+  --hue-stress: #B45309;
+  --hue-spo2: #0284C7;
+  --hue-cardio: #7C3AED;
+
+  --accent: #3B6FE0;
+  --accent-h: #2F5CC4;
+  --accent-bg: rgba(59, 111, 224, 0.08);
+  --accent-bg-s: rgba(59, 111, 224, 0.14);
+  --accent-text: #FFFFFF;
+
+  --ai: #7C3AED;
+  --ai-2: #9F67F2;
+  --ai-bg: rgba(124, 58, 237, 0.08);
+  --ai-bg-s: rgba(124, 58, 237, 0.14);
+  --ai-border: rgba(124, 58, 237, 0.2);
+  --ai-border-s: rgba(124, 58, 237, 0.32);
+  --ai-grad: linear-gradient(135deg, #7C3AED 0%, #E11D48 100%);
   --ai-grad-soft: linear-gradient(135deg,
-                                   rgba(167, 139, 250, 0.14) 0%,
-                                   rgba(244, 114, 182, 0.08) 100%);
-  --ai-text: #191919;
+                                   rgba(124, 58, 237, 0.10) 0%,
+                                   rgba(225, 29, 72, 0.06) 100%);
+  --ai-text: #FFFFFF;
 
-  --green: #529E72;
-  --red: #DF5452;
-  --yellow: #CA9849;
-  --purple: #9A7ECA;
+  --green: #1E9E50;
+  --red: #D6453A;
+  --yellow: #B07800;
+  --purple: #7C3AED;
 
-  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4),
-                   0 1px 3px rgba(0, 0, 0, 0.2);
-}
+  /* light mode may use exactly one shadow (DESIGN.md 3.1) */
+  --shadow-float: 0 1px 3px rgba(15, 18, 28, 0.06),
+                   0 8px 24px rgba(15, 18, 28, 0.08);
+  --shadow-avatar: 0 1px 2px rgba(15, 18, 28, 0.08);
 
-[data-theme="dark"][data-role="role-b"] {
-  --accent: #A78BFA;
-  --accent-h: #C4B5FD;
-  --accent-bg: rgba(167, 139, 250, 0.13);
-  --accent-bg-s: rgba(167, 139, 250, 0.22);
+  --chart-1: #5B66E8;
+  --chart-2: #0D9488;
+  --chart-3: #D97706;
+  --chart-4: #E11D48;
+  --chart-5: #B45309;
+  --chart-ai: #7C3AED;
 }
 
 /* ── Base reset ─────────────────────────────────────────── */
@@ -182,12 +233,17 @@
 html, body {
   height: 100%;
   font-family: var(--f-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--t-body);
+  line-height: 1.55;
   color: var(--text-default);
   background: var(--bg-app);
   -webkit-font-smoothing: antialiased;
-  transition: background 180ms var(--ease), color 180ms var(--ease);
+  transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
+}
+
+/* numerals never wiggle */
+[data-numeric], .halo-num, td, th {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Reduced motion (required) ──────────────────────────── */
