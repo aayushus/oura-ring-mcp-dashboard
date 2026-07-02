@@ -4,176 +4,6 @@
  */
 
 export interface paths {
-    "/v2/usercollection/personal_info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Personal Info Document */
-        get: operations["Single_Personal_Info_Document_v2_usercollection_personal_info_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Tag Documents */
-        get: operations["Multiple_tag_Documents_v2_usercollection_tag_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Tag Documents */
-        get: operations["Sandbox___Multiple_tag_Documents_v2_sandbox_usercollection_tag_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/enhanced_tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Enhanced Tag Documents */
-        get: operations["Multiple_enhanced_tag_Documents_v2_usercollection_enhanced_tag_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/enhanced_tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Enhanced Tag Documents */
-        get: operations["Sandbox___Multiple_enhanced_tag_Documents_v2_sandbox_usercollection_enhanced_tag_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/workout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Workout Documents */
-        get: operations["Multiple_workout_Documents_v2_usercollection_workout_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/workout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Workout Documents */
-        get: operations["Sandbox___Multiple_workout_Documents_v2_sandbox_usercollection_workout_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/session": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Session Documents */
-        get: operations["Multiple_session_Documents_v2_usercollection_session_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/session": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Session Documents */
-        get: operations["Sandbox___Multiple_session_Documents_v2_sandbox_usercollection_session_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_activity": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Activity Documents */
-        get: operations["Multiple_daily_activity_Documents_v2_usercollection_daily_activity_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v2/sandbox/usercollection/daily_activity": {
         parameters: {
             query?: never;
@@ -183,533 +13,6 @@ export interface paths {
         };
         /** Sandbox - Multiple Daily Activity Documents */
         get: operations["Sandbox___Multiple_daily_activity_Documents_v2_sandbox_usercollection_daily_activity_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_sleep": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Sleep Documents */
-        get: operations["Multiple_daily_sleep_Documents_v2_usercollection_daily_sleep_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_sleep": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Daily Sleep Documents */
-        get: operations["Sandbox___Multiple_daily_sleep_Documents_v2_sandbox_usercollection_daily_sleep_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_spo2": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Spo2 Documents */
-        get: operations["Multiple_daily_spo2_Documents_v2_usercollection_daily_spo2_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_spo2": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Daily Spo2 Documents */
-        get: operations["Sandbox___Multiple_daily_spo2_Documents_v2_sandbox_usercollection_daily_spo2_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_readiness": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Readiness Documents */
-        get: operations["Multiple_daily_readiness_Documents_v2_usercollection_daily_readiness_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_readiness": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Daily Readiness Documents */
-        get: operations["Sandbox___Multiple_daily_readiness_Documents_v2_sandbox_usercollection_daily_readiness_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/sleep": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Sleep Documents */
-        get: operations["Multiple_sleep_Documents_v2_usercollection_sleep_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/sleep": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Sleep Documents */
-        get: operations["Sandbox___Multiple_sleep_Documents_v2_sandbox_usercollection_sleep_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/sleep_time": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Sleep Time Documents */
-        get: operations["Multiple_sleep_time_Documents_v2_usercollection_sleep_time_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/sleep_time": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Sleep Time Documents */
-        get: operations["Sandbox___Multiple_sleep_time_Documents_v2_sandbox_usercollection_sleep_time_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/rest_mode_period": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Rest Mode Period Documents */
-        get: operations["Multiple_rest_mode_period_Documents_v2_usercollection_rest_mode_period_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/rest_mode_period": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Rest Mode Period Documents */
-        get: operations["Sandbox___Multiple_rest_mode_period_Documents_v2_sandbox_usercollection_rest_mode_period_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/ring_configuration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Ring Configuration Documents */
-        get: operations["Multiple_ring_configuration_Documents_v2_usercollection_ring_configuration_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/ring_configuration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Ring Configuration Documents */
-        get: operations["Sandbox___Multiple_ring_configuration_Documents_v2_sandbox_usercollection_ring_configuration_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_stress": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Stress Documents */
-        get: operations["Multiple_daily_stress_Documents_v2_usercollection_daily_stress_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_stress": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Daily Stress Documents */
-        get: operations["Sandbox___Multiple_daily_stress_Documents_v2_sandbox_usercollection_daily_stress_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_resilience": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Resilience Documents */
-        get: operations["Multiple_daily_resilience_Documents_v2_usercollection_daily_resilience_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_resilience": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Daily Resilience Documents */
-        get: operations["Sandbox___Multiple_daily_resilience_Documents_v2_sandbox_usercollection_daily_resilience_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_cardiovascular_age": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Daily Cardiovascular Age Documents */
-        get: operations["Multiple_daily_cardiovascular_age_Documents_v2_usercollection_daily_cardiovascular_age_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_cardiovascular_age": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Daily Cardiovascular Age Documents */
-        get: operations["Sandbox___Multiple_daily_cardiovascular_age_Documents_v2_sandbox_usercollection_daily_cardiovascular_age_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/vO2_max": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Vo2 Max Documents */
-        get: operations["Multiple_vO2_max_Documents_v2_usercollection_vO2_max_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/vO2_max": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Vo2 Max Documents */
-        get: operations["Sandbox___Multiple_vO2_max_Documents_v2_sandbox_usercollection_vO2_max_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/tag/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Tag Document */
-        get: operations["Single_tag_Document_v2_usercollection_tag__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/tag/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Tag Document */
-        get: operations["Sandbox___Single_tag_Document_v2_sandbox_usercollection_tag__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/enhanced_tag/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Enhanced Tag Document */
-        get: operations["Single_enhanced_tag_Document_v2_usercollection_enhanced_tag__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/enhanced_tag/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Enhanced Tag Document */
-        get: operations["Sandbox___Single_enhanced_tag_Document_v2_sandbox_usercollection_enhanced_tag__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/workout/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Workout Document */
-        get: operations["Single_workout_Document_v2_usercollection_workout__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/workout/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Workout Document */
-        get: operations["Sandbox___Single_workout_Document_v2_sandbox_usercollection_workout__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/session/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Session Document */
-        get: operations["Single_session_Document_v2_usercollection_session__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/session/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Session Document */
-        get: operations["Sandbox___Single_session_Document_v2_sandbox_usercollection_session__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_activity/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Daily Activity Document */
-        get: operations["Single_daily_activity_Document_v2_usercollection_daily_activity__document_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -735,321 +38,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/usercollection/daily_sleep/{document_id}": {
+    "/v2/sandbox/usercollection/daily_cardiovascular_age": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Single Daily Sleep Document */
-        get: operations["Single_daily_sleep_Document_v2_usercollection_daily_sleep__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_sleep/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Daily Sleep Document */
-        get: operations["Sandbox___Single_daily_sleep_Document_v2_sandbox_usercollection_daily_sleep__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_spo2/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Daily Spo2 Document */
-        get: operations["Single_daily_spo2_Document_v2_usercollection_daily_spo2__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_spo2/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Daily Spo2 Document */
-        get: operations["Sandbox___Single_daily_spo2_Document_v2_sandbox_usercollection_daily_spo2__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_readiness/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Daily Readiness Document */
-        get: operations["Single_daily_readiness_Document_v2_usercollection_daily_readiness__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_readiness/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Daily Readiness Document */
-        get: operations["Sandbox___Single_daily_readiness_Document_v2_sandbox_usercollection_daily_readiness__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/sleep/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Sleep Document */
-        get: operations["Single_sleep_Document_v2_usercollection_sleep__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/sleep/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Sleep Document */
-        get: operations["Sandbox___Single_sleep_Document_v2_sandbox_usercollection_sleep__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/sleep_time/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Sleep Time Document */
-        get: operations["Single_sleep_time_Document_v2_usercollection_sleep_time__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/sleep_time/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Sleep Time Document */
-        get: operations["Sandbox___Single_sleep_time_Document_v2_sandbox_usercollection_sleep_time__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/rest_mode_period/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Rest Mode Period Document */
-        get: operations["Single_rest_mode_period_Document_v2_usercollection_rest_mode_period__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/rest_mode_period/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Rest Mode Period Document */
-        get: operations["Sandbox___Single_rest_mode_period_Document_v2_sandbox_usercollection_rest_mode_period__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/ring_configuration/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Ring Configuration Document */
-        get: operations["Single_ring_configuration_Document_v2_usercollection_ring_configuration__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/ring_configuration/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Ring Configuration Document */
-        get: operations["Sandbox___Single_ring_configuration_Document_v2_sandbox_usercollection_ring_configuration__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_stress/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Daily Stress Document */
-        get: operations["Single_daily_stress_Document_v2_usercollection_daily_stress__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_stress/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Daily Stress Document */
-        get: operations["Sandbox___Single_daily_stress_Document_v2_sandbox_usercollection_daily_stress__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_resilience/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Daily Resilience Document */
-        get: operations["Single_daily_resilience_Document_v2_usercollection_daily_resilience__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/daily_resilience/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Single Daily Resilience Document */
-        get: operations["Sandbox___Single_daily_resilience_Document_v2_sandbox_usercollection_daily_resilience__document_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/daily_cardiovascular_age/{document_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Single Daily Cardiovascular Age Document */
-        get: operations["Single_daily_cardiovascular_age_Document_v2_usercollection_daily_cardiovascular_age__document_id__get"];
+        /** Sandbox - Multiple Daily Cardiovascular Age Documents */
+        get: operations["Sandbox___Multiple_daily_cardiovascular_age_Documents_v2_sandbox_usercollection_daily_cardiovascular_age_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1075,15 +72,457 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/usercollection/vO2_max/{document_id}": {
+    "/v2/sandbox/usercollection/daily_readiness": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Single Vo2 Max Document */
-        get: operations["Single_vO2_max_Document_v2_usercollection_vO2_max__document_id__get"];
+        /** Sandbox - Multiple Daily Readiness Documents */
+        get: operations["Sandbox___Multiple_daily_readiness_Documents_v2_sandbox_usercollection_daily_readiness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_readiness/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Daily Readiness Document */
+        get: operations["Sandbox___Single_daily_readiness_Document_v2_sandbox_usercollection_daily_readiness__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_resilience": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Daily Resilience Documents */
+        get: operations["Sandbox___Multiple_daily_resilience_Documents_v2_sandbox_usercollection_daily_resilience_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_resilience/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Daily Resilience Document */
+        get: operations["Sandbox___Single_daily_resilience_Document_v2_sandbox_usercollection_daily_resilience__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_sleep": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Daily Sleep Documents */
+        get: operations["Sandbox___Multiple_daily_sleep_Documents_v2_sandbox_usercollection_daily_sleep_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_sleep/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Daily Sleep Document */
+        get: operations["Sandbox___Single_daily_sleep_Document_v2_sandbox_usercollection_daily_sleep__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_spo2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Daily Spo2 Documents */
+        get: operations["Sandbox___Multiple_daily_spo2_Documents_v2_sandbox_usercollection_daily_spo2_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_spo2/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Daily Spo2 Document */
+        get: operations["Sandbox___Single_daily_spo2_Document_v2_sandbox_usercollection_daily_spo2__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_stress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Daily Stress Documents */
+        get: operations["Sandbox___Multiple_daily_stress_Documents_v2_sandbox_usercollection_daily_stress_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/daily_stress/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Daily Stress Document */
+        get: operations["Sandbox___Single_daily_stress_Document_v2_sandbox_usercollection_daily_stress__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/enhanced_tag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Enhanced Tag Documents */
+        get: operations["Sandbox___Multiple_enhanced_tag_Documents_v2_sandbox_usercollection_enhanced_tag_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/enhanced_tag/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Enhanced Tag Document */
+        get: operations["Sandbox___Single_enhanced_tag_Document_v2_sandbox_usercollection_enhanced_tag__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/heartrate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Heartrate Documents */
+        get: operations["Sandbox___Multiple_heartrate_Documents_v2_sandbox_usercollection_heartrate_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/rest_mode_period": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Rest Mode Period Documents */
+        get: operations["Sandbox___Multiple_rest_mode_period_Documents_v2_sandbox_usercollection_rest_mode_period_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/rest_mode_period/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Rest Mode Period Document */
+        get: operations["Sandbox___Single_rest_mode_period_Document_v2_sandbox_usercollection_rest_mode_period__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/ring_battery_level": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Ring Battery Level Documents */
+        get: operations["Sandbox___Multiple_ring_battery_level_Documents_v2_sandbox_usercollection_ring_battery_level_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/ring_configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Ring Configuration Documents */
+        get: operations["Sandbox___Multiple_ring_configuration_Documents_v2_sandbox_usercollection_ring_configuration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/ring_configuration/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Ring Configuration Document */
+        get: operations["Sandbox___Single_ring_configuration_Document_v2_sandbox_usercollection_ring_configuration__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Session Documents */
+        get: operations["Sandbox___Multiple_session_Documents_v2_sandbox_usercollection_session_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/session/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Session Document */
+        get: operations["Sandbox___Single_session_Document_v2_sandbox_usercollection_session__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/sleep": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Sleep Documents */
+        get: operations["Sandbox___Multiple_sleep_Documents_v2_sandbox_usercollection_sleep_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/sleep/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Sleep Document */
+        get: operations["Sandbox___Single_sleep_Document_v2_sandbox_usercollection_sleep__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/sleep_time": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Sleep Time Documents */
+        get: operations["Sandbox___Multiple_sleep_time_Documents_v2_sandbox_usercollection_sleep_time_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/sleep_time/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Sleep Time Document */
+        get: operations["Sandbox___Single_sleep_time_Document_v2_sandbox_usercollection_sleep_time__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/tag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Tag Documents */
+        get: operations["Sandbox___Multiple_tag_Documents_v2_sandbox_usercollection_tag_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/tag/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Tag Document */
+        get: operations["Sandbox___Single_tag_Document_v2_sandbox_usercollection_tag__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/vO2_max": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Vo2 Max Documents */
+        get: operations["Sandbox___Multiple_vO2_max_Documents_v2_sandbox_usercollection_vO2_max_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1101,6 +540,635 @@ export interface paths {
         };
         /** Sandbox - Single Vo2 Max Document */
         get: operations["Sandbox___Single_vO2_max_Document_v2_sandbox_usercollection_vO2_max__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/workout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Multiple Workout Documents */
+        get: operations["Sandbox___Multiple_workout_Documents_v2_sandbox_usercollection_workout_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/sandbox/usercollection/workout/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sandbox - Single Workout Document */
+        get: operations["Sandbox___Single_workout_Document_v2_sandbox_usercollection_workout__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Activity Documents */
+        get: operations["Multiple_daily_activity_Documents_v2_usercollection_daily_activity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_activity/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Activity Document */
+        get: operations["Single_daily_activity_Document_v2_usercollection_daily_activity__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_cardiovascular_age": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Cardiovascular Age Documents */
+        get: operations["Multiple_daily_cardiovascular_age_Documents_v2_usercollection_daily_cardiovascular_age_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_cardiovascular_age/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Cardiovascular Age Document */
+        get: operations["Single_daily_cardiovascular_age_Document_v2_usercollection_daily_cardiovascular_age__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Readiness Documents */
+        get: operations["Multiple_daily_readiness_Documents_v2_usercollection_daily_readiness_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_readiness/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Readiness Document */
+        get: operations["Single_daily_readiness_Document_v2_usercollection_daily_readiness__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_resilience": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Resilience Documents */
+        get: operations["Multiple_daily_resilience_Documents_v2_usercollection_daily_resilience_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_resilience/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Resilience Document */
+        get: operations["Single_daily_resilience_Document_v2_usercollection_daily_resilience__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_sleep": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Sleep Documents */
+        get: operations["Multiple_daily_sleep_Documents_v2_usercollection_daily_sleep_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_sleep/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Sleep Document */
+        get: operations["Single_daily_sleep_Document_v2_usercollection_daily_sleep__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_spo2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Spo2 Documents */
+        get: operations["Multiple_daily_spo2_Documents_v2_usercollection_daily_spo2_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_spo2/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Spo2 Document */
+        get: operations["Single_daily_spo2_Document_v2_usercollection_daily_spo2__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_stress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Daily Stress Documents */
+        get: operations["Multiple_daily_stress_Documents_v2_usercollection_daily_stress_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/daily_stress/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Daily Stress Document */
+        get: operations["Single_daily_stress_Document_v2_usercollection_daily_stress__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/enhanced_tag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Enhanced Tag Documents */
+        get: operations["Multiple_enhanced_tag_Documents_v2_usercollection_enhanced_tag_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/enhanced_tag/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Enhanced Tag Document */
+        get: operations["Single_enhanced_tag_Document_v2_usercollection_enhanced_tag__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/heartrate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Heartrate Documents */
+        get: operations["Multiple_heartrate_Documents_v2_usercollection_heartrate_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/personal_info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Personal Info Document */
+        get: operations["Single_Personal_Info_Document_v2_usercollection_personal_info_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/rest_mode_period": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Rest Mode Period Documents */
+        get: operations["Multiple_rest_mode_period_Documents_v2_usercollection_rest_mode_period_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/rest_mode_period/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Rest Mode Period Document */
+        get: operations["Single_rest_mode_period_Document_v2_usercollection_rest_mode_period__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/ring_battery_level": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Ring Battery Level Documents */
+        get: operations["Multiple_ring_battery_level_Documents_v2_usercollection_ring_battery_level_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/ring_configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Ring Configuration Documents */
+        get: operations["Multiple_ring_configuration_Documents_v2_usercollection_ring_configuration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/ring_configuration/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Ring Configuration Document */
+        get: operations["Single_ring_configuration_Document_v2_usercollection_ring_configuration__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Session Documents */
+        get: operations["Multiple_session_Documents_v2_usercollection_session_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/session/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Session Document */
+        get: operations["Single_session_Document_v2_usercollection_session__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/sleep": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Sleep Documents */
+        get: operations["Multiple_sleep_Documents_v2_usercollection_sleep_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/sleep/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Sleep Document */
+        get: operations["Single_sleep_Document_v2_usercollection_sleep__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/sleep_time": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Sleep Time Documents */
+        get: operations["Multiple_sleep_time_Documents_v2_usercollection_sleep_time_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/sleep_time/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Sleep Time Document */
+        get: operations["Single_sleep_time_Document_v2_usercollection_sleep_time__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/tag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Tag Documents */
+        get: operations["Multiple_tag_Documents_v2_usercollection_tag_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/tag/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Tag Document */
+        get: operations["Single_tag_Document_v2_usercollection_tag__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/vO2_max": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Vo2 Max Documents */
+        get: operations["Multiple_vO2_max_Documents_v2_usercollection_vO2_max_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/vO2_max/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Vo2 Max Document */
+        get: operations["Single_vO2_max_Document_v2_usercollection_vO2_max__document_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/workout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Multiple Workout Documents */
+        get: operations["Multiple_workout_Documents_v2_usercollection_workout_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v2/usercollection/workout/{document_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single Workout Document */
+        get: operations["Single_workout_Document_v2_usercollection_workout__document_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1127,6 +1195,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v2/webhook/subscription/renew/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Renew Webhook Subscription */
+        put: operations["renew_webhook_subscription_v2_webhook_subscription_renew__id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v2/webhook/subscription/{id}": {
         parameters: {
             query?: never;
@@ -1146,79 +1231,12 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v2/webhook/subscription/renew/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Renew Webhook Subscription */
-        put: operations["renew_webhook_subscription_v2_webhook_subscription_renew__id__put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/usercollection/heartrate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Multiple Heart Rate Documents */
-        get: operations["Multiple_Heart_Rate_Documents_v2_usercollection_heartrate_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v2/sandbox/usercollection/heartrate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Sandbox - Multiple Heartrate Documents */
-        get: operations["Sandbox___Multiple_heartrate_Documents_v2_sandbox_usercollection_heartrate_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /**
-         * ActivityContributors
-         * @description Object defining activity score contributors.
-         */
-        ActivityContributors: {
-            /** @description Contribution of meeting previous 7-day daily activity targets in range [1, 100]. */
-            meet_daily_targets?: number | null;
-            /** @description Contribution of previous 24-hour inactivity alerts in range [1, 100]. */
-            move_every_hour?: number | null;
-            /** @description Contribution of previous 7-day recovery time in range [1, 100]. */
-            recovery_time?: number | null;
-            /** @description Contribution of previous 24-hour activity in range [1, 100]. */
-            stay_active?: number | null;
-            /** @description Contribution of previous 7-day exercise frequency in range [1, 100]. */
-            training_frequency?: number | null;
-            /** @description Contribution of previous 7-day exercise volume in range [1, 100]. */
-            training_volume?: number | null;
-        };
+        /** ArrayNullableFloatBits64 */
+        Array_Union_float__NoneType__Bits64_: (number | null)[];
         /** CreateWebhookSubscriptionRequest */
         CreateWebhookSubscriptionRequest: {
             /** Callback Url */
@@ -1227,175 +1245,6 @@ export interface components {
             verification_token: string;
             event_type: components["schemas"]["WebhookOperation"];
             data_type: components["schemas"]["ExtApiV2DataType"];
-        };
-        /** DailyActivityModel */
-        DailyActivityModel: {
-            /** Id */
-            id: string;
-            /**
-             * Class 5 Min
-             * @description 5-minute activity classification for the activity period:
-             *     * ```0```	non wear
-             *     * ```1``` rest
-             *     * ```2``` inactive
-             *     * ```3``` low activity
-             *     * ```4``` medium activity
-             *     * ```5``` high activity
-             */
-            class_5_min: string | null;
-            /**
-             * Score
-             * @description Activity score in range ```[1, 100]```
-             */
-            score: number | null;
-            /**
-             * Active Calories
-             * @description Active calories expended (in kilocalories)
-             */
-            active_calories: number;
-            /**
-             * Average Met Minutes
-             * @description Average metabolic equivalent (MET) in minutes
-             */
-            average_met_minutes: number;
-            contributors: components["schemas"]["ActivityContributors"];
-            /**
-             * Equivalent Walking Distance
-             * @description Equivalent walking distance (in meters) of energy expenditure
-             */
-            equivalent_walking_distance: number;
-            /**
-             * High Activity Met Minutes
-             * @description High activity metabolic equivalent (MET) in minutes
-             */
-            high_activity_met_minutes: number;
-            /**
-             * High Activity Time
-             * @description High activity metabolic equivalent (MET) in seconds
-             */
-            high_activity_time: number;
-            /**
-             * Inactivity Alerts
-             * @description Number of inactivity alerts received
-             */
-            inactivity_alerts: number;
-            /**
-             * Low Activity Met Minutes
-             * @description Low activity metabolic equivalent (MET) in minutes
-             */
-            low_activity_met_minutes: number;
-            /**
-             * Low Activity Time
-             * @description Low activity metabolic equivalent (MET) in seconds
-             */
-            low_activity_time: number;
-            /**
-             * Medium Activity Met Minutes
-             * @description Medium activity metabolic equivalent (MET) in minutes
-             */
-            medium_activity_met_minutes: number;
-            /**
-             * Medium Activity Time
-             * @description Medium activity metabolic equivalent (MET) in seconds
-             */
-            medium_activity_time: number;
-            met: components["schemas"]["SampleModel"];
-            /**
-             * Meters To Target
-             * @description Remaining meters to target (from ```target_meters```
-             */
-            meters_to_target: number;
-            /**
-             * Non Wear Time
-             * @description The time (in seconds) in which the ring was not worn
-             */
-            non_wear_time: number;
-            /**
-             * Resting Time
-             * @description Resting time (in seconds)
-             */
-            resting_time: number;
-            /**
-             * Sedentary Met Minutes
-             * @description Sedentary metabolic equivalent (MET) in minutes
-             */
-            sedentary_met_minutes: number;
-            /**
-             * Sedentary Time
-             * @description Sedentary metabolic equivalent (MET) in seconds
-             */
-            sedentary_time: number;
-            /**
-             * Steps
-             * @description Total number of steps taken
-             */
-            steps: number;
-            /**
-             * Target Calories
-             * @description Daily activity target (in kilocalories)
-             */
-            target_calories: number;
-            /**
-             * Target Meters
-             * @description Daily activity target (in meters)
-             */
-            target_meters: number;
-            /**
-             * Total Calories
-             * @description Total calories expended (in kilocalories)
-             */
-            total_calories: number;
-            /**
-             * Day
-             * Format: date
-             * @description The ```YYYY-MM-DD``` formatted local date indicating when the daily activity occurred
-             */
-            day: string;
-            /** @description ISO 8601 formatted local timestamp indicating the start datetime of when the daily activity occurred */
-            timestamp: components["schemas"]["LocalDateTime"];
-        };
-        /** DailyCardiovascularAgeModel */
-        DailyCardiovascularAgeModel: {
-            /**
-             * Day
-             * Format: date
-             */
-            day: string;
-            /**
-             * Vascular Age
-             * @description 'Predicted vascular age in range [18, 100].
-             */
-            vascular_age: number | null;
-        };
-        /** DailyReadinessModel */
-        DailyReadinessModel: {
-            /** Id */
-            id: string;
-            /** @description Contributors of the daily readiness score. */
-            contributors: components["schemas"]["ReadinessContributors"];
-            /**
-             * Day
-             * Format: date
-             * @description Day that the daily readiness belongs to.
-             */
-            day: string;
-            /**
-             * Score
-             * @description Daily readiness score.
-             */
-            score: number | null;
-            /**
-             * Temperature Deviation
-             * @description Temperature deviation in degrees Celsius.
-             */
-            temperature_deviation: number | null;
-            /**
-             * Temperature Trend Deviation
-             * @description Temperature trend deviation in degrees Celsius.
-             */
-            temperature_trend_deviation: number | null;
-            /** @description Timestamp of the daily readiness. */
-            timestamp: components["schemas"]["LocalDateTime"];
         };
         /** DailyResilienceModel */
         DailyResilienceModel: {
@@ -1412,86 +1261,6 @@ export interface components {
             /** @description Resilience level. */
             level: components["schemas"]["LongTermResilienceLevel"];
         };
-        /**
-         * DailySleepModel
-         * @description Object defining daily sleep.
-         */
-        DailySleepModel: {
-            /** Id */
-            id: string;
-            /** @description Contributors for the daily sleep score. */
-            contributors: components["schemas"]["SleepContributors"];
-            /**
-             * Day
-             * Format: date
-             * @description Day that the daily sleep belongs to.
-             */
-            day: string;
-            /**
-             * Score
-             * @description Daily sleep score.
-             */
-            score: number | null;
-            /** @description Timestamp of the daily sleep. */
-            timestamp: components["schemas"]["LocalDateTime"];
-        };
-        /** DailySpO2AggregatedValuesModel */
-        DailySpO2AggregatedValuesModel: {
-            /**
-             * Average
-             * @description Average oxygen saturation (SpO2) throughout the night.
-             */
-            average: number;
-        };
-        /** DailySpO2Model */
-        DailySpO2Model: {
-            /** Id */
-            id: string;
-            /**
-             * Day
-             * Format: date
-             */
-            day: string;
-            /** @description The SpO2 percentage value aggregated over a single day. */
-            spo2_percentage: components["schemas"]["DailySpO2AggregatedValuesModel"] | null;
-            /**
-             * Breathing Disturbance Index
-             * @description Breathing Disturbance Index (BDI) calculated using detected SpO2 drops from timeseries. Values should be in range [0, 100]
-             */
-            breathing_disturbance_index: number | null;
-        };
-        /**
-         * DailyStressModel
-         * @description Object defining daily stress.
-         */
-        DailyStressModel: {
-            /** Id */
-            id: string;
-            /**
-             * Day
-             * Format: date
-             * @description Day that the daily stress belongs to.
-             */
-            day: string;
-            /**
-             * Stress High
-             * @description Time (in seconds) spent in a high stress zone (top quartile data)
-             */
-            stress_high: number | null;
-            /**
-             * Recovery High
-             * @description Time (in seconds) spent in a high recovery zone (bottom quartile data)
-             */
-            recovery_high: number | null;
-            /** @description Stress summary of full day. */
-            day_summary?: components["schemas"]["DailyStressSummary"] | null;
-        };
-        /**
-         * DailyStressSummary
-         * @description Possible daily stress summary types.
-         * @enum {string}
-         */
-        DailyStressSummary: "restored" | "normal" | "stressful";
         /**
          * EnhancedTagModel
          * @description An EnhancedTagModel maps an ASSATag. An ASSATag in ExtAPIV2 is called a EnhancedTag
@@ -1536,27 +1305,14 @@ export interface components {
          * ExtApiV2DataType
          * @enum {string}
          */
-        ExtApiV2DataType: "tag" | "enhanced_tag" | "workout" | "session" | "sleep" | "daily_sleep" | "daily_readiness" | "daily_activity" | "daily_spo2" | "sleep_time" | "rest_mode_period" | "ring_configuration" | "daily_stress" | "daily_cardiovascular_age" | "daily_resilience" | "vo2_max";
+        ExtApiV2DataType: "tag" | "enhanced_tag" | "workout" | "session" | "sleep" | "daily_sleep" | "daily_readiness" | "daily_activity" | "daily_spo2" | "sleep_time" | "rest_mode_period" | "ring_configuration" | "daily_stress" | "daily_cardiovascular_age" | "daily_resilience" | "vo2_max" | "meal";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
-        /** HeartRateModel */
-        HeartRateModel: {
-            /** Bpm */
-            bpm: number;
-            source: components["schemas"]["HeartRateSource"];
-            timestamp: components["schemas"]["LocalDateTime"];
-        };
-        /**
-         * HeartRateSource
-         * @enum {string}
-         */
-        HeartRateSource: "awake" | "rest" | "sleep" | "session" | "live" | "workout";
         ISODate: string;
         LocalDateTime: string;
-        LocalDateTimeWithMilliseconds: string;
         LocalizedDateTime: string;
         /**
          * LongTermResilienceLevel
@@ -1564,36 +1320,12 @@ export interface components {
          * @enum {string}
          */
         LongTermResilienceLevel: "limited" | "adequate" | "solid" | "strong" | "exceptional";
-        /**
-         * MomentMood
-         * @description Possible Moment moods.
-         * @enum {string}
-         */
-        MomentMood: "bad" | "worse" | "same" | "good" | "great";
-        /**
-         * MomentType
-         * @description Possible Moment types.
-         * @enum {string}
-         */
-        MomentType: "breathing" | "meditation" | "nap" | "relaxation" | "rest" | "body_status";
-        /** MultiDocumentResponse[DailyActivityModel] */
-        MultiDocumentResponse_DailyActivityModel_: {
+        /** MultiDocumentResponseDict */
+        MultiDocumentResponseDict: {
             /** Data */
-            data: components["schemas"]["DailyActivityModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[DailyCardiovascularAgeModel] */
-        MultiDocumentResponse_DailyCardiovascularAgeModel_: {
-            /** Data */
-            data: components["schemas"]["DailyCardiovascularAgeModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[DailyReadinessModel] */
-        MultiDocumentResponse_DailyReadinessModel_: {
-            /** Data */
-            data: components["schemas"]["DailyReadinessModel"][];
+            data: {
+                [key: string]: unknown;
+            }[];
             /** Next Token */
             next_token: string | null;
         };
@@ -1604,31 +1336,94 @@ export interface components {
             /** Next Token */
             next_token: string | null;
         };
-        /** MultiDocumentResponse[DailySleepModel] */
-        MultiDocumentResponse_DailySleepModel_: {
-            /** Data */
-            data: components["schemas"]["DailySleepModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[DailySpO2Model] */
-        MultiDocumentResponse_DailySpO2Model_: {
-            /** Data */
-            data: components["schemas"]["DailySpO2Model"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[DailyStressModel] */
-        MultiDocumentResponse_DailyStressModel_: {
-            /** Data */
-            data: components["schemas"]["DailyStressModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
         /** MultiDocumentResponse[EnhancedTagModel] */
         MultiDocumentResponse_EnhancedTagModel_: {
             /** Data */
             data: components["schemas"]["EnhancedTagModel"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicDailyActivity] */
+        MultiDocumentResponse_PublicDailyActivity_: {
+            /** Data */
+            data: components["schemas"]["PublicDailyActivity"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicDailyCardiovascularAge] */
+        MultiDocumentResponse_PublicDailyCardiovascularAge_: {
+            /** Data */
+            data: components["schemas"]["PublicDailyCardiovascularAge"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicDailyReadiness] */
+        MultiDocumentResponse_PublicDailyReadiness_: {
+            /** Data */
+            data: components["schemas"]["PublicDailyReadiness"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicDailySleep] */
+        MultiDocumentResponse_PublicDailySleep_: {
+            /** Data */
+            data: components["schemas"]["PublicDailySleep"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicDailySpO2] */
+        MultiDocumentResponse_PublicDailySpO2_: {
+            /** Data */
+            data: components["schemas"]["PublicDailySpO2"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicDailyStress] */
+        MultiDocumentResponse_PublicDailyStress_: {
+            /** Data */
+            data: components["schemas"]["PublicDailyStress"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicModifiedSleepModel] */
+        MultiDocumentResponse_PublicModifiedSleepModel_: {
+            /** Data */
+            data: components["schemas"]["PublicModifiedSleepModel"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicRestModePeriod] */
+        MultiDocumentResponse_PublicRestModePeriod_: {
+            /** Data */
+            data: components["schemas"]["PublicRestModePeriod"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicRingConfiguration] */
+        MultiDocumentResponse_PublicRingConfiguration_: {
+            /** Data */
+            data: components["schemas"]["PublicRingConfiguration"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicSession] */
+        MultiDocumentResponse_PublicSession_: {
+            /** Data */
+            data: components["schemas"]["PublicSession"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicSleepTime] */
+        MultiDocumentResponse_PublicSleepTime_: {
+            /** Data */
+            data: components["schemas"]["PublicSleepTime"][];
+            /** Next Token */
+            next_token: string | null;
+        };
+        /** MultiDocumentResponse[PublicVO2Max] */
+        MultiDocumentResponse_PublicVO2Max_: {
+            /** Data */
+            data: components["schemas"]["PublicVO2Max"][];
             /** Next Token */
             next_token: string | null;
         };
@@ -1639,52 +1434,10 @@ export interface components {
             /** Next Token */
             next_token: string | null;
         };
-        /** MultiDocumentResponse[RestModePeriodModel] */
-        MultiDocumentResponse_RestModePeriodModel_: {
-            /** Data */
-            data: components["schemas"]["RestModePeriodModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[RingConfigurationModel] */
-        MultiDocumentResponse_RingConfigurationModel_: {
-            /** Data */
-            data: components["schemas"]["RingConfigurationModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[SessionModel] */
-        MultiDocumentResponse_SessionModel_: {
-            /** Data */
-            data: components["schemas"]["SessionModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[SleepModel] */
-        MultiDocumentResponse_SleepModel_: {
-            /** Data */
-            data: components["schemas"]["SleepModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[SleepTimeModel] */
-        MultiDocumentResponse_SleepTimeModel_: {
-            /** Data */
-            data: components["schemas"]["SleepTimeModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
         /** MultiDocumentResponse[TagModel] */
         MultiDocumentResponse_TagModel_: {
             /** Data */
             data: components["schemas"]["TagModel"][];
-            /** Next Token */
-            next_token: string | null;
-        };
-        /** MultiDocumentResponse[VO2MaxModel] */
-        MultiDocumentResponse_VO2MaxModel_: {
-            /** Data */
-            data: components["schemas"]["VO2MaxModel"][];
             /** Next Token */
             next_token: string | null;
         };
@@ -1702,6 +1455,573 @@ export interface components {
             biological_sex?: string | null;
             /** Email */
             email?: string | null;
+        };
+        /**
+         * PublicActivityContributors
+         * @description Object defining activity score contributors.
+         */
+        PublicActivityContributors: {
+            /** @description Contribution of meeting previous 7-day daily activity targets in range [1, 100]. */
+            meet_daily_targets?: number | null;
+            /** @description Contribution of previous 24-hour inactivity alerts in range [1, 100]. */
+            move_every_hour?: number | null;
+            /** @description Contribution of previous 7-day recovery time in range [1, 100]. */
+            recovery_time?: number | null;
+            /** @description Contribution of previous 24-hour activity in range [1, 100]. */
+            stay_active?: number | null;
+            /** @description Contribution of previous 7-day exercise frequency in range [1, 100]. */
+            training_frequency?: number | null;
+            /** @description Contribution of previous 7-day exercise volume in range [1, 100]. */
+            training_volume?: number | null;
+        };
+        /**
+         * PublicDailyActivity
+         * @description Object defining a daily activity that is a 24-hour period starting at 4 a.m.
+         */
+        PublicDailyActivity: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Active calories expended in kilocalories. */
+            active_calories: number;
+            /** @description Average MET minutes. */
+            average_met_minutes: number;
+            /**
+             * @description 5-minute activity classification for the period where every character corresponds to:
+             *     '0' = non wear
+             *     '1' = rest
+             *     '2' = inactive
+             *     '3' = low activity
+             *     '4' = medium activity
+             *     '5' = high activity
+             *     Example: "001233334555524001".
+             */
+            class_5_min?: string | null;
+            /** @description Object containing activity score contributors. */
+            contributors: components["schemas"]["PublicActivityContributors"];
+            /** @description Day that the daily activity belong to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Equivalent walking distance of energe expenditure in meters. */
+            equivalent_walking_distance: number;
+            /** @description The total METs of each minute classified as high activity. */
+            high_activity_met_minutes: number;
+            /** @description The total time in seconds of each minute classified as high activity. */
+            high_activity_time: number;
+            /** @description Number of inactivity alerts received. */
+            inactivity_alerts: number;
+            /** @description The total METs of each minute classified as low activity. */
+            low_activity_met_minutes: number;
+            /** @description The total time in seconds of each minute classified as low activity. */
+            low_activity_time: number;
+            /** @description The total METs of each minute classified as medium activity. */
+            medium_activity_met_minutes: number;
+            /** @description The total time in seconds of each minute classified as medium activity. */
+            medium_activity_time: number;
+            /** @description Sample containing METs. */
+            met: components["schemas"]["PublicSample"];
+            /** @description Meters remaining to target. */
+            meters_to_target: number;
+            /** @description Ring non-wear time in seconds. */
+            non_wear_time: number;
+            /** @description Resting time in seconds. */
+            resting_time: number;
+            /** @description Activity score in range [1, 100]. */
+            score?: number | null;
+            /** @description Sedentary MET minutes. */
+            sedentary_met_minutes: number;
+            /** @description Sedentary time in seconds. */
+            sedentary_time: number;
+            /** @description Total number of steps taken. */
+            steps: number;
+            /** @description Daily activity target in kilocalories. */
+            target_calories: number;
+            /** @description Daily activity target in meters. */
+            target_meters: number;
+            /** @description Timestamp of the daily activity. */
+            timestamp: components["schemas"]["LocalizedDateTime"];
+            /** @description Total calories expended in kilocalories. */
+            total_calories: number;
+        };
+        /**
+         * PublicDailyCardiovascularAge
+         * @description Daily Cardiovascular Age.
+         */
+        PublicDailyCardiovascularAge: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Day that the prediction belongs to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Pulse wave velocity (m/s), derived from vascular age, with possible offset added. */
+            pulse_wave_velocity?: number | null;
+            /** @description Predicted vascular age in range [18, 100]. */
+            vascular_age?: number | null;
+        };
+        /**
+         * PublicDailyReadiness
+         * @description Public object defining daily readiness.
+         */
+        PublicDailyReadiness: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Contributors of the daily readiness score. */
+            contributors: components["schemas"]["PublicReadinessContributors"];
+            /** @description Day that the daily readiness belongs to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Daily readiness score. */
+            score?: number | null;
+            /** @description Temperature deviation in degrees Celsius. */
+            temperature_deviation?: number | null;
+            /** @description Temperature trend deviation in degrees Celsius. */
+            temperature_trend_deviation?: number | null;
+            /** @description Timestamp of the daily readiness. */
+            timestamp: components["schemas"]["LocalizedDateTime"];
+        };
+        /**
+         * PublicDailySleep
+         * @description Public object defining daily sleep.
+         */
+        PublicDailySleep: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Contributors for the daily sleep score. */
+            contributors: components["schemas"]["PublicSleepContributors"];
+            /** @description Day that the daily sleep belongs to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Daily sleep score. */
+            score?: number | null;
+            /** @description Timestamp of the daily sleep. */
+            timestamp: components["schemas"]["LocalizedDateTime"];
+        };
+        /**
+         * PublicDailySpO2
+         * @description Daily SpO2 (Oxygen saturation).
+         */
+        PublicDailySpO2: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Breathing Disturbance Index (BDI) calculated using detected SpO2 drops from timeseries. Values should be in range [0, 100] */
+            breathing_disturbance_index?: number | null;
+            /** @description Day that the spo2 values belong to. */
+            day: components["schemas"]["ISODate"];
+            /** @description The daily SpO2 percentage value aggregates. Sourced from SpO2 percentage timeseries values. */
+            spo2_percentage?: components["schemas"]["PublicSpo2AggregatedValues"] | null;
+        };
+        /**
+         * PublicDailyStress
+         * @description Daily stress.
+         */
+        PublicDailyStress: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Day that the daily stress belongs to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Stress summary of full day. */
+            day_summary?: components["schemas"]["PublicDailyStressSummary"] | null;
+            /** @description Time spent in a high recovery zone (bottom quartile data) in seconds. */
+            recovery_high?: number | null;
+            /** @description Time spent in a high stress zone (top quartile of data) in seconds. */
+            stress_high?: number | null;
+        };
+        /**
+         * PublicDailyStressSummary
+         * @description Possible public daily stress summary types.
+         * @enum {string}
+         */
+        PublicDailyStressSummary: "restored" | "normal" | "stressful";
+        /**
+         * PublicHeartRateRow
+         * @description Heart rate sample
+         */
+        PublicHeartRateRow: {
+            /** @description Timestamp of the discrete sample. */
+            timestamp: components["schemas"]["UtcDateTime"];
+            /** @description Timestamp of the discrete sample as unix time in milliseconds. */
+            timestamp_unix: number;
+            /** @description Heart rate as beats per minute. */
+            bpm: number;
+            /** @description Source of the sample. */
+            source: components["schemas"]["PublicHeartRateSource"];
+        };
+        /**
+         * PublicHeartRateSource
+         * @description Possible heart rate sources.
+         * @enum {string}
+         */
+        PublicHeartRateSource: "awake" | "workout" | "rest" | "sleep" | "live" | "session";
+        /** PublicModifiedSleepModel */
+        PublicModifiedSleepModel: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Average breathing rate during sleep as breaths/minute. */
+            average_breath?: number | null;
+            /** @description Average heart rate during sleep as beats/minute. NOTE: this is the average calculated by ecore (based on 30-second samples) which is different from what is shown in the app. The app shows the average of aggregated 5-minute heart rate samples. */
+            average_heart_rate?: number | null;
+            /** @description Average heart rate variability during sleep. */
+            average_hrv?: number | null;
+            /** @description Duration spent awake in seconds. */
+            awake_time?: number | null;
+            /** @description Bedtime end of the sleep. */
+            bedtime_end: components["schemas"]["LocalizedDateTime"];
+            /** @description Bedtime start of the sleep. */
+            bedtime_start: components["schemas"]["LocalizedDateTime"];
+            /** @description Day that the sleep belongs to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Duration spent in deep sleep in seconds. */
+            deep_sleep_duration?: number | null;
+            /** @description Sleep efficiency rating in range [1, 100]. */
+            efficiency?: number | null;
+            /** @description Object containing heart rate samples. */
+            heart_rate?: components["schemas"]["PublicSample"] | null;
+            /** @description Object containing heart rate variability samples. */
+            hrv?: components["schemas"]["PublicSample"] | null;
+            /** @description Sleep latency in seconds. This is the time it took for the user to fall asleep after going to bed. */
+            latency?: number | null;
+            /** @description Duration spent in light sleep in seconds. */
+            light_sleep_duration?: number | null;
+            /** @description Flag indicating if a low battery alert occurred. */
+            low_battery_alert: boolean;
+            /** @description Lowest heart rate during sleep. NOTE: this is the value calculated by ecore (based on 30-second samples) which is different from what is shown in the app. The app shows the minimum of aggregated 5-minute heart rate samples. */
+            lowest_heart_rate?: number | null;
+            /**
+             * @description 30-second movement classification for the period where every character corresponds to:
+             *     '1' = no motion,
+             *     '2' = restless,
+             *     '3' = tossing and turning
+             *     '4' = active
+             *     Example: "1143222134".
+             */
+            movement_30_sec?: string | null;
+            /** @description ECore sleep period identifier. */
+            period: number;
+            /** @description Object containing the readiness details. */
+            readiness?: components["schemas"]["PublicReadiness"] | null;
+            /** @description Effect on readiness score caused by this sleep period. */
+            readiness_score_delta?: number | null;
+            /** @description Duration spent in REM sleep in seconds. */
+            rem_sleep_duration?: number | null;
+            /** @description Number of restless periods during sleep. */
+            restless_periods?: number | null;
+            /** @description Version of the sleep algorithm used to calculate the sleep data. */
+            sleep_algorithm_version?: components["schemas"]["PublicSleepAlgorithmVersion"] | null;
+            /** @description The reason for the creation or update of the latest version of this sleep. */
+            sleep_analysis_reason?: components["schemas"]["PublicSleepAnalysisReason"] | null;
+            /**
+             * @description 30-second sleep phase classification for the period where every character corresponds to:
+             *     '1' = deep sleep,
+             *     '2' = light sleep,
+             *     '3' = REM sleep
+             *     '4' = awake.
+             *     Example: "444423323441114".
+             */
+            sleep_phase_30_sec?: string | null;
+            /**
+             * @description 5-minute sleep phase classification for the period where every character corresponds to:
+             *     '1' = deep sleep,
+             *     '2' = light sleep,
+             *     '3' = REM sleep
+             *     '4' = awake.
+             *     Example: "444423323441114".
+             */
+            sleep_phase_5_min?: string | null;
+            /** @description Effect on sleep score caused by this sleep period. */
+            sleep_score_delta?: number | null;
+            /** @description Duration spent in bed in seconds. */
+            time_in_bed: number;
+            /** @description Total sleep duration in seconds. */
+            total_sleep_duration?: number | null;
+            /** @description Type of the sleep period. */
+            type?: components["schemas"]["PublicSleepType"] | null;
+            /**
+             * Ring Id
+             * @description Encrypted identifier of the ring that produced this sleep data.
+             */
+            ring_id?: string | null;
+            /**
+             * App Sleep Phase 5 Min
+             * @description 5-minute sleep phase classification for the period aligned with what is shown in the app
+             *             where every character corresponds to:
+             *             '1' = deep sleep,
+             *             '2' = light sleep,
+             *             '3' = REM sleep
+             *             '4' = awake.
+             *             Example: "444423323441114".
+             *             NOTE: This field will be removed in the future after a transition period.
+             */
+            app_sleep_phase_5_min?: string | null;
+        };
+        /**
+         * PublicMomentMood
+         * @description Possible Moment moods.
+         * @enum {string}
+         */
+        PublicMomentMood: "bad" | "worse" | "same" | "good" | "great";
+        /**
+         * PublicMomentType
+         * @description Possible Moment types.
+         * @enum {string}
+         */
+        PublicMomentType: "breathing" | "meditation" | "nap" | "relaxation" | "rest" | "body_status";
+        /**
+         * PublicReadiness
+         * @description Object defining readiness.
+         */
+        PublicReadiness: {
+            /** @description Contributors of the readiness score. */
+            contributors: components["schemas"]["PublicReadinessContributors"];
+            /** @description Readiness score in range [1, 100]. */
+            score?: number | null;
+            /** @description Temperature deviation in degrees Celsius. */
+            temperature_deviation?: number | null;
+            /** @description Temperature trend deviation in degrees Celsius. */
+            temperature_trend_deviation?: number | null;
+        };
+        /**
+         * PublicReadinessContributors
+         * @description Object defining readiness score contributors.
+         */
+        PublicReadinessContributors: {
+            /** @description Contribution of cumulative activity balance in range [1, 100]. */
+            activity_balance?: number | null;
+            /** @description Contribution of body temperature in range [1, 100]. */
+            body_temperature?: number | null;
+            /** @description Contribution of heart rate variability balance in range [1, 100]. */
+            hrv_balance?: number | null;
+            /** @description Contribution of previous day's activity in range [1, 100]. */
+            previous_day_activity?: number | null;
+            /** @description Contribution of previous night's sleep in range [1, 100]. */
+            previous_night?: number | null;
+            /** @description Contribution of recovery index in range [1, 100]. */
+            recovery_index?: number | null;
+            /** @description Contribution of resting heart rate in range [1, 100]. */
+            resting_heart_rate?: number | null;
+            /** @description Contribution of sleep balance in range [1, 100]. */
+            sleep_balance?: number | null;
+            /** @description Contribution of sleep regularity in range [1, 100]. */
+            sleep_regularity?: number | null;
+        };
+        /**
+         * PublicRestModeEpisode
+         * @description Object defining a public Rest Mode episode.
+         */
+        PublicRestModeEpisode: {
+            /** @description Tags selected for the episode. */
+            tags: string[];
+            /** @description Timestamp indicating when the episode occurred. */
+            timestamp: components["schemas"]["LocalizedDateTime"];
+        };
+        /**
+         * PublicRestModePeriod
+         * @description Rest mode episode information.
+         */
+        PublicRestModePeriod: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description End date of rest mode. */
+            end_day?: components["schemas"]["ISODate"] | null;
+            /** @description Timestamp when rest mode ended. */
+            end_time?: components["schemas"]["LocalizedDateTime"] | null;
+            /** @description Collection of episodes during rest mode, consisting of tags. */
+            episodes: components["schemas"]["PublicRestModeEpisode"][];
+            /** @description Start date of rest mode. */
+            start_day: components["schemas"]["ISODate"];
+            /** @description Timestamp when rest mode ended. */
+            start_time?: components["schemas"]["LocalizedDateTime"] | null;
+        };
+        /**
+         * PublicRingBatteryLevelRow
+         * @description Object defining a ring battery level event.
+         */
+        PublicRingBatteryLevelRow: {
+            /** @description Timestamp of the discrete sample. */
+            timestamp: components["schemas"]["UtcDateTime"];
+            /** @description Timestamp of the discrete sample as unix time in milliseconds. */
+            timestamp_unix: number;
+            /** @description Flag indicating if the ring was charging. */
+            charging?: boolean | null;
+            /** @description Flag indicating if the ring was in charger. */
+            in_charger?: boolean | null;
+            /** @description Ring battery level percentage. These values are within [0, 100]. */
+            level: number;
+        };
+        /**
+         * PublicRingColor
+         * @description Possible ring colors.
+         * @enum {string}
+         */
+        PublicRingColor: "brushed_silver" | "glossy_black" | "glossy_gold" | "glossy_white" | "gucci" | "matt_gold" | "rose" | "silver" | "stealth_black" | "titanium" | "titanium_and_gold" | "cloud" | "petal" | "midnight" | "tide" | "deep_rose";
+        /**
+         * PublicRingConfiguration
+         * @description Ring configuration.
+         */
+        PublicRingConfiguration: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Color of the ring. */
+            color?: components["schemas"]["PublicRingColor"] | null;
+            /** @description Design of the ring. */
+            design?: components["schemas"]["PublicRingDesign"] | null;
+            /** @description Firmware version of the ring. */
+            firmware_version?: string | null;
+            /** @description Hardware type of the ring. */
+            hardware_type?: components["schemas"]["PublicRingHardwareType"] | null;
+            /** @description UTC timestamp indicating when the ring was set up. */
+            set_up_at?: components["schemas"]["UtcDateTime"] | null;
+            /** @description US size of the ring. */
+            size?: number | null;
+        };
+        /**
+         * PublicRingDesign
+         * @description Possible ring designs.
+         * @enum {string}
+         */
+        PublicRingDesign: "heritage" | "balance" | "balance_diamond" | "horizon" | "ceramic";
+        /**
+         * PublicRingHardwareType
+         * @description Possible ring hardware types.
+         * @enum {string}
+         */
+        PublicRingHardwareType: "gen1" | "gen2" | "gen2m" | "gen3" | "gen4" | "or5";
+        /**
+         * PublicSample
+         * @description Object defining a recorded sample.
+         */
+        PublicSample: {
+            /** @description Interval in seconds between the sampled items. */
+            interval: number;
+            /** @description Recorded sample items. */
+            items: components["schemas"]["Array_Union_float__NoneType__Bits64_"];
+            /** @description Timestamp when the sample recording started. */
+            timestamp: components["schemas"]["LocalizedDateTime"];
+        };
+        /**
+         * PublicSession
+         * @description Public model defining a recorded Session.
+         */
+        PublicSession: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description The date when the session occurred. */
+            day: components["schemas"]["ISODate"];
+            /** @description Timestamp indicating when the Moment ended. */
+            end_datetime: components["schemas"]["LocalizedDateTime"];
+            /** @description Recorded heart rate samples during the Moment. */
+            heart_rate?: components["schemas"]["PublicSample"] | null;
+            /** @description Recorded heart rate variability samples during the Moment. */
+            heart_rate_variability?: components["schemas"]["PublicSample"] | null;
+            /** @description User-selected mood for the Moment. */
+            mood?: components["schemas"]["PublicMomentMood"] | null;
+            /** @description Recorded motion count samples during the Moment. */
+            motion_count?: components["schemas"]["PublicSample"] | null;
+            /** @description Timestamp indicating when the Moment started. */
+            start_datetime: components["schemas"]["LocalizedDateTime"];
+            /** @description Type of the Moment. */
+            type: components["schemas"]["PublicMomentType"];
+        };
+        /**
+         * PublicSleepAlgorithmVersion
+         * @description Oura Sleep Staging Algorithms.
+         *     v1 = original aka legacy aka OSSA 1.0,
+         *     v2 = latest sleep algorithm
+         * @enum {string}
+         */
+        PublicSleepAlgorithmVersion: "v1" | "v2";
+        /**
+         * PublicSleepAnalysisReason
+         * @description Possible sleep analysis reasons.
+         * @enum {string}
+         */
+        PublicSleepAnalysisReason: "foreground_sleep_analysis" | "bedtime_edit" | "background_sleep_analysis" | "background_created_foreground_updated";
+        /**
+         * PublicSleepContributors
+         * @description Object defining sleep score contributors.
+         */
+        PublicSleepContributors: {
+            /** @description Contribution of deep sleep in range [1, 100]. */
+            deep_sleep?: number | null;
+            /** @description Contribution of sleep efficiency in range [1, 100]. */
+            efficiency?: number | null;
+            /** @description Contribution of sleep latency in range [1, 100]. */
+            latency?: number | null;
+            /** @description Contribution of REM sleep in range [1, 100]. */
+            rem_sleep?: number | null;
+            /** @description Contribution of sleep restfulness in range [1, 100]. */
+            restfulness?: number | null;
+            /** @description Contribution of sleep timing in range [1, 100]. */
+            timing?: number | null;
+            /** @description Contribution of total sleep in range [1, 100]. */
+            total_sleep?: number | null;
+        };
+        /**
+         * PublicSleepTime
+         * @description Suggested bedtime for the user.
+         */
+        PublicSleepTime: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Corresponding day for the sleep time. */
+            day: components["schemas"]["ISODate"];
+            /** @description Optimal bedtime. */
+            optimal_bedtime?: components["schemas"]["PublicSleepTimeWindow"] | null;
+            /** @description Recommended action for bedtime. */
+            recommendation?: components["schemas"]["PublicSleepTimeRecommendation"] | null;
+            /** @description Sleep time status; used to inform sleep time recommendation. */
+            status?: components["schemas"]["PublicSleepTimeStatus"] | null;
+        };
+        /**
+         * PublicSleepTimeRecommendation
+         * @description Possible public SleepTime recommendation.
+         * @enum {string}
+         */
+        PublicSleepTimeRecommendation: "improve_efficiency" | "earlier_bedtime" | "later_bedtime" | "earlier_wake_up_time" | "later_wake_up_time" | "follow_optimal_bedtime";
+        /**
+         * PublicSleepTimeStatus
+         * @description Possible public SleepTime status.
+         * @enum {string}
+         */
+        PublicSleepTimeStatus: "not_enough_nights" | "not_enough_recent_nights" | "bad_sleep_quality" | "only_recommended_found" | "optimal_found";
+        /**
+         * PublicSleepTimeWindow
+         * @description Object defining sleep time window
+         */
+        PublicSleepTimeWindow: {
+            /** @description Timezone offset in second from GMT of the day */
+            day_tz: number;
+            /** @description End offset from midnight in second */
+            end_offset: number;
+            /** @description Start offset from midnight in second */
+            start_offset: number;
+        };
+        /**
+         * PublicSleepType
+         * @description Possible sleep period types.
+         *     'deleted' = deleted sleep by user.
+         *     'sleep' = user confirmed sleep / nap, min 15 minutes, max 3 hours, contributes to daily scores
+         *     'late_nap' = user confirmed sleep / nap, min 15 minutes, ended after sleep day change (6 pm), contributes to next days daily scores
+         *     'long_sleep' = sleep that is long enough (>3h) to automatically contribute to daily scores
+         *     'rest' = Falsely detected sleep / nap, rejected in confirm prompt by user
+         * @enum {string}
+         */
+        PublicSleepType: "deleted" | "sleep" | "long_sleep" | "late_nap" | "rest";
+        /**
+         * PublicSpo2AggregatedValues
+         * @description Object defining public spo2 aggregated values.
+         */
+        PublicSpo2AggregatedValues: {
+            /** @description Average of spo2. */
+            average: number;
+        };
+        /**
+         * PublicVO2Max
+         * @description VO2Max estimate.
+         */
+        PublicVO2Max: {
+            /** @description Unique identifier of the object. */
+            id: string;
+            /** @description Day that the estimate belongs to. */
+            day: components["schemas"]["ISODate"];
+            /** @description Timestamp indicating when the estimate was created. */
+            timestamp: components["schemas"]["LocalizedDateTime"];
+            /** @description VO2 max value. */
+            vo2_max: number;
         };
         /**
          * PublicWorkout
@@ -1741,62 +2061,6 @@ export interface components {
          * @enum {string}
          */
         PublicWorkoutSource: "manual" | "autodetected" | "confirmed" | "workout_heart_rate";
-        /**
-         * ReadinessContributors
-         * @description Object defining readiness score contributors.
-         */
-        ReadinessContributors: {
-            /**
-             * Activity Balance
-             * @description Contribution of cumulative activity balance in range [1, 100].
-             */
-            activity_balance: number | null;
-            /**
-             * Body Temperature
-             * @description Contribution of body temperature in range [1, 100].
-             */
-            body_temperature: number | null;
-            /**
-             * Hrv Balance
-             * @description Contribution of heart rate variability balance in range [1, 100].
-             */
-            hrv_balance: number | null;
-            /**
-             * Previous Day Activity
-             * @description Contribution of previous day's activity in range [1, 100].
-             */
-            previous_day_activity: number | null;
-            /**
-             * Previous Night
-             * @description Contribution of previous night's sleep in range [1, 100].
-             */
-            previous_night: number | null;
-            /**
-             * Recovery Index
-             * @description Contribution of recovery index in range [1, 100].
-             */
-            recovery_index: number | null;
-            /**
-             * Resting Heart Rate
-             * @description Contribution of resting heart rate in range [1, 100].
-             */
-            resting_heart_rate: number | null;
-            /**
-             * Sleep Balance
-             * @description Contribution of sleep balance in range [1, 100].
-             */
-            sleep_balance: number | null;
-        };
-        /** ReadinessSummary */
-        ReadinessSummary: {
-            contributors: components["schemas"]["ReadinessContributors"];
-            /** Score */
-            score?: number | null;
-            /** Temperature Deviation */
-            temperature_deviation?: number | null;
-            /** Temperature Trend Deviation */
-            temperature_trend_deviation?: number | null;
-        };
         /** ResilienceContributors */
         ResilienceContributors: {
             /**
@@ -1815,333 +2079,6 @@ export interface components {
              */
             stress: number;
         };
-        /**
-         * RestModeEpisode
-         * @description Object defining a Rest Mode episode.
-         */
-        RestModeEpisode: {
-            /** @description Tags selected for the episode. */
-            tags: string[];
-            /** @description Timestamp indicating when the episode occurred. */
-            timestamp: components["schemas"]["LocalizedDateTime"];
-        };
-        /**
-         * RestModePeriodModel
-         * @description Object contains information about rest mode episode.
-         */
-        RestModePeriodModel: {
-            /** Id */
-            id: string;
-            /**
-             * End Day
-             * @description End date of rest mode.
-             */
-            end_day?: string | null;
-            /** @description Timestamp when rest mode ended. */
-            end_time?: components["schemas"]["LocalDateTime"] | null;
-            /**
-             * Episodes
-             * @description Collection of episodes during rest mode, consisting of tags.
-             */
-            episodes: components["schemas"]["RestModeEpisode"][];
-            /**
-             * Start Day
-             * Format: date
-             * @description Start date of rest mode.
-             */
-            start_day: string;
-            /** @description Timestamp when rest mode started. */
-            start_time: components["schemas"]["LocalDateTime"] | null;
-        };
-        /**
-         * RingColor
-         * @enum {string}
-         */
-        RingColor: "brushed_silver" | "glossy_black" | "glossy_gold" | "glossy_white" | "gucci" | "matt_gold" | "rose" | "silver" | "stealth_black" | "titanium" | "titanium_and_gold";
-        /** RingConfigurationModel */
-        RingConfigurationModel: {
-            /** Id */
-            id: string;
-            /** @description Color of the ring. */
-            color?: components["schemas"]["RingColor"] | null;
-            /** @description Design of the ring. */
-            design?: components["schemas"]["RingDesign"] | null;
-            /**
-             * Firmware Version
-             * @description Firmware version of the ring.
-             */
-            firmware_version?: string | null;
-            /** @description Hardware type of the ring. */
-            hardware_type?: components["schemas"]["RingHardwareType"] | null;
-            /** @description UTC timestamp indicating when the ring was set up. */
-            set_up_at?: components["schemas"]["LocalDateTime"] | null;
-            /**
-             * Size
-             * @description US size of the ring.
-             */
-            size?: number | null;
-        };
-        /**
-         * RingDesign
-         * @enum {string}
-         */
-        RingDesign: "balance" | "balance_diamond" | "heritage" | "horizon";
-        /**
-         * RingHardwareType
-         * @enum {string}
-         */
-        RingHardwareType: "gen1" | "gen2" | "gen2m" | "gen3" | "gen4";
-        /** SampleModel */
-        SampleModel: {
-            /**
-             * Interval
-             * @description Interval in seconds between the sampled items.
-             */
-            interval: number;
-            /**
-             * Items
-             * @description Recorded sample items.
-             */
-            items: (number | null)[];
-            /** @description Timestamp when the sample recording started. */
-            timestamp: components["schemas"]["LocalDateTimeWithMilliseconds"];
-        };
-        /** SessionModel */
-        SessionModel: {
-            /** Id */
-            id: string;
-            /**
-             * Day
-             * Format: date
-             * @description The date when the session occurred.
-             */
-            day: string;
-            /** @description Timestamp indicating when the Moment ended. */
-            start_datetime: components["schemas"]["LocalDateTime"];
-            /** @description Timestamp indicating when the Moment ended. */
-            end_datetime: components["schemas"]["LocalDateTime"];
-            type: components["schemas"]["MomentType"];
-            heart_rate?: components["schemas"]["SampleModel"] | null;
-            heart_rate_variability?: components["schemas"]["SampleModel"] | null;
-            mood?: components["schemas"]["MomentMood"] | null;
-            motion_count?: components["schemas"]["SampleModel"] | null;
-        };
-        /**
-         * SleepAlgorithmVersion
-         * @enum {string}
-         */
-        SleepAlgorithmVersion: "v1" | "v2";
-        /**
-         * SleepAnalysisReason
-         * @description Possible sleep analysis reasons.
-         * @enum {string}
-         */
-        SleepAnalysisReason: "foreground_sleep_analysis" | "bedtime_edit";
-        /**
-         * SleepContributors
-         * @description Object defining sleep score contributors.
-         */
-        SleepContributors: {
-            /** @description Contribution of deep sleep in range [1, 100]. */
-            deep_sleep?: number | null;
-            /** @description Contribution of sleep efficiency in range [1, 100]. */
-            efficiency?: number | null;
-            /** @description Contribution of sleep latency in range [1, 100]. */
-            latency?: number | null;
-            /** @description Contribution of REM sleep in range [1, 100]. */
-            rem_sleep?: number | null;
-            /** @description Contribution of sleep restfulness in range [1, 100]. */
-            restfulness?: number | null;
-            /** @description Contribution of sleep timing in range [1, 100]. */
-            timing?: number | null;
-            /** @description Contribution of total sleep in range [1, 100]. */
-            total_sleep?: number | null;
-        };
-        /** SleepModel */
-        SleepModel: {
-            /** Id */
-            id: string;
-            /**
-             * Average Breath
-             * @description Average breathing rate during sleep as breaths/second.
-             */
-            average_breath: number | null;
-            /**
-             * Average Heart Rate
-             * @description Average heart rate during sleep as beats/minute.
-             */
-            average_heart_rate: number | null;
-            /**
-             * Average Hrv
-             * @description Average heart rate variability during sleep.
-             */
-            average_hrv: number | null;
-            /**
-             * Awake Time
-             * @description Duration spent awake in seconds.
-             */
-            awake_time: number | null;
-            /** @description Bedtime end of the sleep. */
-            bedtime_end: components["schemas"]["LocalDateTime"];
-            /** @description Bedtime start of the sleep. */
-            bedtime_start: components["schemas"]["LocalDateTime"];
-            /**
-             * Day
-             * Format: date
-             * @description Day that the sleep belongs to.
-             */
-            day: string;
-            /**
-             * Deep Sleep Duration
-             * @description Duration spent in deep sleep in seconds.
-             */
-            deep_sleep_duration: number | null;
-            /**
-             * Efficiency
-             * @description Sleep efficiency rating in range [1, 100].
-             */
-            efficiency: number | null;
-            /** @description Object containing heart rate samples. */
-            heart_rate: components["schemas"]["SampleModel"] | null;
-            hrv: components["schemas"]["SampleModel"] | null;
-            /**
-             * Latency
-             * @description Sleep latency in seconds. This is the time it took for the user to fall asleep after going to bed.
-             */
-            latency: number | null;
-            /**
-             * Light Sleep Duration
-             * @description Duration spent in light sleep in seconds.
-             */
-            light_sleep_duration: number | null;
-            /**
-             * Low Battery Alert
-             * @description Flag indicating if a low battery alert occurred.
-             */
-            low_battery_alert: boolean;
-            /**
-             * Lowest Heart Rate
-             * @description Lowest heart rate during sleep.
-             */
-            lowest_heart_rate: number | null;
-            /**
-             * Movement 30 Sec
-             * @description 30-second movement classification for the period where every character corresponds to:
-             *             '1' = no motion,
-             *             '2' = restless,
-             *             '3' = tossing and turning
-             *             '4' = active
-             * @example 1143222134
-             */
-            movement_30_sec: string | null;
-            /**
-             * Period
-             * @description ECore sleep period identifier.
-             */
-            period: number;
-            /** @description Object containing the readiness details for this sleep. As opposed to the daily readiness object which represents the readiness for the entire day. */
-            readiness: components["schemas"]["ReadinessSummary"] | null;
-            /**
-             * Readiness Score Delta
-             * @description Effect on readiness score caused by this sleep period.
-             */
-            readiness_score_delta: number | null;
-            /**
-             * Rem Sleep Duration
-             * @description Duration spent in REM sleep in seconds.
-             */
-            rem_sleep_duration: number | null;
-            /**
-             * Restless Periods
-             * @description Number of restless periods during sleep.
-             */
-            restless_periods: number | null;
-            /**
-             * Sleep Phase 5 Min
-             * @description 5-minute sleep phase classification for the period where every character corresponds to:
-             *             '1' = deep sleep,
-             *             '2' = light sleep,
-             *             '3' = REM sleep
-             *             '4' = awake.
-             * @example 444423323441114
-             */
-            sleep_phase_5_min: string | null;
-            /**
-             * Sleep Score Delta
-             * @description Effect on sleep score caused by this sleep period.
-             */
-            sleep_score_delta: number | null;
-            /** @description Version of the sleep algorithm used to calculate the sleep data. */
-            sleep_algorithm_version: components["schemas"]["SleepAlgorithmVersion"] | null;
-            /** @description The reason for the creation or update of the latest version of this sleep. */
-            sleep_analysis_reason?: components["schemas"]["SleepAnalysisReason"] | null;
-            /**
-             * Time In Bed
-             * @description Duration spent in bed in seconds.
-             */
-            time_in_bed: number;
-            /**
-             * Total Sleep Duration
-             * @description Total sleep duration in seconds.
-             */
-            total_sleep_duration: number | null;
-            type: components["schemas"]["SleepType"];
-        };
-        /**
-         * SleepTimeModel
-         * @description Object contains suggested bedtime for the user.
-         */
-        SleepTimeModel: {
-            /** Id */
-            id: string;
-            /**
-             * Day
-             * Format: date
-             * @description Corresponding day for the sleep time.
-             */
-            day: string;
-            /** @description Optimal bedtime. */
-            optimal_bedtime?: components["schemas"]["SleepTimeWindow"] | null;
-            /** @description Recommended action for bedtime. */
-            recommendation?: components["schemas"]["SleepTimeRecommendation"] | null;
-            /** @description Sleep time status; used to inform sleep time recommendation. */
-            status?: components["schemas"]["SleepTimeStatus"] | null;
-        };
-        /**
-         * SleepTimeRecommendation
-         * @description Possible SleepTime recommendation.
-         * @enum {string}
-         */
-        SleepTimeRecommendation: "improve_efficiency" | "earlier_bedtime" | "later_bedtime" | "earlier_wake_up_time" | "later_wake_up_time" | "follow_optimal_bedtime";
-        /**
-         * SleepTimeStatus
-         * @description Possible SleepTime status.
-         * @enum {string}
-         */
-        SleepTimeStatus: "not_enough_nights" | "not_enough_recent_nights" | "bad_sleep_quality" | "only_recommended_found" | "optimal_found";
-        /**
-         * SleepTimeWindow
-         * @description Object defining sleep time window
-         */
-        SleepTimeWindow: {
-            /** @description Timezone offset in second from GMT of the day */
-            day_tz: number;
-            /** @description End offset from midnight in second */
-            end_offset: number;
-            /** @description Start offset from midnight in second */
-            start_offset: number;
-        };
-        /**
-         * SleepType
-         * @description Possible sleep period types.
-         *     'deleted' = deleted sleep by user.
-         *     'sleep' = user confirmed sleep / nap, min 15 minutes, max 3 hours, contributes to daily scores
-         *     'late_nap' = user confirmed sleep / nap, min 15 minutes, ended after sleep day change (6 pm), contributes to next days daily scores
-         *     'long_sleep' = sleep that is long enough (>3h) to automatically contribute to daily scores
-         *     'rest' = Falsely detected sleep / nap, rejected in confirm prompt by user
-         * @enum {string}
-         */
-        SleepType: "deleted" | "sleep" | "long_sleep" | "late_nap" | "rest";
         /**
          * TagModel
          * @description A TagModel maps to an ASSANote. An ASSANote in ExtAPIV2 is called a Tag
@@ -2170,10 +2107,26 @@ export interface components {
              */
             tags: string[];
         };
-        /** TimeSeriesResponse[HeartRateModel] */
-        TimeSeriesResponse_HeartRateModel_: {
+        /** TimeSeriesResponseDict */
+        TimeSeriesResponseDict: {
             /** Data */
-            data: components["schemas"]["HeartRateModel"][];
+            data: {
+                [key: string]: unknown;
+            }[];
+            /** Next Token */
+            next_token?: string | null;
+        };
+        /** TimeSeriesResponse[PublicHeartRateRow] */
+        TimeSeriesResponse_PublicHeartRateRow_: {
+            /** Data */
+            data: components["schemas"]["PublicHeartRateRow"][];
+            /** Next Token */
+            next_token?: string | null;
+        };
+        /** TimeSeriesResponse[PublicRingBatteryLevelRow] */
+        TimeSeriesResponse_PublicRingBatteryLevelRow_: {
+            /** Data */
+            data: components["schemas"]["PublicRingBatteryLevelRow"][];
             /** Next Token */
             next_token?: string | null;
         };
@@ -2187,24 +2140,6 @@ export interface components {
             data_type?: components["schemas"]["ExtApiV2DataType"] | null;
         };
         UtcDateTime: string;
-        /** VO2MaxModel */
-        VO2MaxModel: {
-            /** Id */
-            id: string;
-            /**
-             * Day
-             * Format: date
-             * @description Day that the estimate belongs to.
-             */
-            day: string;
-            /** @description Timestamp indicating when the estimate was created. */
-            timestamp: components["schemas"]["LocalDateTime"];
-            /**
-             * Vo2 Max
-             * @description VO2 max value.
-             */
-            vo2_max: number | null;
-        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -2245,603 +2180,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Single_Personal_Info_Document_v2_usercollection_personal_info_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PersonalInfoResponse"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_tag_Documents_v2_usercollection_tag_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_TagModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_tag_Documents_v2_sandbox_usercollection_tag_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_TagModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_enhanced_tag_Documents_v2_usercollection_enhanced_tag_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_EnhancedTagModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_enhanced_tag_Documents_v2_sandbox_usercollection_enhanced_tag_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_EnhancedTagModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_workout_Documents_v2_usercollection_workout_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_PublicWorkout_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_workout_Documents_v2_sandbox_usercollection_workout_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_PublicWorkout_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_session_Documents_v2_usercollection_session_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_SessionModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_session_Documents_v2_sandbox_usercollection_session_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_SessionModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_daily_activity_Documents_v2_usercollection_daily_activity_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyActivityModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     Sandbox___Multiple_daily_activity_Documents_v2_sandbox_usercollection_daily_activity_get: {
         parameters: {
             query?: {
@@ -2861,7 +2199,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyActivityModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyActivity_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -2903,7 +2241,73 @@ export interface operations {
             };
         };
     };
-    Multiple_daily_sleep_Documents_v2_usercollection_daily_sleep_get: {
+    Sandbox___Single_daily_activity_Document_v2_sandbox_usercollection_daily_activity__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyActivity"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_daily_cardiovascular_age_Documents_v2_sandbox_usercollection_daily_cardiovascular_age_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -2922,7 +2326,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailySleepModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyCardiovascularAge_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -2964,15 +2368,13 @@ export interface operations {
             };
         };
     };
-    Sandbox___Multiple_daily_sleep_Documents_v2_sandbox_usercollection_daily_sleep_get: {
+    Sandbox___Single_daily_cardiovascular_age_Document_v2_sandbox_usercollection_daily_cardiovascular_age__document_id__get: {
         parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
+            query?: never;
             header?: never;
-            path?: never;
+            path: {
+                document_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -2983,7 +2385,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailySleepModel_"];
+                    "application/json": components["schemas"]["PublicDailyCardiovascularAge"];
                 };
             };
             /** @description Client Exception */
@@ -3007,184 +2409,8 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_daily_spo2_Documents_v2_usercollection_daily_spo2_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailySpO2Model_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_daily_spo2_Documents_v2_sandbox_usercollection_daily_spo2_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailySpO2Model_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_daily_readiness_Documents_v2_usercollection_daily_readiness_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyReadinessModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3227,7 +2453,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyReadinessModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyReadiness_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3269,7 +2495,73 @@ export interface operations {
             };
         };
     };
-    Multiple_sleep_Documents_v2_usercollection_sleep_get: {
+    Sandbox___Single_daily_readiness_Document_v2_sandbox_usercollection_daily_readiness__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyReadiness"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_daily_resilience_Documents_v2_sandbox_usercollection_daily_resilience_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3288,7 +2580,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_SleepModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_DailyResilienceModel_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3330,7 +2622,73 @@ export interface operations {
             };
         };
     };
-    Sandbox___Multiple_sleep_Documents_v2_sandbox_usercollection_sleep_get: {
+    Sandbox___Single_daily_resilience_Document_v2_sandbox_usercollection_daily_resilience__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyResilienceModel"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_daily_sleep_Documents_v2_sandbox_usercollection_daily_sleep_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3349,7 +2707,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_SleepModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailySleep_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3391,7 +2749,73 @@ export interface operations {
             };
         };
     };
-    Multiple_sleep_time_Documents_v2_usercollection_sleep_time_get: {
+    Sandbox___Single_daily_sleep_Document_v2_sandbox_usercollection_daily_sleep__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailySleep"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_daily_spo2_Documents_v2_sandbox_usercollection_daily_spo2_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3410,7 +2834,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_SleepTimeModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailySpO2_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3452,7 +2876,73 @@ export interface operations {
             };
         };
     };
-    Sandbox___Multiple_sleep_time_Documents_v2_sandbox_usercollection_sleep_time_get: {
+    Sandbox___Single_daily_spo2_Document_v2_sandbox_usercollection_daily_spo2__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailySpO2"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_daily_stress_Documents_v2_sandbox_usercollection_daily_stress_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3471,7 +2961,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_SleepTimeModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyStress_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3513,7 +3003,73 @@ export interface operations {
             };
         };
     };
-    Multiple_rest_mode_period_Documents_v2_usercollection_rest_mode_period_get: {
+    Sandbox___Single_daily_stress_Document_v2_sandbox_usercollection_daily_stress__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyStress"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_enhanced_tag_Documents_v2_sandbox_usercollection_enhanced_tag_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3532,7 +3088,134 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_RestModePeriodModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_EnhancedTagModel_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Single_enhanced_tag_Document_v2_sandbox_usercollection_enhanced_tag__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnhancedTagModel"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_heartrate_Documents_v2_sandbox_usercollection_heartrate_get: {
+        parameters: {
+            query?: {
+                start_datetime?: string | null;
+                end_datetime?: string | null;
+                next_token?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeSeriesResponse_PublicHeartRateRow_"] | components["schemas"]["TimeSeriesResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3593,7 +3276,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_RestModePeriodModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicRestModePeriod_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3635,9 +3318,77 @@ export interface operations {
             };
         };
     };
-    Multiple_ring_configuration_Documents_v2_usercollection_ring_configuration_get: {
+    Sandbox___Single_rest_mode_period_Document_v2_sandbox_usercollection_rest_mode_period__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicRestModePeriod"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_ring_battery_level_Documents_v2_sandbox_usercollection_ring_battery_level_get: {
         parameters: {
             query?: {
+                start_datetime?: string | null;
+                end_datetime?: string | null;
                 next_token?: string | null;
             };
             header?: never;
@@ -3652,7 +3403,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_RingConfigurationModel_"];
+                    "application/json": components["schemas"]["TimeSeriesResponse_PublicRingBatteryLevelRow_"] | components["schemas"]["TimeSeriesResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3711,7 +3462,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_RingConfigurationModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicRingConfiguration_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3753,7 +3504,73 @@ export interface operations {
             };
         };
     };
-    Multiple_daily_stress_Documents_v2_usercollection_daily_stress_get: {
+    Sandbox___Single_ring_configuration_Document_v2_sandbox_usercollection_ring_configuration__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicRingConfiguration"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_session_Documents_v2_sandbox_usercollection_session_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3772,7 +3589,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyStressModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicSession_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3814,7 +3631,73 @@ export interface operations {
             };
         };
     };
-    Sandbox___Multiple_daily_stress_Documents_v2_sandbox_usercollection_daily_stress_get: {
+    Sandbox___Single_session_Document_v2_sandbox_usercollection_session__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSession"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_sleep_Documents_v2_sandbox_usercollection_sleep_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3833,7 +3716,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyStressModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicModifiedSleepModel_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3875,7 +3758,73 @@ export interface operations {
             };
         };
     };
-    Multiple_daily_resilience_Documents_v2_usercollection_daily_resilience_get: {
+    Sandbox___Single_sleep_Document_v2_sandbox_usercollection_sleep__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicModifiedSleepModel"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_sleep_time_Documents_v2_sandbox_usercollection_sleep_time_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3894,7 +3843,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyResilienceModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicSleepTime_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3936,7 +3885,73 @@ export interface operations {
             };
         };
     };
-    Sandbox___Multiple_daily_resilience_Documents_v2_sandbox_usercollection_daily_resilience_get: {
+    Sandbox___Single_sleep_time_Document_v2_sandbox_usercollection_sleep_time__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSleepTime"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_tag_Documents_v2_sandbox_usercollection_tag_get: {
         parameters: {
             query?: {
                 start_date?: string | null;
@@ -3955,7 +3970,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyResilienceModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_TagModel_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -3997,15 +4012,13 @@ export interface operations {
             };
         };
     };
-    Multiple_daily_cardiovascular_age_Documents_v2_usercollection_daily_cardiovascular_age_get: {
+    Sandbox___Single_tag_Document_v2_sandbox_usercollection_tag__document_id__get: {
         parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
+            query?: never;
             header?: never;
-            path?: never;
+            path: {
+                document_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -4016,7 +4029,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyCardiovascularAgeModel_"];
+                    "application/json": components["schemas"]["TagModel"];
                 };
             };
             /** @description Client Exception */
@@ -4040,123 +4053,8 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_daily_cardiovascular_age_Documents_v2_sandbox_usercollection_daily_cardiovascular_age_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_DailyCardiovascularAgeModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Multiple_vO2_max_Documents_v2_usercollection_vO2_max_get: {
-        parameters: {
-            query?: {
-                start_date?: string | null;
-                end_date?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_VO2MaxModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4199,7 +4097,2116 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MultiDocumentResponse_VO2MaxModel_"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicVO2Max_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Single_vO2_max_Document_v2_sandbox_usercollection_vO2_max__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicVO2Max"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Multiple_workout_Documents_v2_sandbox_usercollection_workout_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicWorkout_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Sandbox___Single_workout_Document_v2_sandbox_usercollection_workout__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicWorkout"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_activity_Documents_v2_usercollection_daily_activity_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyActivity_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_activity_Document_v2_usercollection_daily_activity__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyActivity"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_cardiovascular_age_Documents_v2_usercollection_daily_cardiovascular_age_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyCardiovascularAge_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_cardiovascular_age_Document_v2_usercollection_daily_cardiovascular_age__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyCardiovascularAge"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_readiness_Documents_v2_usercollection_daily_readiness_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyReadiness_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_readiness_Document_v2_usercollection_daily_readiness__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyReadiness"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_resilience_Documents_v2_usercollection_daily_resilience_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description N/A. This route does not support field selection yet, all fields will be returned. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_DailyResilienceModel_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_resilience_Document_v2_usercollection_daily_resilience__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyResilienceModel"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_sleep_Documents_v2_usercollection_daily_sleep_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailySleep_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_sleep_Document_v2_usercollection_daily_sleep__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailySleep"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_spo2_Documents_v2_usercollection_daily_spo2_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailySpO2_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_spo2_Document_v2_usercollection_daily_spo2__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailySpO2"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_daily_stress_Documents_v2_usercollection_daily_stress_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicDailyStress_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_daily_stress_Document_v2_usercollection_daily_stress__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicDailyStress"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_enhanced_tag_Documents_v2_usercollection_enhanced_tag_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description N/A. This route does not support field selection yet, all fields will be returned. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_EnhancedTagModel_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_enhanced_tag_Document_v2_usercollection_enhanced_tag__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnhancedTagModel"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_heartrate_Documents_v2_usercollection_heartrate_get: {
+        parameters: {
+            query?: {
+                start_datetime?: string | null;
+                end_datetime?: string | null;
+                next_token?: string | null;
+                /** @description If True, returns most recent sample. */
+                latest?: boolean | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeSeriesResponse_PublicHeartRateRow_"] | components["schemas"]["TimeSeriesResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_Personal_Info_Document_v2_usercollection_personal_info_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonalInfoResponse"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_rest_mode_period_Documents_v2_usercollection_rest_mode_period_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicRestModePeriod_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_rest_mode_period_Document_v2_usercollection_rest_mode_period__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicRestModePeriod"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_ring_battery_level_Documents_v2_usercollection_ring_battery_level_get: {
+        parameters: {
+            query?: {
+                start_datetime?: string | null;
+                end_datetime?: string | null;
+                next_token?: string | null;
+                /** @description If True, returns most recent sample. */
+                latest?: boolean | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeSeriesResponse_PublicRingBatteryLevelRow_"] | components["schemas"]["TimeSeriesResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_ring_configuration_Documents_v2_usercollection_ring_configuration_get: {
+        parameters: {
+            query?: {
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+                next_token?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicRingConfiguration_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_ring_configuration_Document_v2_usercollection_ring_configuration__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicRingConfiguration"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_session_Documents_v2_usercollection_session_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicSession_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_session_Document_v2_usercollection_session__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSession"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_sleep_Documents_v2_usercollection_sleep_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicModifiedSleepModel_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_sleep_Document_v2_usercollection_sleep__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicModifiedSleepModel"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_sleep_time_Documents_v2_usercollection_sleep_time_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicSleepTime_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_sleep_time_Document_v2_usercollection_sleep_time__document_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSleepTime"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Multiple_tag_Documents_v2_usercollection_tag_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description N/A. This route does not support field selection yet, all fields will be returned. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_TagModel_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -4307,7 +6314,70 @@ export interface operations {
             };
         };
     };
-    Sandbox___Single_tag_Document_v2_sandbox_usercollection_tag__document_id__get: {
+    Multiple_vO2_max_Documents_v2_usercollection_vO2_max_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicVO2Max_"] | components["schemas"]["MultiDocumentResponseDict"];
+                };
+            };
+            /** @description Client Exception */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Request Rate Limit Exceeded. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Single_vO2_max_Document_v2_usercollection_vO2_max__document_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -4324,7 +6394,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TagModel"];
+                    "application/json": components["schemas"]["PublicVO2Max"];
                 };
             };
             /** @description Client Exception */
@@ -4373,13 +6443,17 @@ export interface operations {
             };
         };
     };
-    Single_enhanced_tag_Document_v2_usercollection_enhanced_tag__document_id__get: {
+    Multiple_workout_Documents_v2_usercollection_workout_get: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                next_token?: string | null;
+                /** @description Comma-separated list of fields to include in the response, in addition to the always returned fields. Defaults to all fields if not provided. */
+                fields?: string | null;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -4390,7 +6464,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["EnhancedTagModel"];
+                    "application/json": components["schemas"]["MultiDocumentResponse_PublicWorkout_"] | components["schemas"]["MultiDocumentResponseDict"];
                 };
             };
             /** @description Client Exception */
@@ -4409,79 +6483,6 @@ export interface operations {
             };
             /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
             403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_enhanced_tag_Document_v2_sandbox_usercollection_enhanced_tag__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnhancedTagModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4571,1788 +6572,6 @@ export interface operations {
             };
         };
     };
-    Sandbox___Single_workout_Document_v2_sandbox_usercollection_workout__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PublicWorkout"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_session_Document_v2_usercollection_session__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_session_Document_v2_sandbox_usercollection_session__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_activity_Document_v2_usercollection_daily_activity__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyActivityModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_activity_Document_v2_sandbox_usercollection_daily_activity__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyActivityModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_sleep_Document_v2_usercollection_daily_sleep__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailySleepModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_sleep_Document_v2_sandbox_usercollection_daily_sleep__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailySleepModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_spo2_Document_v2_usercollection_daily_spo2__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailySpO2Model"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_spo2_Document_v2_sandbox_usercollection_daily_spo2__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailySpO2Model"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_readiness_Document_v2_usercollection_daily_readiness__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyReadinessModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_readiness_Document_v2_sandbox_usercollection_daily_readiness__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyReadinessModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_sleep_Document_v2_usercollection_sleep__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SleepModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_sleep_Document_v2_sandbox_usercollection_sleep__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SleepModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_sleep_time_Document_v2_usercollection_sleep_time__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SleepTimeModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_sleep_time_Document_v2_sandbox_usercollection_sleep_time__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SleepTimeModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_rest_mode_period_Document_v2_usercollection_rest_mode_period__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RestModePeriodModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_rest_mode_period_Document_v2_sandbox_usercollection_rest_mode_period__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RestModePeriodModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_ring_configuration_Document_v2_usercollection_ring_configuration__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RingConfigurationModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_ring_configuration_Document_v2_sandbox_usercollection_ring_configuration__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RingConfigurationModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_stress_Document_v2_usercollection_daily_stress__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyStressModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_stress_Document_v2_sandbox_usercollection_daily_stress__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyStressModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_resilience_Document_v2_usercollection_daily_resilience__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyResilienceModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_resilience_Document_v2_sandbox_usercollection_daily_resilience__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyResilienceModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_daily_cardiovascular_age_Document_v2_usercollection_daily_cardiovascular_age__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyCardiovascularAgeModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_daily_cardiovascular_age_Document_v2_sandbox_usercollection_daily_cardiovascular_age__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DailyCardiovascularAgeModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Single_vO2_max_Document_v2_usercollection_vO2_max__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VO2MaxModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Single_vO2_max_Document_v2_sandbox_usercollection_vO2_max__document_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                document_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VO2MaxModel"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     list_webhook_subscriptions_v2_webhook_subscription_get: {
         parameters: {
             query?: never;
@@ -6394,6 +6613,44 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["WebhookSubscriptionModel"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    renew_webhook_subscription_v2_webhook_subscription_renew__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookSubscriptionModel"];
+                };
+            };
+            /** @description Webhook with specified id does not exist. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
@@ -6519,166 +6776,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
-            };
-        };
-    };
-    renew_webhook_subscription_v2_webhook_subscription_renew__id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WebhookSubscriptionModel"];
-                };
-            };
-            /** @description Webhook with specified id does not exist. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    Multiple_Heart_Rate_Documents_v2_usercollection_heartrate_get: {
-        parameters: {
-            query?: {
-                start_datetime?: string | null;
-                end_datetime?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeSeriesResponse_HeartRateModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Sandbox___Multiple_heartrate_Documents_v2_sandbox_usercollection_heartrate_get: {
-        parameters: {
-            query?: {
-                start_datetime?: string | null;
-                end_datetime?: string | null;
-                next_token?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TimeSeriesResponse_HeartRateModel_"];
-                };
-            };
-            /** @description Client Exception */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized access exception. Usually means the access token is expired, malformed or revoked. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Access forbidden. Usually means the user's subscription to Oura has expired and their data is not available via the API. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Request Rate Limit Exceeded. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

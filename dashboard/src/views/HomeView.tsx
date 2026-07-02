@@ -1,0 +1,193 @@
+import { Card, CardContent, CardHeader } from "../components/components";
+import { DeltaChip, Kpi, RingCard } from "../components/halo";
+import type { ReadinessRecord, SleepRecord, ActivityRecord, StressRecord } from "../types";
+import { DashboardLineChart } from "./charts";
+
+interface HomeViewProps {
+  latestReadiness: ReadinessRecord | null;
+  latestSleep: SleepRecord | null;
+  latestActivity: ActivityRecord | null;
+  latestStress: StressRecord | null;
+  readinessBaseline: number | null;
+  sleepBaseline: number | null;
+  activityBaseline: number | null;
+  rhrBaseline: number | null;
+  hrvBaseline: number | null;
+  tempFlag: boolean;
+  strainHours: number;
+  recoveryHours: number;
+  headline: string;
+  recoveryPosture: string;
+  readinessChartData: any[];
+  insights: any[];
+  hues: any;
+  setActiveTab: (tab: "sleep" | "readiness" | "activity" | "insights") => void;
+  AIFinding: any;
+}
+
+export function HomeView({
+  latestReadiness,
+  latestSleep,
+  latestActivity,
+  latestStress,
+  readinessBaseline,
+  sleepBaseline,
+  activityBaseline,
+  rhrBaseline,
+  hrvBaseline,
+  tempFlag,
+  strainHours,
+  recoveryHours,
+  headline,
+  recoveryPosture,
+  readinessChartData,
+  insights,
+  hues,
+  setActiveTab,
+  AIFinding,
+}: HomeViewProps) {
+  return (
+    <div className="dashboard-stack">
+      <section className="halo-rings" aria-label="Today's scores">
+        <RingCard
+          label="Readiness"
+          score={latestReadiness?.score ?? null}
+          delta={
+            latestReadiness && readinessBaseline != null
+              ? latestReadiness.score - readinessBaseline
+              : null
+          }
+          onClick={() => setActiveTab("readiness")}
+        />
+        <RingCard
+          label="Sleep"
+          score={latestSleep?.score ?? null}
+          delta={
+            latestSleep && sleepBaseline != null
+              ? latestSleep.score - sleepBaseline
+              : null
+          }
+          onClick={() => setActiveTab("sleep")}
+        />
+        <RingCard
+          label="Activity"
+          score={latestActivity?.score ?? null}
+          delta={
+            latestActivity && activityBaseline != null
+              ? latestActivity.score - activityBaseline
+              : null
+          }
+          onClick={() => setActiveTab("activity")}
+        />
+      </section>
+
+      <section className="halo-vitals" aria-label="Vitals">
+        <Kpi
+          label="Resting HR"
+          value={latestReadiness?.rhr || "—"}
+          unit="bpm"
+          note={
+            latestReadiness && rhrBaseline != null ? (
+              <DeltaChip
+                value={latestReadiness.rhr - rhrBaseline}
+                higherIsBetter={false}
+              />
+            ) : (
+              "vs baseline pending"
+            )
+          }
+        />
+        <Kpi
+          label="HRV"
+          value={latestReadiness?.hrv || "—"}
+          unit="ms"
+          note={
+            latestReadiness && hrvBaseline != null ? (
+              <DeltaChip value={latestReadiness.hrv - hrvBaseline} />
+            ) : (
+              "vs baseline pending"
+            )
+          }
+        />
+        <Kpi
+          label="Temp"
+          value={
+            latestReadiness ? (
+              <span className={tempFlag ? "tone-fair" : undefined}>
+                {latestReadiness.temperature_deviation > 0 ? "+" : ""}
+                {latestReadiness.temperature_deviation.toFixed(1)}
+              </span>
+            ) : (
+              "—"
+            )
+          }
+          unit="°C"
+          note={tempFlag ? "outside normal range" : "normal range"}
+        />
+        <Kpi
+          label="Stress balance"
+          value={latestStress ? `${strainHours}h` : "—"}
+          note={
+            latestStress
+              ? `${recoveryHours}h recovery time`
+              : "no stress sample"
+          }
+        />
+      </section>
+
+      <div className="halo-home-grid">
+        <Card>
+          <CardHeader
+            title="Readiness trend"
+            description="Daily score across your tracked history"
+          />
+          <CardContent>
+            <div className="chart-frame feature">
+              <DashboardLineChart
+                className="dashboard-chart"
+                dataset={readinessChartData}
+                xAxis={[{ scaleType: "point", dataKey: "day" }]}
+                yAxis={[{ min: 0, max: 100 }]}
+                grid={{ horizontal: true }}
+                hideLegend
+                series={[
+                  {
+                    dataKey: "score",
+                    label: "Readiness",
+                    color: hues.readiness,
+                    area: true,
+                    showMark: false,
+                  },
+                ]}
+                height={320}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="halo-home-rail">
+          <div className="halo-insight">
+            <span className="halo-insight-overline">Today</span>
+            <span className="halo-insight-headline">{headline}</span>
+            <span className="halo-insight-sub">
+              {latestReadiness
+                ? `Readiness is ${latestReadiness.score} · posture: ${recoveryPosture}`
+                : "Waiting for data"}
+            </span>
+          </div>
+          <div className="insights-list">
+            {insights.map((insight) => (
+              <AIFinding
+                key={insight.title}
+                variant={insight.variant}
+                title={insight.title}
+                body={insight.body}
+                cta={{ label: insight.cta }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

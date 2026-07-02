@@ -61,9 +61,9 @@ function formatSession(session: Session): string {
     if (session.heart_rate) {
       const hrItems = session.heart_rate.items || [];
       if (hrItems.length > 0) {
-        const validHr = hrItems.filter((hr): hr is number => hr !== null);
+        const validHr = hrItems.filter((hr: number | null): hr is number => hr !== null);
         if (validHr.length > 0) {
-          const avgHr = Math.round(validHr.reduce((a, b) => a + b, 0) / validHr.length);
+          const avgHr = Math.round(validHr.reduce((a: number, b: number) => a + b, 0) / validHr.length);
           lines.push(`- Avg Heart Rate: ${avgHr} bpm`);
         }
       }
@@ -72,9 +72,9 @@ function formatSession(session: Session): string {
     if (session.heart_rate_variability) {
       const hrvItems = session.heart_rate_variability.items || [];
       if (hrvItems.length > 0) {
-        const validHrv = hrvItems.filter((hrv): hrv is number => hrv !== null);
+        const validHrv = hrvItems.filter((hrv: number | null): hrv is number => hrv !== null);
         if (validHrv.length > 0) {
-          const avgHrv = Math.round(validHrv.reduce((a, b) => a + b, 0) / validHrv.length);
+          const avgHrv = Math.round(validHrv.reduce((a: number, b: number) => a + b, 0) / validHrv.length);
           lines.push(`- Avg HRV: ${avgHrv} ms`);
         }
       }
@@ -123,7 +123,7 @@ export function registerActivityTools(server: McpServer, client: OuraClient) {
         const formatted = response.data.map((day) => {
           return [
             `## Activity: ${day.day}`,
-            `**Score:** ${formatScore(day.score)}`,
+            `**Score:** ${formatScore(day.score ?? null)}`,
             `**Steps:** ${day.steps.toLocaleString()}`,
             `**Calories:** ${day.total_calories.toLocaleString()} total (${day.active_calories.toLocaleString()} active)`,
             `**Walking Equivalent:** ${(day.equivalent_walking_distance / 1000).toFixed(1)} km`,

@@ -95,7 +95,7 @@ export function formatDailySleep(day: DailySleep): string {
   const c = day.contributors;
   return [
     `## Daily Sleep Score: ${day.day}`,
-    `**Score:** ${formatScore(day.score)}`,
+    `**Score:** ${formatScore(day.score ?? null)}`,
     "",
     "**Contributors:**",
     `- Total Sleep: ${c.total_sleep ?? "N/A"}`,
@@ -599,7 +599,7 @@ export function registerSleepTools(server: McpServer, client: OuraClient) {
 
         // Most recent night's HRV recovery pattern
         const mostRecent = sessions[sessions.length - 1];
-        const hrvSamples = mostRecent.hrv?.items?.filter((v): v is number => v !== null) ?? [];
+        const hrvSamples = mostRecent.hrv?.items?.filter((v: number | null): v is number => v !== null) ?? [];
         if (hrvSamples.length >= 4) {
           const recovery = hrvRecoveryPattern(hrvSamples);
           if (recovery.pattern !== "insufficient_data") {

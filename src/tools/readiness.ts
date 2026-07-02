@@ -69,7 +69,7 @@ export function registerReadinessTools(server: McpServer, client: OuraClient) {
           const c = day.contributors;
           return [
             `## Readiness: ${day.day}`,
-            `**Score:** ${formatScore(day.score)}`,
+            `**Score:** ${formatScore(day.score ?? null)}`,
             "",
             "**Contributors:**",
             `- HRV Balance: ${c.hrv_balance ?? "N/A"}`,

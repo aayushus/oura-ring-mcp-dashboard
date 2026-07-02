@@ -1,28 +1,18 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import type { BarChartProps } from "@mui/x-charts/BarChart";
-import type { LineChartProps } from "@mui/x-charts/LineChart";
 import {
   AIFinding,
   Alert,
   AppShell,
   Button,
   Callout,
-  Card,
-  CardContent,
-  CardHeader,
   Main,
   ThemeToggle,
 } from "./components/components";
 import {
   BAND_LABEL,
-  DeltaChip,
   HaloMark,
-  Kpi,
-  MetricTable,
   RailItem,
-  RingCard,
-  ScoreRing,
   scoreBand,
   type MetricColumn,
 } from "./components/halo";
@@ -34,155 +24,23 @@ import {
   SleepIcon,
 } from "./components/Icons";
 
-const LineChart = lazy(() =>
-  import("@mui/x-charts/LineChart").then((module) => ({ default: module.LineChart }))
-);
-const BarChart = lazy(() =>
-  import("@mui/x-charts/BarChart").then((module) => ({ default: module.BarChart }))
-);
+import type { HistorySummary, TabKey, SleepRecord, ReadinessRecord, ActivityRecord } from "./types";
+import { HUES, TAB_TITLES } from "./constants";
+import {
+  formatDayLabel,
+  formatLongDate,
+  greeting,
+  average,
+  zScorer,
+  formatSecondsToHours,
+  formatHours,
+} from "./utils";
 
-function DashboardLazyFallback() {
-  return <div className="dashboard-lazy-fallback chart" />;
-}
-
-function DashboardLineChart(props: LineChartProps) {
-  return (
-    <Suspense fallback={<DashboardLazyFallback />}>
-      <LineChart {...props} />
-    </Suspense>
-  );
-}
-
-function DashboardBarChart(props: BarChartProps) {
-  return (
-    <Suspense fallback={<DashboardLazyFallback />}>
-      <BarChart {...props} />
-    </Suspense>
-  );
-}
-
-interface SleepRecord {
-  day: string;
-  score: number;
-  duration: number;
-  deep: number;
-  rem: number;
-  light: number;
-  efficiency: number;
-}
-
-interface ReadinessRecord {
-  day: string;
-  score: number;
-  hrv: number;
-  rhr: number;
-  temperature_deviation: number;
-}
-
-interface ActivityRecord {
-  day: string;
-  score: number;
-  steps: number;
-  active_calories: number;
-  total_calories: number;
-}
-
-interface StressRecord {
-  day: string;
-  stress_duration: number;
-  recovery_duration: number;
-}
-
-interface HistorySummary {
-  sleep: SleepRecord[];
-  readiness: ReadinessRecord[];
-  activity: ActivityRecord[];
-  stress: StressRecord[];
-}
-
-type TabKey = "home" | "sleep" | "readiness" | "activity" | "insights";
-
-/* Domain hues per theme (DESIGN.md 3.1) — JS copies for chart series,
-   kept in sync with tokens.css */
-const HUES = {
-  dark: {
-    sleep: "#8A93F8",
-    sleepDeep: "#5B66E8",
-    rem: "#38BDF8",
-    readiness: "#2DD4BF",
-    activity: "#FF9F0A",
-    heart: "#FF6482",
-    stress: "#FBBF24",
-    optimal: "#30D158",
-    low: "#FF6B5E",
-    accent: "#7C9EF8",
-    ai: "#BF7AF0",
-  },
-  light: {
-    sleep: "#5B66E8",
-    sleepDeep: "#4048C8",
-    rem: "#0284C7",
-    readiness: "#0D9488",
-    activity: "#D97706",
-    heart: "#E11D48",
-    stress: "#B45309",
-    optimal: "#1E9E50",
-    low: "#D6453A",
-    accent: "#3B6FE0",
-    ai: "#7C3AED",
-  },
-} as const;
-
-function formatSecondsToHours(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.round((seconds % 3600) / 60);
-  return `${hrs}h ${mins}m`;
-}
-
-function formatHours(seconds: number): string {
-  return `${(seconds / 3600).toFixed(1)}h`;
-}
-
-function formatDayLabel(day: string): string {
-  return new Date(`${day}T00:00:00`).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function formatLongDate(day: string): string {
-  return new Date(`${day}T00:00:00`).toLocaleDateString(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-function greeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 5) return "Good night";
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
-}
-
-function average(values: number[]): number | null {
-  const valid = values.filter((v) => Number.isFinite(v) && v > 0);
-  if (valid.length === 0) return null;
-  return valid.reduce((sum, v) => sum + v, 0) / valid.length;
-}
-
-/* z-score helper for the anomaly feed (FEATURES F-4, simplified:
-   baseline = the whole loaded window) */
-function zScorer(values: number[]): { z: (v: number) => number; mean: number } {
-  const valid = values.filter((v) => Number.isFinite(v) && v > 0);
-  if (valid.length < 5) return { z: () => 0, mean: 0 };
-  const mean = valid.reduce((s, v) => s + v, 0) / valid.length;
-  const sd = Math.sqrt(
-    valid.reduce((s, v) => s + (v - mean) ** 2, 0) / (valid.length - 1)
-  );
-  return { z: (v: number) => (sd > 0 ? (v - mean) / sd : 0), mean };
-}
+import { HomeView } from "./views/HomeView";
+import { SleepView } from "./views/SleepView";
+import { ReadinessView } from "./views/ReadinessView";
+import { ActivityView } from "./views/ActivityView";
+import { InsightsView } from "./views/InsightsView";
 
 function ScoreCell({ score }: { score: number }) {
   const band = scoreBand(score);
@@ -192,14 +50,6 @@ function ScoreCell({ score }: { score: number }) {
     </span>
   );
 }
-
-const TAB_TITLES: Record<TabKey, string> = {
-  home: "Overview",
-  sleep: "Sleep",
-  readiness: "Readiness",
-  activity: "Activity",
-  insights: "Insights",
-};
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
@@ -361,7 +211,6 @@ function App() {
       totalCalories: entry.total_calories,
     })) ?? [];
 
-  // mirrored stress chart: recovery plotted below the zero axis (REQ C6 W1)
   const stressChartData =
     data?.stress.map((entry) => ({
       day: formatDayLabel(entry.day),
@@ -369,7 +218,6 @@ function App() {
       recovery: -Number((entry.recovery_duration / 3600).toFixed(1)),
     })) ?? [];
 
-  // baselines: average of history excluding the latest day, for deltas
   const sleepBaseline = data ? average(data.sleep.slice(0, -1).map((d) => d.score)) : null;
   const readinessBaseline = data
     ? average(data.readiness.slice(0, -1).map((d) => d.score))
@@ -416,9 +264,8 @@ function App() {
     : "Pending";
 
   const tempFlag =
-    latestReadiness && Math.abs(latestReadiness.temperature_deviation) >= 0.3;
+    !!(latestReadiness && Math.abs(latestReadiness.temperature_deviation) >= 0.3);
 
-  // headline insight — first match wins (REQ C1 W3)
   const headline = (() => {
     if (!latestReadiness) return "Sync your ring to see today's picture.";
     if (tempFlag && latestReadiness.temperature_deviation >= 0.5) {
@@ -487,7 +334,6 @@ function App() {
     return items;
   })();
 
-  // week-over-week comparison: last 7 days vs the 7 before (needs ≥ 10 days)
   const weekCompare = (() => {
     if (!data || data.readiness.length < 10) return null;
     const week = <T,>(rows: T[]) => ({ cur: rows.slice(-7), prev: rows.slice(-14, -7) });
@@ -543,7 +389,6 @@ function App() {
     return entries.filter((e) => e.cur != null);
   })();
 
-  // anomaly feed: readings well outside the window's own normal (|z| ≥ 1.5)
   const anomalies = (() => {
     if (!data || data.readiness.length < 7) return [];
     const out: Array<{
@@ -768,516 +613,69 @@ function App() {
             ) : (
               <>
                 {activeTab === "home" && (
-                  <div className="dashboard-stack">
-                    <section className="halo-rings" aria-label="Today's scores">
-                      <RingCard
-                        label="Readiness"
-                        score={latestReadiness?.score ?? null}
-                        delta={
-                          latestReadiness && readinessBaseline != null
-                            ? latestReadiness.score - readinessBaseline
-                            : null
-                        }
-                        onClick={() => setActiveTab("readiness")}
-                      />
-                      <RingCard
-                        label="Sleep"
-                        score={latestSleep?.score ?? null}
-                        delta={
-                          latestSleep && sleepBaseline != null
-                            ? latestSleep.score - sleepBaseline
-                            : null
-                        }
-                        onClick={() => setActiveTab("sleep")}
-                      />
-                      <RingCard
-                        label="Activity"
-                        score={latestActivity?.score ?? null}
-                        delta={
-                          latestActivity && activityBaseline != null
-                            ? latestActivity.score - activityBaseline
-                            : null
-                        }
-                        onClick={() => setActiveTab("activity")}
-                      />
-                    </section>
-
-                    <section className="halo-vitals" aria-label="Vitals">
-                      <Kpi
-                        label="Resting HR"
-                        value={latestReadiness?.rhr || "—"}
-                        unit="bpm"
-                        note={
-                          latestReadiness && rhrBaseline != null ? (
-                            <DeltaChip
-                              value={latestReadiness.rhr - rhrBaseline}
-                              higherIsBetter={false}
-                            />
-                          ) : (
-                            "vs baseline pending"
-                          )
-                        }
-                      />
-                      <Kpi
-                        label="HRV"
-                        value={latestReadiness?.hrv || "—"}
-                        unit="ms"
-                        note={
-                          latestReadiness && hrvBaseline != null ? (
-                            <DeltaChip value={latestReadiness.hrv - hrvBaseline} />
-                          ) : (
-                            "vs baseline pending"
-                          )
-                        }
-                      />
-                      <Kpi
-                        label="Temp"
-                        value={
-                          latestReadiness ? (
-                            <span className={tempFlag ? "tone-fair" : undefined}>
-                              {latestReadiness.temperature_deviation > 0 ? "+" : ""}
-                              {latestReadiness.temperature_deviation.toFixed(1)}
-                            </span>
-                          ) : (
-                            "—"
-                          )
-                        }
-                        unit="°C"
-                        note={tempFlag ? "outside normal range" : "normal range"}
-                      />
-                      <Kpi
-                        label="Stress balance"
-                        value={latestStress ? `${strainHours}h` : "—"}
-                        note={
-                          latestStress
-                            ? `${recoveryHours}h recovery time`
-                            : "no stress sample"
-                        }
-                      />
-                    </section>
-
-                    <div className="halo-home-grid">
-                      <Card>
-                        <CardHeader
-                          title="Readiness trend"
-                          description="Daily score across your tracked history"
-                        />
-                        <CardContent>
-                          <div className="chart-frame feature">
-                            <DashboardLineChart
-                              className="dashboard-chart"
-                              dataset={readinessChartData}
-                              xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                              yAxis={[{ min: 0, max: 100 }]}
-                              grid={{ horizontal: true }}
-                              hideLegend
-                              series={[
-                                {
-                                  dataKey: "score",
-                                  label: "Readiness",
-                                  color: hues.readiness,
-                                  area: true,
-                                  showMark: false,
-                                },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <div className="halo-home-rail">
-                        <div className="halo-insight">
-                          <span className="halo-insight-overline">Today</span>
-                          <span className="halo-insight-headline">{headline}</span>
-                          <span className="halo-insight-sub">
-                            {latestReadiness
-                              ? `${BAND_LABEL[scoreBand(latestReadiness.score)]} readiness · posture: ${recoveryPosture}`
-                              : "Waiting for data"}
-                          </span>
-                        </div>
-                        <div className="insights-list">
-                          {insights.map((insight) => (
-                            <AIFinding
-                              key={insight.title}
-                              variant={insight.variant}
-                              title={insight.title}
-                              body={insight.body}
-                              cta={{ label: insight.cta }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <HomeView
+                    latestReadiness={latestReadiness}
+                    latestSleep={latestSleep}
+                    latestActivity={latestActivity}
+                    latestStress={latestStress}
+                    readinessBaseline={readinessBaseline}
+                    sleepBaseline={sleepBaseline}
+                    activityBaseline={activityBaseline}
+                    rhrBaseline={rhrBaseline}
+                    hrvBaseline={hrvBaseline}
+                    tempFlag={tempFlag}
+                    strainHours={strainHours}
+                    recoveryHours={recoveryHours}
+                    headline={headline}
+                    recoveryPosture={recoveryPosture}
+                    readinessChartData={readinessChartData}
+                    insights={insights}
+                    hues={hues}
+                    setActiveTab={setActiveTab}
+                    AIFinding={AIFinding}
+                  />
                 )}
 
                 {activeTab === "sleep" && (
-                  <div className="dashboard-stack">
-                    <div
-                      className="halo-module-head"
-                      style={{ "--hue": "var(--hue-sleep)" } as React.CSSProperties}
-                    >
-                      <span className="rule" />
-                      <p>Nightly duration, stage composition, and full history.</p>
-                    </div>
-
-                    <div className="dashboard-pane-grid">
-                      <Card>
-                        <CardHeader
-                          title="Sleep duration"
-                          description="Total nightly sleep hours"
-                        />
-                        <CardContent>
-                          <div className="chart-frame tall">
-                            <DashboardLineChart
-                              className="dashboard-chart"
-                              dataset={sleepChartData}
-                              xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                              grid={{ horizontal: true }}
-                              hideLegend
-                              series={[
-                                {
-                                  dataKey: "duration",
-                                  label: "Sleep hours",
-                                  color: hues.sleep,
-                                  area: true,
-                                  showMark: false,
-                                },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader
-                          title="Stage composition"
-                          description="Deep, REM, and light per night"
-                        />
-                        <CardContent>
-                          <div className="chart-frame tall">
-                            <DashboardBarChart
-                              className="dashboard-chart"
-                              dataset={sleepChartData}
-                              xAxis={[{ scaleType: "band", dataKey: "day" }]}
-                              grid={{ horizontal: true }}
-                              series={[
-                                { dataKey: "deep", label: "Deep", stack: "stages", color: hues.sleepDeep },
-                                { dataKey: "rem", label: "REM", stack: "stages", color: hues.rem },
-                                { dataKey: "light", label: "Light", stack: "stages", color: hues.sleep },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <Card>
-                      <CardHeader
-                        title="Sleep log"
-                        description="Most recent nights first"
-                      />
-                      <CardContent>
-                        <MetricTable
-                          columns={sleepColumns}
-                          rows={sleepRows}
-                          rowKey={(row) => row.day}
-                        />
-                      </CardContent>
-                    </Card>
-                  </div>
+                  <SleepView
+                    sleepChartData={sleepChartData}
+                    sleepRows={sleepRows}
+                    sleepColumns={sleepColumns}
+                    hues={hues}
+                  />
                 )}
 
                 {activeTab === "readiness" && (
-                  <div className="dashboard-stack">
-                    <div
-                      className="halo-module-head"
-                      style={{ "--hue": "var(--hue-readiness)" } as React.CSSProperties}
-                    >
-                      <span className="rule" />
-                      <p>Recovery score, HRV, resting heart rate, and thermal drift.</p>
-                    </div>
-
-                    <div className="dashboard-pane-grid">
-                      <Card>
-                        <CardHeader
-                          title="Heart rate variability"
-                          description="Nightly average — higher is better"
-                        />
-                        <CardContent>
-                          <div className="chart-frame tall">
-                            <DashboardLineChart
-                              className="dashboard-chart"
-                              dataset={readinessChartData}
-                              xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                              grid={{ horizontal: true }}
-                              hideLegend
-                              series={[
-                                {
-                                  dataKey: "hrv",
-                                  label: "HRV",
-                                  color: hues.readiness,
-                                  area: true,
-                                  showMark: false,
-                                },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader
-                          title="Resting heart rate"
-                          description="Lowest overnight — lower is better"
-                        />
-                        <CardContent>
-                          <div className="chart-frame tall">
-                            <DashboardLineChart
-                              className="dashboard-chart"
-                              dataset={readinessChartData}
-                              xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                              grid={{ horizontal: true }}
-                              hideLegend
-                              series={[
-                                {
-                                  dataKey: "rhr",
-                                  label: "RHR",
-                                  color: hues.heart,
-                                  showMark: false,
-                                },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <Card>
-                      <CardHeader
-                        title="Recovery log"
-                        description="Latest days first so outliers stand out"
-                      />
-                      <CardContent>
-                        <MetricTable
-                          columns={readinessColumns}
-                          rows={readinessRows}
-                          rowKey={(row) => row.day}
-                        />
-                      </CardContent>
-                    </Card>
-                  </div>
+                  <ReadinessView
+                    readinessChartData={readinessChartData}
+                    readinessRows={readinessRows}
+                    readinessColumns={readinessColumns}
+                    hues={hues}
+                  />
                 )}
 
                 {activeTab === "activity" && (
-                  <div className="dashboard-stack">
-                    <div
-                      className="halo-module-head"
-                      style={{ "--hue": "var(--hue-activity)" } as React.CSSProperties}
-                    >
-                      <span className="rule" />
-                      <p>Movement volume, energy burn, and stress balance.</p>
-                    </div>
-
-                    <div className="dashboard-pane-grid">
-                      <Card>
-                        <CardHeader title="Steps" description="Daily step count" />
-                        <CardContent>
-                          <div className="chart-frame tall">
-                            <DashboardBarChart
-                              className="dashboard-chart"
-                              dataset={activityChartData}
-                              xAxis={[{ scaleType: "band", dataKey: "day" }]}
-                              grid={{ horizontal: true }}
-                              hideLegend
-                              series={[
-                                { dataKey: "steps", label: "Steps", color: hues.activity },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader
-                          title="Stress and recovery"
-                          description="Stress above the line, recovery below"
-                        />
-                        <CardContent>
-                          <div className="chart-frame tall">
-                            <DashboardBarChart
-                              className="dashboard-chart"
-                              dataset={stressChartData}
-                              xAxis={[{ scaleType: "band", dataKey: "day" }]}
-                              yAxis={[
-                                {
-                                  valueFormatter: (v: number) => `${Math.abs(v)}h`,
-                                },
-                              ]}
-                              grid={{ horizontal: true }}
-                              series={[
-                                {
-                                  dataKey: "stress",
-                                  label: "Stress",
-                                  stack: "balance",
-                                  color: hues.stress,
-                                  valueFormatter: (v: number | null) =>
-                                    v == null ? "" : `${Math.abs(v)}h`,
-                                },
-                                {
-                                  dataKey: "recovery",
-                                  label: "Recovery",
-                                  stack: "balance",
-                                  color: hues.optimal,
-                                  valueFormatter: (v: number | null) =>
-                                    v == null ? "" : `${Math.abs(v)}h`,
-                                },
-                              ]}
-                              height={320}
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <Card>
-                      <CardHeader
-                        title="Activity log"
-                        description="Steps and energy across your history"
-                      />
-                      <CardContent>
-                        <MetricTable
-                          columns={activityColumns}
-                          rows={activityRows}
-                          rowKey={(row) => row.day}
-                        />
-                      </CardContent>
-                    </Card>
-                  </div>
+                  <ActivityView
+                    activityChartData={activityChartData}
+                    stressChartData={stressChartData}
+                    activityRows={activityRows}
+                    activityColumns={activityColumns}
+                    hues={hues}
+                  />
                 )}
 
                 {activeTab === "insights" && (
-                  <div className="dashboard-stack">
-                    <div
-                      className="halo-module-head"
-                      style={{ "--hue": "var(--ai)" } as React.CSSProperties}
-                    >
-                      <span className="rule" />
-                      <p>Current recovery posture, key risks, and next best actions.</p>
-                    </div>
-
-                    <section className="halo-verdict" aria-label="Today's verdict">
-                      <ScoreRing score={latestReadiness?.score ?? null} size={140} strokeWidth={10} />
-                      <div className="halo-verdict-copy">
-                        <span className="halo-verdict-posture">
-                          Posture: {recoveryPosture}
-                        </span>
-                        <span className="halo-verdict-headline">{headline}</span>
-                        <span className="halo-verdict-body">
-                          {latestReadiness
-                            ? `Readiness is ${latestReadiness.score} (${BAND_LABEL[scoreBand(latestReadiness.score)].toLowerCase()}). Resting HR ${latestReadiness.rhr} bpm and HRV ${latestReadiness.hrv} ms${
-                                tempFlag
-                                  ? `, with temperature ${latestReadiness.temperature_deviation > 0 ? "+" : ""}${latestReadiness.temperature_deviation.toFixed(1)} °C off baseline`
-                                  : ""
-                              }.`
-                            : "Sync your ring to build today's verdict."}
-                        </span>
-                        <span className="halo-verdict-meta">
-                          {heroDate
-                            ? `From data through ${formatDayLabel(heroDate)} · rule-based, computed locally`
-                            : "Waiting for enough history"}
-                        </span>
-                      </div>
-                    </section>
-
-                    {weekCompare && (
-                      <>
-                        <div className="halo-topbar-overline" style={{ marginTop: 8 }}>
-                          This week vs last week
-                        </div>
-                        <section className="halo-vitals" aria-label="Week over week">
-                          {weekCompare.map((entry) => (
-                            <Kpi
-                              key={entry.label}
-                              label={entry.label}
-                              value={entry.cur != null ? entry.format(entry.cur) : "—"}
-                              unit={entry.unit}
-                              note={
-                                entry.prev != null && entry.cur != null ? (
-                                  <DeltaChip
-                                    value={entry.cur - entry.prev}
-                                    higherIsBetter={entry.higherIsBetter}
-                                    format={(v) =>
-                                      entry.label === "Steps"
-                                        ? Math.abs(Math.round(v)).toLocaleString()
-                                        : `${Math.abs(Math.round(v))}`
-                                    }
-                                  />
-                                ) : (
-                                  "no prior week yet"
-                                )
-                              }
-                            />
-                          ))}
-                        </section>
-                      </>
-                    )}
-
-                    <div className="halo-insights-grid">
-                      <div className="halo-findings" aria-label="Findings">
-                        <div className="halo-topbar-overline">What to act on</div>
-                        {insights.map((insight) => (
-                          <div key={insight.title} className={`halo-finding ${insight.variant}`}>
-                            <span className="halo-finding-title">{insight.title}</span>
-                            <span className="halo-finding-body">{insight.body}</span>
-                            {insight.tab && (
-                              <button
-                                type="button"
-                                className="halo-finding-cta"
-                                onClick={() => setActiveTab(insight.tab as TabKey)}
-                              >
-                                {insight.cta} →
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-
-                      <Card>
-                        <CardHeader
-                          title="Unusual readings"
-                          description="Days that stood out from your own normal"
-                        />
-                        <CardContent>
-                          <div className="halo-anomalies">
-                            {anomalies.length === 0 ? (
-                              <span className="halo-empty-note">
-                                No unusual readings in this window — steady is good.
-                              </span>
-                            ) : (
-                              anomalies.map((item, index) => (
-                                <div className="halo-anomaly" key={`${item.day}-${index}`}>
-                                  <span className="halo-anomaly-date">
-                                    {formatDayLabel(item.day)}
-                                  </span>
-                                  <span className={`halo-anomaly-dot ${item.tone}`} />
-                                  <span className="halo-anomaly-text">
-                                    <strong>{item.metric}</strong> — {item.detail}
-                                  </span>
-                                </div>
-                              ))
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
+                  <InsightsView
+                    latestReadiness={latestReadiness}
+                    recoveryPosture={recoveryPosture}
+                    headline={headline}
+                    tempFlag={tempFlag}
+                    heroDate={heroDate}
+                    weekCompare={weekCompare}
+                    insights={insights}
+                    anomalies={anomalies}
+                    setActiveTab={setActiveTab}
+                  />
                 )}
               </>
             )}

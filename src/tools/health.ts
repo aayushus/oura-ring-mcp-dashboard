@@ -36,13 +36,13 @@ function formatStress(day: DailyStress): string {
 
   lines.push("**Time Breakdown:**");
 
-  if (day.stress_high !== null) {
+  if (day.stress_high !== null && day.stress_high !== undefined) {
     lines.push(`- High Stress: ${formatDuration(day.stress_high)}`);
   } else {
     lines.push("- High Stress: N/A");
   }
 
-  if (day.recovery_high !== null) {
+  if (day.recovery_high !== null && day.recovery_high !== undefined) {
     lines.push(`- High Recovery: ${formatDuration(day.recovery_high)}`);
   } else {
     lines.push("- High Recovery: N/A");
@@ -106,7 +106,7 @@ function formatSpo2(day: DailySpo2): string {
     lines.push("**Average SpO2:** N/A");
   }
 
-  if (day.breathing_disturbance_index !== null) {
+  if (day.breathing_disturbance_index !== null && day.breathing_disturbance_index !== undefined) {
     lines.push(`**Breathing Disturbance Index:** ${day.breathing_disturbance_index.toFixed(1)}`);
 
     // Add context for BDI

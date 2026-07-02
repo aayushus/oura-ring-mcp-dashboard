@@ -18,24 +18,24 @@ function addDays(dateStr: string, days: number): string {
 }
 
 // Re-export commonly used types for convenience
-export type SleepSession = components["schemas"]["SleepModel"];
-export type DailySleep = components["schemas"]["DailySleepModel"];
-export type DailyReadiness = components["schemas"]["DailyReadinessModel"];
-export type DailyActivity = components["schemas"]["DailyActivityModel"];
-export type DailyStress = components["schemas"]["DailyStressModel"];
-export type HeartRate = components["schemas"]["HeartRateModel"];
+export type SleepSession = components["schemas"]["PublicModifiedSleepModel"];
+export type DailySleep = components["schemas"]["PublicDailySleep"];
+export type DailyReadiness = components["schemas"]["PublicDailyReadiness"];
+export type DailyActivity = components["schemas"]["PublicDailyActivity"];
+export type DailyStress = components["schemas"]["PublicDailyStress"];
+export type HeartRate = components["schemas"]["PublicHeartRateRow"];
 export type Workout = components["schemas"]["PublicWorkout"];
-export type DailySpo2 = components["schemas"]["DailySpO2Model"];
-export type VO2Max = components["schemas"]["VO2MaxModel"];
+export type DailySpo2 = components["schemas"]["PublicDailySpO2"];
+export type VO2Max = components["schemas"]["PublicVO2Max"];
 export type PersonalInfo = components["schemas"]["PersonalInfoResponse"];
 export type DailyResilience = components["schemas"]["DailyResilienceModel"];
-export type DailyCardiovascularAge = components["schemas"]["DailyCardiovascularAgeModel"];
+export type DailyCardiovascularAge = components["schemas"]["PublicDailyCardiovascularAge"];
 export type Tag = components["schemas"]["TagModel"];
 export type EnhancedTag = components["schemas"]["EnhancedTagModel"];
-export type Session = components["schemas"]["SessionModel"];
-export type RestModePeriod = components["schemas"]["RestModePeriodModel"];
-export type RingConfiguration = components["schemas"]["RingConfigurationModel"];
-export type SleepTime = components["schemas"]["SleepTimeModel"];
+export type Session = components["schemas"]["PublicSession"];
+export type RestModePeriod = components["schemas"]["PublicRestModePeriod"];
+export type RingConfiguration = components["schemas"]["PublicRingConfiguration"];
+export type SleepTime = components["schemas"]["PublicSleepTime"];
 
 export interface OuraClientConfig {
   accessToken: string;

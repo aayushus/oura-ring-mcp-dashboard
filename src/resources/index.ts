@@ -24,7 +24,7 @@ import {
   sleepRegularity,
   sleepStageRatios,
   hrvRecoveryPattern,
-} from "../utils/analysis.js";
+} from "../utils/analysis/index.js";
 
 /**
  * Register all MCP resources with the server
@@ -110,7 +110,7 @@ export function registerResources(server: McpServer, client: OuraClient): void {
             }
 
             // HRV Recovery Pattern (if we have HRV samples)
-            const hrvSamples = mainSession.hrv?.items?.filter((v): v is number => v !== null) ?? [];
+            const hrvSamples = mainSession.hrv?.items?.filter((v: number | null): v is number => v !== null) ?? [];
             if (hrvSamples.length >= 4) {
               const recovery = hrvRecoveryPattern(hrvSamples);
               if (recovery.pattern !== "insufficient_data") {
@@ -589,7 +589,7 @@ export function registerResources(server: McpServer, client: OuraClient): void {
         if (hrvValues.length >= 10) {
           const hrvOutliers = detectOutliers(hrvValues);
           if (hrvOutliers.outliers.length > 0) {
-            const lowOutliers = hrvOutliers.outliers.filter((o) => o.value < hrvOutliers.lowerBound);
+            const lowOutliers = hrvOutliers.outliers.filter((o: { index: number; value: number }) => o.value < hrvOutliers.lowerBound);
             if (lowOutliers.length > 0) {
               sections.push(`🔍 **${lowOutliers.length} night(s) with unusually low HRV** - may indicate stress, illness, or poor recovery.`);
             }

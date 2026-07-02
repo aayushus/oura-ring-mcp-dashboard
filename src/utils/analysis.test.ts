@@ -22,7 +22,7 @@ import {
   sleepStageRatios,
   computeSleepScore,
   hrvRecoveryPattern,
-} from "./analysis.js";
+} from "./analysis/index.js";
 
 describe("Basic Statistics", () => {
   describe("mean", () => {
