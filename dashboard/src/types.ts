@@ -64,4 +64,5 @@ export type TabKey =
   | "experiments"
   | "anomalies"
   | "insights"
+  | "daystrip"
   | "settings";

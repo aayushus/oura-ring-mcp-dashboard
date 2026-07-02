@@ -90,6 +90,16 @@ export function HomeView({
         />
       </section>
 
+      <div style={{ padding: "16px 24px", background: "var(--bg-card)", border: "1px solid var(--divider)", borderRadius: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", marginTop: "24px", marginBottom: "4px", transition: "all 150ms var(--ease)" }} onClick={() => setActiveTab("daystrip")} onMouseOver={(e) => e.currentTarget.style.borderColor = "var(--accent)"} onMouseOut={(e) => e.currentTarget.style.borderColor = "var(--divider)"}>
+        <div>
+          <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--accent)", fontWeight: 600 }}>Explore Aligned 24-Hour Timeline</h3>
+          <p style={{ margin: "4px 0 0 0", fontSize: "0.85rem", opacity: 0.7 }}>
+            Analyze Sleep stages, Heart Rate buckets, Movement intensity, and Workout events aligned chronologically.
+          </p>
+        </div>
+        <span style={{ fontSize: "1.4rem", color: "var(--accent)" }}>→</span>
+      </div>
+
       <section className="halo-vitals" aria-label="Vitals">
         <Kpi
           label="Resting HR"

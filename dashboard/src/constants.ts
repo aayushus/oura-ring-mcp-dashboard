@@ -44,5 +44,6 @@ export const TAB_TITLES: Record<TabKey, string> = {
   experiments: "Self-Experiments",
   anomalies: "Anomaly Feed",
   insights: "Insights",
+  daystrip: "24h Day-Strip",
   settings: "Settings",
 };

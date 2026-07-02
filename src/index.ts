@@ -157,7 +157,9 @@ async function main() {
   if (useHttpTransport) {
     // HTTP transport for remote deployment
     const { startHttpServer } = await import("./transports/http.js");
+    const { startDigestScheduler } = await import("./utils/digest.js");
     await startHttpServer(server, { ouraClient });
+    startDigestScheduler();
   } else {
     // Stdio transport for local use (Claude Desktop)
     const transport = new StdioServerTransport();

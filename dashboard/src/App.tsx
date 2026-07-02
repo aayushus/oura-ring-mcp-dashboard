@@ -51,6 +51,8 @@ import { WorkoutsView } from "./views/WorkoutsView";
 import { CorrelationView } from "./views/CorrelationView";
 import { ExperimentsView } from "./views/ExperimentsView";
 import { AnomaliesView } from "./views/AnomaliesView";
+import { DayStripView } from "./views/DayStripView";
+import { CrosshairProvider } from "./context/CrosshairContext";
 
 function ScoreCell({ score }: { score: number }) {
   const band = scoreBand(score);
@@ -550,12 +552,14 @@ function App() {
     { key: "experiments", label: "Experiments", hue: "var(--optimal)", icon: <InsightsIcon size={20} /> },
     { key: "anomalies", label: "Anomalies", hue: "var(--low)", icon: <SettingsIcon size={20} /> },
     { key: "insights", label: "Insights", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
+    { key: "daystrip", label: "24h Timeline", hue: "var(--accent)", icon: <ActivityIcon size={20} /> },
     { key: "settings", label: "Settings", hue: "var(--divider-strong)", icon: <SettingsIcon size={20} /> },
   ];
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <AppShell>
+      <CrosshairProvider>
+        <AppShell>
         <nav className="halo-rail" aria-label="Modules">
           <div className="halo-rail-mark">
             <HaloMark size={34} />
@@ -740,6 +744,10 @@ function App() {
                   />
                 )}
 
+                {activeTab === "daystrip" && (
+                  <DayStripView />
+                )}
+
                 {activeTab === "settings" && (
                   <SettingsView />
                 )}
@@ -748,6 +756,7 @@ function App() {
           </div>
         </Main>
       </AppShell>
+      </CrosshairProvider>
     </ThemeProvider>
   );
 }

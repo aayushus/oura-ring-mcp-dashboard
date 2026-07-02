@@ -134,6 +134,13 @@ export async function getDb(): Promise<Database> {
       z_score REAL,
       PRIMARY KEY (day, metric_id)
     );
+
+    CREATE TABLE IF NOT EXISTS digest_log (
+      date TEXT PRIMARY KEY,
+      channel TEXT,
+      sent_at TEXT,
+      had_data INTEGER
+    );
   `);
 
   return dbInstance;
@@ -594,4 +601,37 @@ export async function getAnomalies(limit = 100): Promise<AnomalyRecord[]> {
     `SELECT * FROM anomalies ORDER BY day DESC LIMIT ?`,
     [limit]
   );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Digest Logs Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface DigestLogRecord {
+  date: string;
+  channel: string;
+  sent_at: string;
+  had_data: number;
+}
+
+export async function upsertDigestLog(log: DigestLogRecord): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO digest_log (date, channel, sent_at, had_data)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(date) DO UPDATE SET
+       channel = excluded.channel,
+       sent_at = excluded.sent_at,
+       had_data = excluded.had_data`,
+    [log.date, log.channel, log.sent_at, log.had_data]
+  );
+}
+
+export async function getDigestLog(date: string): Promise<DigestLogRecord | null> {
+  const db = await getDb();
+  const row = await db.get<DigestLogRecord>(
+    `SELECT * FROM digest_log WHERE date = ?`,
+    [date]
+  );
+  return row || null;
 }

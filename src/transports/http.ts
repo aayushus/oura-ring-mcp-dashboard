@@ -410,6 +410,38 @@ export async function startHttpServer(
     }
   });
 
+  // Get raw details for unified day-strip stacked timeline
+  app.get("/api/dashboard/daystrip", async (req: Request, res: Response) => {
+    try {
+      const day = (req.query.day as string) || getToday();
+      
+      // Calculate D-1
+      const date = new Date(day + "T00:00:00Z");
+      date.setUTCDate(date.getUTCDate() - 1);
+      const prevDay = date.toISOString().slice(0, 10);
+
+      // Fetch raw datasets
+      const sleepDocs = await getRawDocuments("sleep", prevDay, day);
+      const activityDocs = await getRawDocuments("daily_activity", prevDay, day);
+      const heartrateDocs = await getRawDocuments("heartrate", prevDay, day);
+      const workoutDocs = await getRawDocuments("workout", prevDay, day);
+      const sessionDocs = await getRawDocuments("session", prevDay, day);
+      
+      res.json({
+        day,
+        prevDay,
+        sleep: sleepDocs,
+        activity: activityDocs,
+        heartrate: heartrateDocs,
+        workouts: workoutDocs,
+        sessions: sessionDocs,
+      });
+    } catch (err) {
+      console.error("Daystrip API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
   // Get user profile, targets, and targets changelog history
   app.get("/api/dashboard/targets", async (_req: Request, res: Response) => {
     try {
