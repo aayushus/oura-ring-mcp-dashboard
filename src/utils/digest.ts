@@ -56,7 +56,7 @@ export async function checkAndSendDigest(): Promise<void> {
 
     // 3. Check for last night's data (Wait-for-data loop)
     const db = await getDb();
-    const sleepRecord = await db.get("SELECT * FROM daily_sleep WHERE day = ?", [today]);
+    const sleepRecord = await db.get("SELECT * FROM sleep_history WHERE day = ?", [today]);
     const isPastThreeHours = currentTimeMinutes >= wakeTimeMinutes + 180;
 
     if (!sleepRecord) {

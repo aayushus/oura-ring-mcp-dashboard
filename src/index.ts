@@ -159,7 +159,8 @@ async function main() {
     if (process.env.DATABASE_URL) {
       console.log("[DB] PostgreSQL configuration active. Running migration check...");
       try {
-        await import("./scripts/migrate-db.js");
+        const { runMigration } = await import("./scripts/migrate-db.js");
+        await runMigration();
       } catch (err) {
         console.error("[DB] Migration check failed or skipped:", err);
       }

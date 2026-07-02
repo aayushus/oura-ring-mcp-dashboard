@@ -833,8 +833,8 @@ function App() {
 
                 {activeTab === "sleep" && (
                   <SleepView
-                    sleepChartData={sleepChartData}
-                    compareSleepData={compareSleepChartData}
+                    sleepChartData={sleepChartData.slice(-30)}
+                    compareSleepData={compareSleepChartData?.slice(-30)}
                     sleepRows={sleepRows}
                     sleepColumns={sleepColumns}
                     hues={hues}
@@ -845,8 +845,8 @@ function App() {
 
                 {activeTab === "readiness" && (
                   <ReadinessView
-                    readinessChartData={readinessChartData}
-                    compareReadinessData={compareReadinessChartData}
+                    readinessChartData={readinessChartData.slice(-30)}
+                    compareReadinessData={compareReadinessChartData?.slice(-30)}
                     readinessRows={readinessRows}
                     readinessColumns={readinessColumns}
                     hues={hues}
@@ -856,8 +856,8 @@ function App() {
 
                 {activeTab === "activity" && (
                   <ActivityView
-                    activityChartData={activityChartData}
-                    compareActivityData={compareActivityChartData}
+                    activityChartData={activityChartData.slice(-30)}
+                    compareActivityData={compareActivityChartData?.slice(-30)}
                     stressChartData={stressChartData}
                     activityRows={activityRows}
                     activityColumns={activityColumns}

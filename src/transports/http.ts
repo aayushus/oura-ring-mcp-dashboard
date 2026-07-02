@@ -153,7 +153,7 @@ export async function startHttpServer(
   app.get("/api/dashboard/summary", async (req: Request, res: Response) => {
     try {
       const endDay = (req.query.day as string) || undefined;
-      let history = await getHistory(60, endDay); // fetch 60 days to compute ACWR and sleep debt properly
+      let history = await getHistory(365, endDay); // fetch 365 days to support year-view heatmaps, ACWR, and sleep debt properly
 
       // Auto-sync if DB is empty and client is available
       const isEmpty = history.sleep.length === 0 && history.readiness.length === 0;
@@ -161,7 +161,7 @@ export async function startHttpServer(
         console.error("[HTTP] Database empty, triggering auto-sync...");
         const syncResult = await syncData(ouraClient, getDaysAgo(30), getToday());
         if (syncResult.success) {
-          history = await getHistory(60);
+          history = await getHistory(365);
         }
       }
 

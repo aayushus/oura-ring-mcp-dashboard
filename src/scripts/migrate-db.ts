@@ -8,13 +8,14 @@ import pg from "pg";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { existsSync } from "node:fs";
+import { getDb } from "../db.js";
 
 // Find database file
 const localHostPath = join(process.cwd(), "oura_credentials", "oura-health.db");
 const containerPath = join(homedir(), ".oura-mcp", "oura-health.db");
 let sqliteFile = existsSync(containerPath) ? containerPath : (existsSync(localHostPath) ? localHostPath : null);
 
-async function migrate() {
+export async function runMigration() {
   const dbUrl = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/oura_health";
   
   console.log(`[Migration] Target PostgreSQL URL: ${dbUrl}`);
@@ -22,8 +23,12 @@ async function migrate() {
 
   if (!sqliteFile) {
     console.log("[Migration] No local SQLite database file found to migrate. Skipping.");
-    process.exit(0);
+    return;
   }
+
+  // Initialize target database schemas first
+  console.log("[Migration] Initializing target database tables...");
+  await getDb();
 
   // Open SQLite source
   const sqliteDb = await open({
@@ -122,7 +127,10 @@ async function migrate() {
   console.log("[Migration] SQLite to PostgreSQL database migration completed successfully!");
 }
 
-migrate().catch((err) => {
-  console.error("[Migration] Fatal migration error:", err);
-  process.exit(1);
-});
+// Run immediately if called directly
+if (process.argv[1] && process.argv[1].includes("migrate-db")) {
+  runMigration().catch((err) => {
+    console.error("[Migration] Fatal migration error:", err);
+    process.exit(1);
+  });
+}
