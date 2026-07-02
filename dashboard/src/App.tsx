@@ -760,7 +760,7 @@ function App() {
               <span className={`halo-fresh ${isFresh ? "" : "stale"}`}>
                 <span className="dot" />
                 {syncing
-                  ? "Syncing…"
+                  ? "Syncing past year (365 days)..."
                   : isFresh
                     ? `Up to date${lastSyncedTime ? ` (${lastSyncedTime})` : ""}`
                     : heroDate
@@ -776,7 +776,7 @@ function App() {
               </Button>
               <ThemeToggle />
               <Button variant="primary" onClick={handleSync} disabled={syncing}>
-                {syncing ? "Syncing…" : "Sync now"}
+                {syncing ? "Syncing (365d)..." : "Sync now"}
               </Button>
             </div>
           </header>
