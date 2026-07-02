@@ -807,7 +807,7 @@ function App() {
                   <CardioView
                     cardioAge={data?.cardioAge || []}
                     vo2Max={data?.vo2Max || []}
-                    profile={data?.targets}
+                    profile={data?.profile}
                     hues={hues}
                   />
                 )}

@@ -253,6 +253,7 @@ export async function startHttpServer(
         worstContributor,
         rawActivity: (await getRawDocuments("daily_activity")).slice(-10),
         targets,
+        profile: await getUserProfile(),
         alertPreferences: await getAlertPreferences(),
       });
     } catch (err) {

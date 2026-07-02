@@ -52,6 +52,7 @@ export interface HistorySummary {
   correlations?: Record<string, Record<string, number>>;
   tagEffects?: any[];
   targets?: any;
+  profile?: any;
 }
 
 export type TabKey =
