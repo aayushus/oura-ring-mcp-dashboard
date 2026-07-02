@@ -93,7 +93,7 @@ export function SleepView({
           <CardContent>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "8px 0" }}>
               {contributorsList.length === 0 ? (
-                <p style={{ opacity: 0.6, fontSize: "0.9rem" }}>Sync details pending to load contributors.</p>
+                <p style={{ opacity: 0.6, fontSize: "0.9rem" }}>No sleep stage contributor metrics available. Verify ring sync or wearable data for this date.</p>
               ) : (
                 contributorsList.map((contrib) => {
                   const val = contrib.value;

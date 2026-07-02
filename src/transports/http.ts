@@ -180,7 +180,7 @@ export async function startHttpServer(
 
       // Fetch raw endpoints from database
       const rawTags = await getRawDocuments("enhanced_tag");
-      const rawSleep = await getRawDocuments("sleep");
+      const rawSleep = await getRawDocuments("daily_sleep");
       const rawWorkouts = await getRawDocuments("workout");
       const rawCardioAge = await getRawDocuments("daily_cardiovascular_age");
       const rawVo2Max = await getRawDocuments("vO2_max");
@@ -247,6 +247,7 @@ export async function startHttpServer(
         tagEffects,
         correlations,
         rawSleep: rawSleep.slice(-10),
+        rawReadiness: (await getRawDocuments("daily_readiness")).slice(-10),
         workouts: rawWorkouts.slice(-20),
         cardioAge: rawCardioAge.slice(-30),
         vo2Max: rawVo2Max.slice(-30),

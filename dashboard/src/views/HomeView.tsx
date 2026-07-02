@@ -323,15 +323,30 @@ export function HomeView({
             </div>
           )}
           <div className="insights-list">
-            {insights.map((insight) => (
-              <AIFinding
-                key={insight.title}
-                variant={insight.variant}
-                title={insight.title}
-                body={insight.body}
-                cta={{ label: insight.cta }}
-              />
-            ))}
+            {insights.map((insight) => {
+              const text = (insight.cta || "").toLowerCase();
+              const target = text.includes("sleep")
+                ? "sleep"
+                : text.includes("readiness")
+                ? "readiness"
+                : text.includes("activity")
+                ? "activity"
+                : text.includes("stress")
+                ? "stress"
+                : null;
+              return (
+                <AIFinding
+                  key={insight.title}
+                  variant={insight.variant}
+                  title={insight.title}
+                  body={insight.body}
+                  cta={{
+                    label: insight.cta,
+                    onClick: target ? () => setActiveTab(target) : undefined,
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

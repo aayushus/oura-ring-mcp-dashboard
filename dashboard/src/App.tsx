@@ -304,6 +304,7 @@ function App() {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setSyncing(false);
+      fetchData();
     }
   }
 
