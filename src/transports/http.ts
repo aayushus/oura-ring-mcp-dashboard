@@ -371,7 +371,7 @@ export async function startHttpServer(
         return;
       }
 
-      const syncResult = await syncData(ouraClient, getDaysAgo(7), getToday());
+      const syncResult = await syncData(ouraClient, getDaysAgo(365), getToday());
       if (!syncResult.success) {
         res.status(500).json({ error: syncResult.error || "Sync failed" });
         return;

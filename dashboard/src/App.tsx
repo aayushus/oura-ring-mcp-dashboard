@@ -86,6 +86,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(() => localStorage.getItem("last_synced_time"));
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
@@ -270,6 +271,9 @@ function App() {
 
       const json = (await response.json()) as HistorySummary;
       setData(json);
+      const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      localStorage.setItem("last_synced_time", timeStr);
+      setLastSyncedTime(timeStr);
 
       // Async fetch supplementary recaps and mute configs
       loadWeeklyData();
@@ -758,7 +762,7 @@ function App() {
                 {syncing
                   ? "Syncing…"
                   : isFresh
-                    ? "Up to date"
+                    ? `Up to date${lastSyncedTime ? ` (${lastSyncedTime})` : ""}`
                     : heroDate
                       ? `Data through ${formatDayLabel(heroDate)}`
                       : "No data yet"}

@@ -12,6 +12,7 @@ import {
   upsertRawDocument,
   getHistory,
   upsertUserProfile,
+  getUserProfile,
 } from "./db.js";
 import { getToday, getDaysAgo } from "./utils/index.js";
 
@@ -99,14 +100,15 @@ export async function syncData(
     ]);
 
     if (personalInfo) {
+      const existing = await getUserProfile();
       await upsertUserProfile({
-        age: personalInfo.age ?? 30,
-        weight_kg: personalInfo.weight ?? 70,
-        height_cm: personalInfo.height ?? 175,
-        biological_sex: personalInfo.biological_sex ?? "unknown",
-        target_wake_time: "07:00:00",
-        goal: "general_health",
-        training_days: 3,
+        age: personalInfo.age ?? existing?.age ?? 30,
+        weight_kg: personalInfo.weight ?? existing?.weight_kg ?? 70,
+        height_cm: personalInfo.height ?? existing?.height_cm ?? 175,
+        biological_sex: personalInfo.biological_sex ?? existing?.biological_sex ?? "unknown",
+        target_wake_time: existing?.target_wake_time ?? "07:00:00",
+        goal: existing?.goal ?? "general_health",
+        training_days: existing?.training_days ?? 3,
       });
     }
 
@@ -178,8 +180,8 @@ export async function syncData(
 export function startSyncScheduler(client: OuraClient): cron.ScheduledTask {
   console.log("[Sync] Initializing background sync scheduler (4-hour intervals)...");
 
-  // Perform initial backfill of past 30 days
-  const backfillStart = getDaysAgo(30);
+  // Perform initial backfill of past 365 days
+  const backfillStart = getDaysAgo(365);
   const today = getToday();
   
   if (process.env.NODE_ENV !== "test") {
