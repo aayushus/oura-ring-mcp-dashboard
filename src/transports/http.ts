@@ -233,13 +233,13 @@ export async function startHttpServer(
       }
 
       res.json({
-        sleep: history.sleep.slice(-30),
+        sleep: history.sleep,
         sleepCompare: history.sleep.slice(-60, -30),
-        readiness: history.readiness.slice(-30),
+        readiness: history.readiness,
         readinessCompare: history.readiness.slice(-60, -30),
-        activity: history.activity.slice(-30),
+        activity: history.activity,
         activityCompare: history.activity.slice(-60, -30),
-        stress: history.stress.slice(-30),
+        stress: history.stress,
         sleepDebt: sleepDebt.slice(-30),
         acwr: acwr.slice(-30),
         anomalies: computedAnomalies.slice(0, 30),
