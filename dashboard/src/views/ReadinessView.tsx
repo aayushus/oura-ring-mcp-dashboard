@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, Alert } from "../components/components";
 import { MetricTable, type MetricColumn } from "../components/halo";
 import type { ReadinessRecord } from "../types";
 import { DashboardLineChart } from "./charts";
+import { YearHeatmap } from "../components/YearHeatmap";
 
 interface ReadinessViewProps {
   readinessChartData: any[];
@@ -10,6 +11,7 @@ interface ReadinessViewProps {
   readinessColumns: MetricColumn<ReadinessRecord>[];
   hues: any;
   illnessWarning?: boolean;
+  compareReadinessData?: any[];
 }
 
 export function ReadinessView({
@@ -18,6 +20,7 @@ export function ReadinessView({
   readinessColumns,
   hues,
   illnessWarning,
+  compareReadinessData,
 }: ReadinessViewProps) {
   // Get last 14 days of readiness scores for the heatmap grid
   const trailing14Days = readinessRows.slice(0, 14).reverse();
@@ -105,6 +108,11 @@ export function ReadinessView({
         </CardContent>
       </Card>
 
+      <YearHeatmap 
+        data={readinessRows.map(r => ({ day: r.day, score: r.score }))} 
+        metricLabel="Readiness" 
+      />
+
       <div className="dashboard-pane-grid">
         
         {/* Heart Rate Variability */}
@@ -118,6 +126,7 @@ export function ReadinessView({
               <DashboardLineChart
                 className="dashboard-chart"
                 dataset={readinessChartData}
+                compareDataset={compareReadinessData}
                 xAxis={[{ scaleType: "point", dataKey: "day" }]}
                 grid={{ horizontal: true }}
                 hideLegend
@@ -147,6 +156,7 @@ export function ReadinessView({
               <DashboardLineChart
                 className="dashboard-chart"
                 dataset={readinessChartData}
+                compareDataset={compareReadinessData}
                 xAxis={[{ scaleType: "point", dataKey: "day" }]}
                 grid={{ horizontal: true }}
                 hideLegend

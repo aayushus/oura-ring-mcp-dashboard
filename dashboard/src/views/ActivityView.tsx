@@ -13,6 +13,7 @@ interface ActivityViewProps {
   acwr: any[];
   targets: any;
   rawActivity?: any[];
+  compareActivityData?: any[];
 }
 
 export function ActivityView({
@@ -24,6 +25,7 @@ export function ActivityView({
   acwr,
   targets,
   rawActivity,
+  compareActivityData,
 }: ActivityViewProps) {
   // 1. Calculate MET-Minutes over last 7 days (C4.3)
   // MET-minutes = active_calories * 1.25 (approximation)
@@ -200,6 +202,7 @@ export function ActivityView({
               <DashboardBarChart
                 className="dashboard-chart"
                 dataset={activityChartData}
+                compareDataset={compareActivityData}
                 xAxis={[{ scaleType: "band", dataKey: "day" }]}
                 grid={{ horizontal: true }}
                 hideLegend

@@ -25,6 +25,7 @@ interface HomeViewProps {
   AIFinding: any;
   illnessWarning?: boolean;
   worstContributor?: { source: string; name: string; score: number } | null;
+  onMuteAlert?: (alertType: string) => void;
 }
 
 export function HomeView({
@@ -49,12 +50,23 @@ export function HomeView({
   AIFinding,
   illnessWarning,
   worstContributor,
+  onMuteAlert,
 }: HomeViewProps) {
   return (
     <div className="dashboard-stack">
       {illnessWarning && (
         <Alert variant="warn" title="Early Illness Warning Alert">
-          Your biometric markers (RHR, HRV, or body temperature deviation) indicate significant strain. Consider prioritizing recovery and reducing training intensity.
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+            <span>Your biometric markers (RHR, HRV, or body temperature deviation) indicate significant strain. Consider prioritizing recovery and reducing training intensity.</span>
+            {onMuteAlert && (
+              <button 
+                onClick={() => onMuteAlert("illness_warning")}
+                style={{ marginLeft: "16px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "6px", color: "inherit", padding: "4px 8px", fontSize: "0.75rem", cursor: "pointer" }}
+              >
+                Mute
+              </button>
+            )}
+          </div>
         </Alert>
       )}
       <section className="halo-rings" aria-label="Today's scores">

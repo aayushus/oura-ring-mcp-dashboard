@@ -43,6 +43,8 @@ import {
   upsertExperimentDay,
   getAnomalies,
   upsertAnomaly,
+  getAlertPreferences,
+  setAlertMute,
 } from "../db.js";
 import { syncData, startSyncScheduler } from "../sync.js";
 import { getToday, getDaysAgo } from "../utils/index.js";
@@ -231,8 +233,11 @@ export async function startHttpServer(
 
       res.json({
         sleep: history.sleep.slice(-30),
+        sleepCompare: history.sleep.slice(-60, -30),
         readiness: history.readiness.slice(-30),
+        readinessCompare: history.readiness.slice(-60, -30),
         activity: history.activity.slice(-30),
+        activityCompare: history.activity.slice(-60, -30),
         stress: history.stress.slice(-30),
         sleepDebt: sleepDebt.slice(-30),
         acwr: acwr.slice(-30),
@@ -248,6 +253,7 @@ export async function startHttpServer(
         worstContributor,
         rawActivity: (await getRawDocuments("daily_activity")).slice(-10),
         targets,
+        alertPreferences: await getAlertPreferences(),
       });
     } catch (err) {
       console.error("Dashboard summary API error:", err);
@@ -438,6 +444,114 @@ export async function startHttpServer(
       });
     } catch (err) {
       console.error("Daystrip API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get weekly narrative summary
+  app.get("/api/dashboard/weekly", async (_req: Request, res: Response) => {
+    try {
+      const history = await getHistory(14); // Fetch 14 days
+      const sleep = history.sleep;
+      const readiness = history.readiness;
+      const activity = history.activity;
+
+      // Split into last 7 days and prior 7 days
+      const currentSleep = sleep.slice(-7);
+      const priorSleep = sleep.slice(-14, -7);
+
+      const currentReadiness = readiness.slice(-7);
+      const priorReadiness = readiness.slice(-14, -7);
+
+      const currentActivity = activity.slice(-7);
+      const priorActivity = activity.slice(-14, -7);
+
+      const avg = (arr: any[]) => arr.length > 0 ? arr.reduce((sum, r) => sum + r.score, 0) / arr.length : null;
+
+      const avgSleepCurr = avg(currentSleep);
+      const avgSleepPrior = avg(priorSleep);
+
+      const avgReadinessCurr = avg(currentReadiness);
+      const avgReadinessPrior = avg(priorReadiness);
+
+      const avgActivityCurr = avg(currentActivity);
+      const avgActivityPrior = avg(priorActivity);
+
+      const deltas = {
+        sleep: avgSleepCurr !== null && avgSleepPrior !== null ? avgSleepCurr - avgSleepPrior : 0,
+        readiness: avgReadinessCurr !== null && avgReadinessPrior !== null ? avgReadinessCurr - avgReadinessPrior : 0,
+        activity: avgActivityCurr !== null && avgActivityPrior !== null ? avgActivityCurr - avgActivityPrior : 0,
+      };
+
+      // Biggest win & watch out
+      let biggestWin = "Recovery consistency";
+      let winDelta = 0;
+      let watchOut = "Activity patterns";
+      let watchOutDelta = 100;
+
+      const candidates = [
+        { name: "Sleep Quality", delta: deltas.sleep },
+        { name: "Readiness Recovery", delta: deltas.readiness },
+        { name: "Activity Consistency", delta: deltas.activity }
+      ];
+
+      candidates.forEach(c => {
+        if (c.delta > winDelta) {
+          winDelta = c.delta;
+          biggestWin = c.name;
+        }
+        if (c.delta < watchOutDelta) {
+          watchOutDelta = c.delta;
+          watchOut = c.name;
+        }
+      });
+
+      // Calculate Sleep Streak (consecutive days >= 75)
+      let streak = 0;
+      let maxStreak = 0;
+      sleep.forEach(r => {
+        if (r.score >= 75) {
+          streak++;
+          if (streak > maxStreak) maxStreak = streak;
+        } else {
+          streak = 0;
+        }
+      });
+
+      res.json({
+        sleepAvg: avgSleepCurr !== null ? Math.round(avgSleepCurr) : null,
+        sleepDelta: deltas.sleep.toFixed(1),
+        readinessAvg: avgReadinessCurr !== null ? Math.round(avgReadinessCurr) : null,
+        readinessDelta: deltas.readiness.toFixed(1),
+        activityAvg: avgActivityCurr !== null ? Math.round(avgActivityCurr) : null,
+        activityDelta: deltas.activity.toFixed(1),
+        biggestWin,
+        watchOut,
+        sleepStreak: maxStreak,
+      });
+    } catch (err) {
+      console.error("Weekly narrative API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get alert preferences
+  app.get("/api/dashboard/alerts/prefs", async (_req: Request, res: Response) => {
+    try {
+      const prefs = await getAlertPreferences();
+      res.json(prefs);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Mute an alert
+  app.post("/api/dashboard/alerts/mute", async (req: Request, res: Response) => {
+    try {
+      const { alert_type, muted } = req.body;
+      await setAlertMute(alert_type, muted ? 1 : 0);
+      res.json({ success: true, alert_type, muted });
+    } catch (err) {
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
   });

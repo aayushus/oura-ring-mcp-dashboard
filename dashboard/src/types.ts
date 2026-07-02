@@ -32,8 +32,11 @@ export interface StressRecord {
 
 export interface HistorySummary {
   sleep: SleepRecord[];
+  sleepCompare?: SleepRecord[];
   readiness: ReadinessRecord[];
+  readinessCompare?: ReadinessRecord[];
   activity: ActivityRecord[];
+  activityCompare?: ActivityRecord[];
   stress: StressRecord[];
   sleepDebt?: Array<{ day: string; debt: number }>;
   acwr?: Array<{ day: string; acute: number; chronic: number; ratio: number }>;

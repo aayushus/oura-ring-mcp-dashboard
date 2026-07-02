@@ -14,7 +14,6 @@ function DashboardLazyFallback() {
   return <div className="dashboard-lazy-fallback chart" />;
 }
 
-// Default margins for MUI charts (in pixels)
 const DEFAULT_MARGIN = { left: 50, right: 20, top: 20, bottom: 30 };
 
 function parseMargin(raw: any) {
@@ -29,8 +28,12 @@ function parseMargin(raw: any) {
   };
 }
 
-export function DashboardLineChart(props: LineChartProps) {
-  const { dataset, xAxis } = props;
+export interface EnrichedLineChartProps extends LineChartProps {
+  compareDataset?: any[];
+}
+
+export function DashboardLineChart(props: EnrichedLineChartProps) {
+  const { dataset, xAxis, series, compareDataset, ...rest } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const { hover, setHoverState } = useCrosshair();
   const [containerWidth, setContainerWidth] = useState(0);
@@ -72,6 +75,42 @@ export function DashboardLineChart(props: LineChartProps) {
     setHoverState(null, null);
   };
 
+  // Merge datasets for comparison if active
+  let finalDataset = dataset;
+  let finalSeries = series;
+
+  if (compareDataset && compareDataset.length > 0 && dataset) {
+    finalDataset = dataset.map((d, i) => {
+      const matched = compareDataset[i];
+      const merged: any = { ...d };
+      if (series) {
+        series.forEach((s: any) => {
+          if (s.dataKey) {
+            merged[`${String(s.dataKey)}_compare`] = matched ? matched[s.dataKey] : null;
+          }
+        });
+      }
+      return merged;
+    });
+
+    if (series) {
+      const extra: any[] = [];
+      series.forEach((s: any) => {
+        if (s.dataKey) {
+          extra.push({
+            ...s,
+            dataKey: `${String(s.dataKey)}_compare`,
+            label: `${s.label || "Metric"} (Previous)`,
+            color: "var(--text-4)",
+            area: false,
+            showMark: false,
+          });
+        }
+      });
+      finalSeries = [...series, ...extra];
+    }
+  }
+
   // Calculate synchronized line position
   const hoverIndex =
     dataset && hover.value
@@ -96,7 +135,13 @@ export function DashboardLineChart(props: LineChartProps) {
       onPointerLeave={handlePointerLeave}
     >
       <Suspense fallback={<DashboardLazyFallback />}>
-        <LineChart {...props} />
+        <LineChart
+          {...rest}
+          xAxis={xAxis}
+          margin={margin}
+          series={finalSeries}
+          dataset={finalDataset}
+        />
       </Suspense>
 
       {/* Synchronized Vertical Hairline indicator */}
@@ -118,8 +163,12 @@ export function DashboardLineChart(props: LineChartProps) {
   );
 }
 
-export function DashboardBarChart(props: BarChartProps) {
-  const { dataset, xAxis } = props;
+export interface EnrichedBarChartProps extends BarChartProps {
+  compareDataset?: any[];
+}
+
+export function DashboardBarChart(props: EnrichedBarChartProps) {
+  const { dataset, xAxis, series, compareDataset, ...rest } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const { hover, setHoverState } = useCrosshair();
   const [containerWidth, setContainerWidth] = useState(0);
@@ -161,6 +210,40 @@ export function DashboardBarChart(props: BarChartProps) {
     setHoverState(null, null);
   };
 
+  // Merge datasets for comparison if active
+  let finalDataset = dataset;
+  let finalSeries = series;
+
+  if (compareDataset && compareDataset.length > 0 && dataset) {
+    finalDataset = dataset.map((d, i) => {
+      const matched = compareDataset[i];
+      const merged: any = { ...d };
+      if (series) {
+        series.forEach((s: any) => {
+          if (s.dataKey) {
+            merged[`${String(s.dataKey)}_compare`] = matched ? matched[s.dataKey] : null;
+          }
+        });
+      }
+      return merged;
+    });
+
+    if (series) {
+      const extra: any[] = [];
+      series.forEach((s: any) => {
+        if (s.dataKey) {
+          extra.push({
+            ...s,
+            dataKey: `${String(s.dataKey)}_compare`,
+            label: `${s.label || "Metric"} (Previous)`,
+            color: "var(--text-4)",
+          });
+        }
+      });
+      finalSeries = [...series, ...extra];
+    }
+  }
+
   // Calculate synchronized line position (centered on active bar band)
   const hoverIndex =
     dataset && hover.value
@@ -185,7 +268,13 @@ export function DashboardBarChart(props: BarChartProps) {
       onPointerLeave={handlePointerLeave}
     >
       <Suspense fallback={<DashboardLazyFallback />}>
-        <BarChart {...props} />
+        <BarChart
+          {...rest}
+          xAxis={xAxis}
+          margin={margin}
+          series={finalSeries}
+          dataset={finalDataset}
+        />
       </Suspense>
 
       {/* Synchronized Vertical Hairline indicator */}

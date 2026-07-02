@@ -14,6 +14,7 @@ interface InsightsViewProps {
   insights: any[];
   anomalies: any[];
   setActiveTab: (tab: any) => void;
+  weeklyData?: any;
 }
 
 export function InsightsView({
@@ -26,6 +27,7 @@ export function InsightsView({
   insights,
   anomalies,
   setActiveTab,
+  weeklyData,
 }: InsightsViewProps) {
   return (
     <div className="dashboard-stack">
@@ -60,6 +62,63 @@ export function InsightsView({
           </span>
         </div>
       </section>
+
+      {weeklyData && (
+        <div style={{ margin: "20px 0" }}>
+          <Card>
+          <CardHeader
+            title="Weekly Narrative Recap"
+            description="Comparing trailing 7 days vs previous 7 days."
+          />
+          <CardContent>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginBottom: "20px" }}>
+              <div style={{ padding: "12px", background: "var(--bg-card)", borderRadius: "10px", border: "1px solid var(--divider)" }}>
+                <span style={{ fontSize: "0.75rem", opacity: 0.6, display: "block" }}>Avg Sleep Score</span>
+                <span style={{ fontSize: "1.5rem", fontWeight: 600, display: "block", margin: "4px 0" }}>{weeklyData.sleepAvg || "—"}</span>
+                <span style={{ fontSize: "0.8rem", color: Number(weeklyData.sleepDelta) >= 0 ? "var(--score-optimal)" : "var(--score-low)" }}>
+                  {Number(weeklyData.sleepDelta) >= 0 ? `▲ +${weeklyData.sleepDelta}` : `▼ ${weeklyData.sleepDelta}`}
+                </span>
+              </div>
+              <div style={{ padding: "12px", background: "var(--bg-card)", borderRadius: "10px", border: "1px solid var(--divider)" }}>
+                <span style={{ fontSize: "0.75rem", opacity: 0.6, display: "block" }}>Avg Readiness Score</span>
+                <span style={{ fontSize: "1.5rem", fontWeight: 600, display: "block", margin: "4px 0" }}>{weeklyData.readinessAvg || "—"}</span>
+                <span style={{ fontSize: "0.8rem", color: Number(weeklyData.readinessDelta) >= 0 ? "var(--score-optimal)" : "var(--score-low)" }}>
+                  {Number(weeklyData.readinessDelta) >= 0 ? `▲ +${weeklyData.readinessDelta}` : `▼ ${weeklyData.readinessDelta}`}
+                </span>
+              </div>
+              <div style={{ padding: "12px", background: "var(--bg-card)", borderRadius: "10px", border: "1px solid var(--divider)" }}>
+                <span style={{ fontSize: "0.75rem", opacity: 0.6, display: "block" }}>Avg Activity Score</span>
+                <span style={{ fontSize: "1.5rem", fontWeight: 600, display: "block", margin: "4px 0" }}>{weeklyData.activityAvg || "—"}</span>
+                <span style={{ fontSize: "0.8rem", color: Number(weeklyData.activityDelta) >= 0 ? "var(--score-optimal)" : "var(--score-low)" }}>
+                  {Number(weeklyData.activityDelta) >= 0 ? `▲ +${weeklyData.activityDelta}` : `▼ ${weeklyData.activityDelta}`}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", fontSize: "0.9rem" }}>
+                <span style={{ fontSize: "1.2rem" }}>🏆</span>
+                <div>
+                  <strong>Win of the Week:</strong> Improved {weeklyData.biggestWin.toLowerCase()}. Nice effort maintaining consistency!
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", fontSize: "0.9rem" }}>
+                <span style={{ fontSize: "1.2rem" }}>⚠️</span>
+                <div>
+                  <strong>Watch Out:</strong> Pay attention to your {weeklyData.watchOut.toLowerCase()}. Focus on recovery overlays here.
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", fontSize: "0.9rem" }}>
+                <span style={{ fontSize: "1.2rem" }}>🔥</span>
+                <div>
+                  <strong>Sleep Streak:</strong> You maintained a sleep score of &ge; 75 for <strong>{weeklyData.sleepStreak} consecutive days</strong> this period. Keep up the clean sleep hygiene!
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        </div>
+      )}
 
       {weekCompare && (
         <>

@@ -141,6 +141,12 @@ export async function getDb(): Promise<Database> {
       sent_at TEXT,
       had_data INTEGER
     );
+
+    CREATE TABLE IF NOT EXISTS alert_prefs (
+      alert_type TEXT PRIMARY KEY,
+      muted INTEGER DEFAULT 0,
+      muted_at TEXT
+    );
   `);
 
   return dbInstance;
@@ -634,4 +640,31 @@ export async function getDigestLog(date: string): Promise<DigestLogRecord | null
     [date]
   );
   return row || null;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Alert Preferences Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface AlertPreference {
+  alert_type: string;
+  muted: number;
+  muted_at?: string;
+}
+
+export async function setAlertMute(alertType: string, muted: number): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO alert_prefs (alert_type, muted, muted_at)
+     VALUES (?, ?, ?)
+     ON CONFLICT(alert_type) DO UPDATE SET
+       muted = excluded.muted,
+       muted_at = excluded.muted_at`,
+    [alertType, muted, muted ? new Date().toISOString() : null]
+  );
+}
+
+export async function getAlertPreferences(): Promise<AlertPreference[]> {
+  const db = await getDb();
+  return db.all<AlertPreference[]>(`SELECT * FROM alert_prefs`);
 }

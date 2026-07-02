@@ -11,6 +11,7 @@ interface SleepViewProps {
   hues: any;
   sleepDebt: any[];
   rawSleep: any[];
+  compareSleepData?: any[];
 }
 
 export function SleepView({
@@ -20,6 +21,7 @@ export function SleepView({
   hues,
   sleepDebt,
   rawSleep,
+  compareSleepData,
 }: SleepViewProps) {
   const latestRawSleep = rawSleep && rawSleep.length > 0 ? rawSleep[rawSleep.length - 1] : null;
 
@@ -167,6 +169,7 @@ export function SleepView({
               <DashboardLineChart
                 className="dashboard-chart"
                 dataset={sleepChartData}
+                compareDataset={compareSleepData}
                 xAxis={[{ scaleType: "point", dataKey: "day" }]}
                 grid={{ horizontal: true }}
                 hideLegend

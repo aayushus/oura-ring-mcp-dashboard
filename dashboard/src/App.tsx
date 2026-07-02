@@ -53,6 +53,7 @@ import { ExperimentsView } from "./views/ExperimentsView";
 import { AnomaliesView } from "./views/AnomaliesView";
 import { DayStripView } from "./views/DayStripView";
 import { CrosshairProvider } from "./context/CrosshairContext";
+import { CommandPalette } from "./components/CommandPalette";
 
 function ScoreCell({ score }: { score: number }) {
   const band = scoreBand(score);
@@ -69,6 +70,62 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [comparePrevious, setComparePrevious] = useState(false);
+  const [weeklyData, setWeeklyData] = useState<any>(null);
+  const [alertPrefs, setAlertPrefs] = useState<any[]>([]);
+
+  const loadWeeklyData = async () => {
+    try {
+      const res = await fetch("/api/dashboard/weekly");
+      if (res.ok) {
+        const json = await res.json();
+        setWeeklyData(json);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadAlertPrefs = async () => {
+    try {
+      const res = await fetch("/api/dashboard/alerts/prefs");
+      if (res.ok) {
+        const json = await res.json();
+        setAlertPrefs(json);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const muteAlert = async (alertType: string) => {
+    try {
+      const res = await fetch("/api/dashboard/alerts/mute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ alert_type: alertType, muted: true }),
+      });
+      if (res.ok) {
+        loadAlertPrefs();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Keyboard shortcut listener for Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(() => {
     if (typeof document === "undefined") return "dark";
     const savedTheme = localStorage.getItem("oura-dashboard-theme");
@@ -149,6 +206,10 @@ function App() {
 
       const json = (await response.json()) as HistorySummary;
       setData(json);
+
+      // Async fetch supplementary recaps and mute configs
+      loadWeeklyData();
+      loadAlertPrefs();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -222,6 +283,38 @@ function App() {
       activeCalories: entry.active_calories,
       totalCalories: entry.total_calories,
     })) ?? [];
+
+  const compareSleepChartData =
+    comparePrevious && data?.sleepCompare
+      ? data.sleepCompare.map((entry) => ({
+          day: formatDayLabel(entry.day),
+          duration: Number((entry.duration / 3600).toFixed(1)),
+          deep: Number((entry.deep / 3600).toFixed(1)),
+          rem: Number((entry.rem / 3600).toFixed(1)),
+          light: Number((entry.light / 3600).toFixed(1)),
+        }))
+      : undefined;
+
+  const compareReadinessChartData =
+    comparePrevious && data?.readinessCompare
+      ? data.readinessCompare.map((entry) => ({
+          day: formatDayLabel(entry.day),
+          score: entry.score,
+          hrv: entry.hrv,
+          rhr: entry.rhr,
+          temperature: Number(entry.temperature_deviation.toFixed(2)),
+        }))
+      : undefined;
+
+  const compareActivityChartData =
+    comparePrevious && data?.activityCompare
+      ? data.activityCompare.map((entry) => ({
+          day: formatDayLabel(entry.day),
+          steps: entry.steps,
+          activeCalories: entry.active_calories,
+          totalCalories: entry.total_calories,
+        }))
+      : undefined;
 
   const stressChartData =
     data?.stress.map((entry) => ({
@@ -598,6 +691,13 @@ function App() {
                       ? `Data through ${formatDayLabel(heroDate)}`
                       : "No data yet"}
               </span>
+              <Button
+                variant={comparePrevious ? "primary" : "secondary"}
+                onClick={() => setComparePrevious((prev) => !prev)}
+                style={{ height: "30px", fontSize: "12.5px" }}
+              >
+                {comparePrevious ? "Compare: ON" : "Compare Previous"}
+              </Button>
               <ThemeToggle />
               <Button variant="primary" onClick={handleSync} disabled={syncing}>
                 {syncing ? "Syncing…" : "Sync now"}
@@ -645,14 +745,16 @@ function App() {
                     hues={hues}
                     setActiveTab={setActiveTab}
                     AIFinding={AIFinding}
-                    illnessWarning={data?.illnessWarning}
+                    illnessWarning={data?.illnessWarning && !alertPrefs.some((p: any) => p.alert_type === "illness_warning" && p.muted === 1)}
                     worstContributor={data?.worstContributor}
+                    onMuteAlert={muteAlert}
                   />
                 )}
 
                 {activeTab === "sleep" && (
                   <SleepView
                     sleepChartData={sleepChartData}
+                    compareSleepData={compareSleepChartData}
                     sleepRows={sleepRows}
                     sleepColumns={sleepColumns}
                     hues={hues}
@@ -664,16 +766,18 @@ function App() {
                 {activeTab === "readiness" && (
                   <ReadinessView
                     readinessChartData={readinessChartData}
+                    compareReadinessData={compareReadinessChartData}
                     readinessRows={readinessRows}
                     readinessColumns={readinessColumns}
                     hues={hues}
-                    illnessWarning={data?.illnessWarning}
+                    illnessWarning={data?.illnessWarning && !alertPrefs.some((p: any) => p.alert_type === "illness_warning" && p.muted === 1)}
                   />
                 )}
 
                 {activeTab === "activity" && (
                   <ActivityView
                     activityChartData={activityChartData}
+                    compareActivityData={compareActivityChartData}
                     stressChartData={stressChartData}
                     activityRows={activityRows}
                     activityColumns={activityColumns}
@@ -741,6 +845,7 @@ function App() {
                     insights={insights}
                     anomalies={anomalies}
                     setActiveTab={setActiveTab}
+                    weeklyData={weeklyData}
                   />
                 )}
 
@@ -756,6 +861,11 @@ function App() {
           </div>
         </Main>
       </AppShell>
+      <CommandPalette
+        active={isPaletteOpen}
+        onClose={() => setIsPaletteOpen(false)}
+        setActiveTab={setActiveTab}
+      />
       </CrosshairProvider>
     </ThemeProvider>
   );
