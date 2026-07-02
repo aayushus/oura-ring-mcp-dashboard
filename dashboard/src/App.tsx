@@ -279,7 +279,8 @@ function App() {
       loadWeeklyData();
       loadAlertPrefs();
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const isOffline = err instanceof TypeError || String(err).includes("Failed to fetch") || String(err).includes("fetch failed");
+      setError(isOffline ? "Connection lost. The local dashboard server is offline or unreachable." : (err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
     }
@@ -305,7 +306,8 @@ function App() {
         setData(result.history as HistorySummary);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const isOffline = err instanceof TypeError || String(err).includes("Failed to fetch") || String(err).includes("fetch failed");
+      setError(isOffline ? "Connection lost. The local dashboard server is offline or unreachable." : (err instanceof Error ? err.message : String(err)));
     } finally {
       setSyncing(false);
       fetchData();
