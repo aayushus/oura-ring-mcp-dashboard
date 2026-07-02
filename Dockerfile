@@ -17,7 +17,7 @@ RUN pnpm install --frozen-lockfile
 
 # Copy dashboard package files and install dashboard dependencies
 COPY dashboard/package.json dashboard/package-lock.json* ./dashboard/
-RUN npm --prefix dashboard install
+RUN npm --prefix dashboard install --include=dev
 
 # Copy source and build
 COPY . .
