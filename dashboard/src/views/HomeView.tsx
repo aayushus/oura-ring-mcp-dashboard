@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader } from "../components/components";
+import { Card, CardContent, CardHeader, Alert } from "../components/components";
 import { DeltaChip, Kpi, RingCard } from "../components/halo";
-import type { ReadinessRecord, SleepRecord, ActivityRecord, StressRecord } from "../types";
+import type { ReadinessRecord, SleepRecord, ActivityRecord, StressRecord, TabKey } from "../types";
 import { DashboardLineChart } from "./charts";
 
 interface HomeViewProps {
@@ -21,8 +21,10 @@ interface HomeViewProps {
   readinessChartData: any[];
   insights: any[];
   hues: any;
-  setActiveTab: (tab: "sleep" | "readiness" | "activity" | "insights") => void;
+  setActiveTab: (tab: TabKey) => void;
   AIFinding: any;
+  illnessWarning?: boolean;
+  worstContributor?: { source: string; name: string; score: number } | null;
 }
 
 export function HomeView({
@@ -45,9 +47,16 @@ export function HomeView({
   hues,
   setActiveTab,
   AIFinding,
+  illnessWarning,
+  worstContributor,
 }: HomeViewProps) {
   return (
     <div className="dashboard-stack">
+      {illnessWarning && (
+        <Alert variant="warn" title="Early Illness Warning Alert">
+          Your biometric markers (RHR, HRV, or body temperature deviation) indicate significant strain. Consider prioritizing recovery and reducing training intensity.
+        </Alert>
+      )}
       <section className="halo-rings" aria-label="Today's scores">
         <RingCard
           label="Readiness"
@@ -175,6 +184,15 @@ export function HomeView({
                 : "Waiting for data"}
             </span>
           </div>
+          {worstContributor && (
+            <div style={{ marginTop: "16px", padding: "16px", border: "1px solid var(--divider-strong)", borderRadius: "14px", background: "rgba(255, 107, 94, 0.08)" }}>
+              <strong style={{ display: "block", fontSize: "0.75rem", opacity: 0.6, textTransform: "uppercase", marginBottom: "4px" }}>Worst Biometric Contributor</strong>
+              <div style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--low)" }}>{worstContributor.name} ({worstContributor.score})</div>
+              <p style={{ fontSize: "0.85rem", opacity: 0.8, marginTop: "6px", marginBottom: 0 }}>
+                This metric in your {worstContributor.source} data had the lowest rating today. Prioritizing improvement here will yield the largest recovery benefit.
+              </p>
+            </div>
+          )}
           <div className="insights-list">
             {insights.map((insight) => (
               <AIFinding

@@ -36,6 +36,11 @@ export function createMockOuraClient(overrides?: Partial<MockOuraClient>): MockO
     getDailySpo2: vi.fn().mockResolvedValue(spo2Response),
     getVO2Max: vi.fn().mockResolvedValue(vo2maxResponse),
     getPersonalInfo: vi.fn().mockResolvedValue(personalInfoResponse),
+    getSessions: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getSleepTime: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getDailyResilience: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getDailyCardiovascularAge: vi.fn().mockResolvedValue({ data: [], next_token: null }),
+    getEnhancedTags: vi.fn().mockResolvedValue({ data: [], next_token: null }),
   };
 
   // Apply any overrides
@@ -69,5 +74,10 @@ export function createErrorClient(errorMessage: string): MockOuraClient {
     getDailySpo2: vi.fn().mockRejectedValue(error),
     getVO2Max: vi.fn().mockRejectedValue(error),
     getPersonalInfo: vi.fn().mockRejectedValue(error),
+    getSessions: vi.fn().mockRejectedValue(error),
+    getSleepTime: vi.fn().mockRejectedValue(error),
+    getDailyResilience: vi.fn().mockRejectedValue(error),
+    getDailyCardiovascularAge: vi.fn().mockRejectedValue(error),
+    getEnhancedTags: vi.fn().mockRejectedValue(error),
   };
 }

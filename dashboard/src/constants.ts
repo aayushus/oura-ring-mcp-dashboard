@@ -36,5 +36,13 @@ export const TAB_TITLES: Record<TabKey, string> = {
   sleep: "Sleep",
   readiness: "Readiness",
   activity: "Activity",
+  heart: "Heart Rate & HRV",
+  stress: "Stress & Resilience",
+  cardio: "Cardiovascular Health",
+  workouts: "Workouts & Sessions",
+  correlation: "Tag Correlation Lab",
+  experiments: "Self-Experiments",
+  anomalies: "Anomaly Feed",
   insights: "Insights",
+  settings: "Settings",
 };

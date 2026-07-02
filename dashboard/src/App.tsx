@@ -22,6 +22,8 @@ import {
   InsightsIcon,
   ReadinessIcon,
   SleepIcon,
+  SettingsIcon,
+  HeartIcon,
 } from "./components/Icons";
 
 import type { HistorySummary, TabKey, SleepRecord, ReadinessRecord, ActivityRecord } from "./types";
@@ -41,6 +43,14 @@ import { SleepView } from "./views/SleepView";
 import { ReadinessView } from "./views/ReadinessView";
 import { ActivityView } from "./views/ActivityView";
 import { InsightsView } from "./views/InsightsView";
+import { SettingsView } from "./views/SettingsView";
+import { HeartRateView } from "./views/HeartRateView";
+import { StressView } from "./views/StressView";
+import { CardioView } from "./views/CardioView";
+import { WorkoutsView } from "./views/WorkoutsView";
+import { CorrelationView } from "./views/CorrelationView";
+import { ExperimentsView } from "./views/ExperimentsView";
+import { AnomaliesView } from "./views/AnomaliesView";
 
 function ScoreCell({ score }: { score: number }) {
   const band = scoreBand(score);
@@ -530,19 +540,17 @@ function App() {
   const railItems: Array<{ key: TabKey; label: string; hue: string; icon: React.ReactNode }> = [
     { key: "home", label: "Overview", hue: "var(--accent)", icon: <HomeIcon size={20} /> },
     { key: "sleep", label: "Sleep", hue: "var(--hue-sleep)", icon: <SleepIcon size={20} /> },
-    {
-      key: "readiness",
-      label: "Readiness",
-      hue: "var(--hue-readiness)",
-      icon: <ReadinessIcon size={20} />,
-    },
-    {
-      key: "activity",
-      label: "Activity",
-      hue: "var(--hue-activity)",
-      icon: <ActivityIcon size={20} />,
-    },
+    { key: "readiness", label: "Readiness", hue: "var(--hue-readiness)", icon: <ReadinessIcon size={20} /> },
+    { key: "activity", label: "Activity", hue: "var(--hue-activity)", icon: <ActivityIcon size={20} /> },
+    { key: "heart", label: "Heart Rate", hue: "var(--hue-heart)", icon: <HeartIcon size={20} /> },
+    { key: "stress", label: "Stress", hue: "var(--stress)", icon: <ActivityIcon size={20} /> },
+    { key: "cardio", label: "Cardio Age", hue: "var(--hue-heart)", icon: <HeartIcon size={20} /> },
+    { key: "workouts", label: "Workouts", hue: "var(--hue-activity)", icon: <ActivityIcon size={20} /> },
+    { key: "correlation", label: "Correlations", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
+    { key: "experiments", label: "Experiments", hue: "var(--optimal)", icon: <InsightsIcon size={20} /> },
+    { key: "anomalies", label: "Anomalies", hue: "var(--low)", icon: <SettingsIcon size={20} /> },
     { key: "insights", label: "Insights", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
+    { key: "settings", label: "Settings", hue: "var(--divider-strong)", icon: <SettingsIcon size={20} /> },
   ];
 
   return (
@@ -633,6 +641,8 @@ function App() {
                     hues={hues}
                     setActiveTab={setActiveTab}
                     AIFinding={AIFinding}
+                    illnessWarning={data?.illnessWarning}
+                    worstContributor={data?.worstContributor}
                   />
                 )}
 
@@ -642,6 +652,8 @@ function App() {
                     sleepRows={sleepRows}
                     sleepColumns={sleepColumns}
                     hues={hues}
+                    sleepDebt={data?.sleepDebt || []}
+                    rawSleep={data?.rawSleep || []}
                   />
                 )}
 
@@ -651,6 +663,7 @@ function App() {
                     readinessRows={readinessRows}
                     readinessColumns={readinessColumns}
                     hues={hues}
+                    illnessWarning={data?.illnessWarning}
                   />
                 )}
 
@@ -661,7 +674,56 @@ function App() {
                     activityRows={activityRows}
                     activityColumns={activityColumns}
                     hues={hues}
+                    acwr={data?.acwr || []}
+                    targets={data?.targets}
+                    rawActivity={data?.rawActivity || []}
                   />
+                )}
+
+                {activeTab === "heart" && (
+                  <HeartRateView
+                    readinessRows={readinessRows}
+                    rawSleep={data?.rawSleep || []}
+                    hues={hues}
+                  />
+                )}
+
+                {activeTab === "stress" && (
+                  <StressView
+                    stressChartData={stressChartData}
+                    resilience={data?.resilience || []}
+                  />
+                )}
+
+                {activeTab === "cardio" && (
+                  <CardioView
+                    cardioAge={data?.cardioAge || []}
+                    vo2Max={data?.vo2Max || []}
+                    profile={data?.targets}
+                  />
+                )}
+
+                {activeTab === "workouts" && (
+                  <WorkoutsView
+                    workouts={data?.workouts || []}
+                    readinessRows={readinessRows}
+                    hues={hues}
+                  />
+                )}
+
+                {activeTab === "correlation" && (
+                  <CorrelationView
+                    correlations={data?.correlations}
+                    tagEffects={data?.tagEffects}
+                  />
+                )}
+
+                {activeTab === "experiments" && (
+                  <ExperimentsView />
+                )}
+
+                {activeTab === "anomalies" && (
+                  <AnomaliesView />
                 )}
 
                 {activeTab === "insights" && (
@@ -676,6 +738,10 @@ function App() {
                     anomalies={anomalies}
                     setActiveTab={setActiveTab}
                   />
+                )}
+
+                {activeTab === "settings" && (
+                  <SettingsView />
                 )}
               </>
             )}

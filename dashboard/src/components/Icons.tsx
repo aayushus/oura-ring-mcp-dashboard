@@ -267,3 +267,20 @@ export function TrendFlat({ size = 14, className, strokeWidth = 1.6 }: IconProps
     </svg>
   );
 }
+
+export function SettingsIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <circle cx="7" cy="7" r="2" />
+      <path d="M7 1c.3 0 .6.2.7.4l.2.8c.3.1.6.2.8.4l.7-.5c.2-.2.6-.1.8.1l1.1 1.1c.2.2.2.6 0 .8l-.5.7c.2.2.3.5.4.8l.8.2c.2.1.4.4.4.7v1.6c0 .3-.2.6-.4.7l-.8.2c-.1.3-.2.6-.4.8l.5.7c.2.2.2.6 0 .8l-1.1 1.1c-.2.2-.6.2-.8 0l-.7-.5c-.2.2-.5.3-.8.4l-.2.8c-.1.2-.4.4-.7.4H6.3c-.3 0-.6-.2-.7-.4l-.2-.8c-.3-.1-.6-.2-.8-.4l-.7.5c-.2.2-.6.1-.8-.1L2 10.3c-.2-.2-.2-.6 0-.8l.5-.7c-.2-.2-.3-.5-.4-.8l-.8-.2C1.2 7.7 1 7.4 1 7.1V5.5c0-.3.2-.6.4-.7l.8-.2c.1-.3.2-.6.4-.8l-.5-.7c-.2-.2-.2-.6 0-.8L3.2 2c.2-.2.6-.2.8 0l.7.5c.2-.2.5-.3.8-.4l.2-.8c.1-.2.4-.4.7-.4h1.3z" />
+    </svg>
+  );
+}
+
+export function HeartIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      <path d="M7 12.5s-5-3-5-6.5a2.5 2.5 0 014.3-1.8L7 5l.7-.8A2.5 2.5 0 0112 6c0 3.5-5 6.5-5 6.5z" />
+    </svg>
+  );
+}

@@ -30,9 +30,30 @@ import {
 import type { OuraClient } from "../client.js";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { getHistory } from "../db.js";
+import {
+  getHistory,
+  getUserProfile,
+  getUserTargets,
+  getTargetHistory,
+  upsertUserProfile,
+  getRawDocuments,
+  getExperiments,
+  getExperimentDays,
+  upsertExperiment,
+  upsertExperimentDay,
+  getAnomalies,
+  upsertAnomaly,
+} from "../db.js";
 import { syncData, startSyncScheduler } from "../sync.js";
 import { getToday, getDaysAgo } from "../utils/index.js";
+import { runWeeklyTargetJob } from "../utils/targets.js";
+import {
+  calculateSleepDebt,
+  calculateACWR,
+  detectBiometricAnomalies,
+  calculatePearsonCorrelations,
+  calculateTagEffects,
+} from "../utils/analysis/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -126,10 +147,10 @@ export async function startHttpServer(
 
   // ── Oura Health Dashboard API Routes ──────────────────────
 
-  // Get health summary history (last 30 days)
+  // Get health summary history (last 30 days) with advanced analytics
   app.get("/api/dashboard/summary", async (_req: Request, res: Response) => {
     try {
-      let history = await getHistory(30);
+      let history = await getHistory(60); // fetch 60 days to compute ACWR and sleep debt properly
 
       // Auto-sync if DB is empty and client is available
       const isEmpty = history.sleep.length === 0 && history.readiness.length === 0;
@@ -137,13 +158,198 @@ export async function startHttpServer(
         console.error("[HTTP] Database empty, triggering auto-sync...");
         const syncResult = await syncData(ouraClient, getDaysAgo(30), getToday());
         if (syncResult.success) {
-          history = await getHistory(30);
+          history = await getHistory(60);
         }
       }
 
-      res.json(history);
+      // Calculate sleep need and step targets
+      const targets = await getUserTargets();
+      const sleepNeed = targets?.sleep_need_seconds ?? 27900; // default 7.75h
+
+      const sleepDebt = calculateSleepDebt(history.sleep, sleepNeed);
+      const acwr = calculateACWR(history.activity);
+      const computedAnomalies = detectBiometricAnomalies(history.readiness);
+
+      // Save computed anomalies to database
+      for (const anomaly of computedAnomalies) {
+        await upsertAnomaly(anomaly);
+      }
+
+      // Fetch raw endpoints from database
+      const rawTags = await getRawDocuments("enhanced_tag");
+      const rawSleep = await getRawDocuments("sleep");
+      const rawWorkouts = await getRawDocuments("workout");
+      const rawCardioAge = await getRawDocuments("daily_cardiovascular_age");
+      const rawVo2Max = await getRawDocuments("vO2_max");
+      const rawResilience = await getRawDocuments("daily_resilience");
+
+      const tagEffects = calculateTagEffects(rawTags, history.sleep, history.readiness);
+      const correlations = calculatePearsonCorrelations(history.sleep, history.readiness, history.activity);
+
+      // Early warning illness calculation
+      const latestRead = history.readiness[history.readiness.length - 1];
+      const rhrWindow = history.readiness.slice(-30).map((r) => r.rhr);
+      const hrvWindow = history.readiness.slice(-30).map((r) => r.hrv);
+      const rhrBaseline = rhrWindow.length > 0 ? rhrWindow.reduce((a, b) => a + b, 0) / rhrWindow.length : 60;
+      const hrvBaseline = hrvWindow.length > 0 ? hrvWindow.reduce((a, b) => a + b, 0) / hrvWindow.length : 50;
+
+      let illnessWarning = false;
+      if (latestRead) {
+        if (
+          latestRead.temperature_deviation >= 0.5 ||
+          latestRead.rhr > 1.2 * rhrBaseline ||
+          latestRead.hrv < 0.7 * hrvBaseline
+        ) {
+          illnessWarning = true;
+        }
+      }
+
+      // Worst contributor extraction
+      const latestRawSleep = rawSleep[rawSleep.length - 1];
+      const latestRawReadiness = (await getRawDocuments("daily_readiness")).slice(-1)[0] || null;
+
+      let worstContributor = null;
+      let worstScore = 100;
+
+      if (latestRawSleep && latestRawSleep.contributors) {
+        for (const [name, val] of Object.entries(latestRawSleep.contributors)) {
+          if (typeof val === "number" && val < worstScore) {
+            worstScore = val;
+            worstContributor = { source: "Sleep", name: name.replace(/_/g, " "), score: val };
+          }
+        }
+      }
+
+      if (latestRawReadiness && latestRawReadiness.contributors) {
+        for (const [name, val] of Object.entries(latestRawReadiness.contributors)) {
+          if (typeof val === "number" && val < worstScore) {
+            worstScore = val;
+            worstContributor = { source: "Readiness", name: name.replace(/_/g, " "), score: val };
+          }
+        }
+      }
+
+      res.json({
+        sleep: history.sleep.slice(-30),
+        readiness: history.readiness.slice(-30),
+        activity: history.activity.slice(-30),
+        stress: history.stress.slice(-30),
+        sleepDebt: sleepDebt.slice(-30),
+        acwr: acwr.slice(-30),
+        anomalies: computedAnomalies.slice(0, 30),
+        illnessWarning,
+        tagEffects,
+        correlations,
+        rawSleep: rawSleep.slice(-10),
+        workouts: rawWorkouts.slice(-20),
+        cardioAge: rawCardioAge.slice(-30),
+        vo2Max: rawVo2Max.slice(-30),
+        resilience: rawResilience.slice(-30),
+        worstContributor,
+        rawActivity: (await getRawDocuments("daily_activity")).slice(-10),
+        targets,
+      });
     } catch (err) {
       console.error("Dashboard summary API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get anomaly alerts log list
+  app.get("/api/dashboard/anomalies", async (_req: Request, res: Response) => {
+    try {
+      const records = await getAnomalies(50);
+      res.json(records);
+    } catch (err) {
+      console.error("Get anomalies list API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get active self-experiments list
+  app.get("/api/dashboard/experiments", async (_req: Request, res: Response) => {
+    try {
+      const exps = await getExperiments();
+      const enriched = await Promise.all(
+        exps.map(async (exp) => {
+          const loggedDays = await getExperimentDays(exp.id);
+          return {
+            ...exp,
+            metric_ids: JSON.parse(exp.metric_ids),
+            loggedDays,
+          };
+        })
+      );
+      res.json(enriched);
+    } catch (err) {
+      console.error("Get self experiments list API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Register new self-experiment config
+  app.post("/api/dashboard/experiments", async (req: Request, res: Response) => {
+    try {
+      const {
+        title,
+        behavior_text,
+        metric_ids,
+        direction_hypothesis,
+        start_date,
+        duration_days,
+        confounder_warning,
+      } = req.body;
+
+      if (!title || !behavior_text || !start_date) {
+        res.status(400).json({ error: "Missing required experiment parameters" });
+        return;
+      }
+
+      const id = `exp-${Date.now()}`;
+      const exp = {
+        id,
+        title,
+        behavior_text,
+        metric_ids: JSON.stringify(metric_ids || []),
+        direction_hypothesis: direction_hypothesis || "improve",
+        start_date,
+        duration_days: Number(duration_days || 14),
+        status: "active",
+        confounder_warning: confounder_warning || "",
+      };
+
+      await upsertExperiment(exp);
+      res.json({
+        ...exp,
+        metric_ids: metric_ids || [],
+        loggedDays: [],
+      });
+    } catch (err) {
+      console.error("Create self experiment API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Log adherence compliance status for a specific day
+  app.post("/api/dashboard/experiments/:id/log", async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id as string;
+      const { day, adherent } = req.body;
+
+      if (!day || adherent === undefined) {
+        res.status(400).json({ error: "Missing day or adherence status parameters" });
+        return;
+      }
+
+      await upsertExperimentDay({
+        experiment_id: id,
+        day,
+        adherent: Number(adherent),
+      });
+
+      res.json({ success: true });
+    } catch (err) {
+      console.error("Log experiment day API error:", err);
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
   });
@@ -166,6 +372,104 @@ export async function startHttpServer(
       res.json({ success: true, history });
     } catch (err) {
       console.error("Dashboard sync API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Export full historical biometrics in JSON or CSV format
+  app.get("/api/dashboard/export", async (req: Request, res: Response) => {
+    try {
+      const history = await getHistory(1000);
+      const anomalies = await getAnomalies();
+      const targetHistory = await getTargetHistory();
+      const format = req.query.format === "csv" ? "csv" : "json";
+
+      if (format === "json") {
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader("Content-Disposition", "attachment; filename=oura_dashboard_export.json");
+        res.json({ history, anomalies, targetHistory });
+      } else {
+        let csv = "date,metric,value\n";
+        history.sleep.forEach((r) => {
+          csv += `${r.day},sleep_score,${r.score}\n`;
+        });
+        history.readiness.forEach((r) => {
+          csv += `${r.day},readiness_score,${r.score}\n`;
+        });
+        history.activity.forEach((r) => {
+          csv += `${r.day},activity_score,${r.score}\n`;
+        });
+        
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader("Content-Disposition", "attachment; filename=oura_dashboard_export.csv");
+        res.send(csv);
+      }
+    } catch (err) {
+      console.error("Dashboard export API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get user profile, targets, and targets changelog history
+  app.get("/api/dashboard/targets", async (_req: Request, res: Response) => {
+    try {
+      const profile = await getUserProfile();
+      const targets = await getUserTargets();
+      const history = await getTargetHistory();
+      res.json({ profile, targets, history });
+    } catch (err) {
+      console.error("Get dashboard targets API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Save onboarding profile data and trigger initial targets calculation
+  app.post("/api/dashboard/onboarding", async (req: Request, res: Response) => {
+    try {
+      const {
+        age,
+        weight_kg,
+        height_cm,
+        biological_sex,
+        target_wake_time,
+        goal,
+        training_days,
+      } = req.body;
+
+      if (
+        age === undefined ||
+        weight_kg === undefined ||
+        height_cm === undefined ||
+        !biological_sex ||
+        !target_wake_time ||
+        !goal ||
+        training_days === undefined
+      ) {
+        res.status(400).json({ error: "Missing required onboarding fields" });
+        return;
+      }
+
+      // Upsert profile
+      await upsertUserProfile({
+        age: Number(age),
+        weight_kg: Number(weight_kg),
+        height_cm: Number(height_cm),
+        biological_sex,
+        target_wake_time,
+        goal,
+        training_days: Number(training_days),
+      });
+
+      // Run weekly targets calculation job immediately
+      await runWeeklyTargetJob();
+
+      const profile = await getUserProfile();
+      const targets = await getUserTargets();
+      const history = await getTargetHistory();
+
+      res.json({ profile, targets, history });
+    } catch (err) {
+      console.error("Onboarding API error:", err);
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
   });

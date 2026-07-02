@@ -69,6 +69,71 @@ export async function getDb(): Promise<Database> {
       stress_duration INTEGER,
       recovery_duration INTEGER
     );
+
+    CREATE TABLE IF NOT EXISTS user_profile (
+      id INTEGER PRIMARY KEY CHECK (id = 1), -- Single-user enforcement
+      age INTEGER,
+      weight_kg REAL,
+      height_cm REAL,
+      biological_sex TEXT,
+      target_wake_time TEXT,
+      goal TEXT,
+      training_days INTEGER
+    );
+
+    CREATE TABLE IF NOT EXISTS user_targets (
+      id INTEGER PRIMARY KEY CHECK (id = 1), -- Single-user enforcement
+      sleep_need_seconds INTEGER,
+      recommended_bedtime TEXT,
+      step_goal INTEGER,
+      max_hr INTEGER,
+      bmr_kcal REAL
+    );
+
+    CREATE TABLE IF NOT EXISTS target_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      target_id TEXT,
+      old_value TEXT,
+      new_value TEXT,
+      reason TEXT,
+      change_date TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS raw_documents (
+      day TEXT,
+      endpoint TEXT,
+      doc_id TEXT,
+      data TEXT, -- JSON payload string
+      PRIMARY KEY (day, endpoint, doc_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS experiments (
+      id TEXT PRIMARY KEY,
+      title TEXT,
+      behavior_text TEXT,
+      metric_ids TEXT,
+      direction_hypothesis TEXT,
+      start_date TEXT,
+      duration_days INTEGER,
+      status TEXT,
+      confounder_warning TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS experiment_days (
+      experiment_id TEXT,
+      day TEXT,
+      adherent INTEGER, -- 0 or 1
+      PRIMARY KEY (experiment_id, day),
+      FOREIGN KEY (experiment_id) REFERENCES experiments(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS anomalies (
+      day TEXT,
+      metric_id TEXT,
+      value REAL,
+      z_score REAL,
+      PRIMARY KEY (day, metric_id)
+    );
   `);
 
   return dbInstance;
@@ -250,4 +315,283 @@ export async function getHistory(limitDays = 30): Promise<HistorySummary> {
     activity: activity.reverse(),
     stress: stress.reverse(),
   };
+}
+
+// ─────────────────────────────────────────────────────────────
+// User Profile Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface UserProfile {
+  age: number;
+  weight_kg: number;
+  height_cm: number;
+  biological_sex: string;
+  target_wake_time: string;
+  goal: string;
+  training_days: number;
+}
+
+export async function upsertUserProfile(profile: UserProfile): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO user_profile (id, age, weight_kg, height_cm, biological_sex, target_wake_time, goal, training_days)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       age = excluded.age,
+       weight_kg = excluded.weight_kg,
+       height_cm = excluded.height_cm,
+       biological_sex = excluded.biological_sex,
+       target_wake_time = excluded.target_wake_time,
+       goal = excluded.goal,
+       training_days = excluded.training_days`,
+    [
+      profile.age,
+      profile.weight_kg,
+      profile.height_cm,
+      profile.biological_sex,
+      profile.target_wake_time,
+      profile.goal,
+      profile.training_days,
+    ]
+  );
+}
+
+export async function getUserProfile(): Promise<UserProfile | null> {
+  const db = await getDb();
+  const profile = await db.get<UserProfile>(`SELECT age, weight_kg, height_cm, biological_sex, target_wake_time, goal, training_days FROM user_profile WHERE id = 1`);
+  return profile || null;
+}
+
+// ─────────────────────────────────────────────────────────────
+// User Targets Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface UserTargets {
+  sleep_need_seconds: number;
+  recommended_bedtime: string;
+  step_goal: number;
+  max_hr: number;
+  bmr_kcal: number;
+}
+
+export async function upsertUserTargets(targets: UserTargets): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO user_targets (id, sleep_need_seconds, recommended_bedtime, step_goal, max_hr, bmr_kcal)
+     VALUES (1, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       sleep_need_seconds = excluded.sleep_need_seconds,
+       recommended_bedtime = excluded.recommended_bedtime,
+       step_goal = excluded.step_goal,
+       max_hr = excluded.max_hr,
+       bmr_kcal = excluded.bmr_kcal`,
+    [
+      targets.sleep_need_seconds,
+      targets.recommended_bedtime,
+      targets.step_goal,
+      targets.max_hr,
+      targets.bmr_kcal,
+    ]
+  );
+}
+
+export async function getUserTargets(): Promise<UserTargets | null> {
+  const db = await getDb();
+  const targets = await db.get<UserTargets>(`SELECT sleep_need_seconds, recommended_bedtime, step_goal, max_hr, bmr_kcal FROM user_targets WHERE id = 1`);
+  return targets || null;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Target History Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface TargetHistoryRecord {
+  id: number;
+  target_id: string;
+  old_value: string;
+  new_value: string;
+  reason: string;
+  change_date: string;
+}
+
+export async function addTargetHistory(
+  targetId: string,
+  oldValue: string,
+  newValue: string,
+  reason: string,
+  changeDate: string
+): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO target_history (target_id, old_value, new_value, reason, change_date)
+     VALUES (?, ?, ?, ?, ?)`,
+    [targetId, oldValue, newValue, reason, changeDate]
+  );
+}
+
+export async function getTargetHistory(targetId?: string): Promise<TargetHistoryRecord[]> {
+  const db = await getDb();
+  if (targetId) {
+    return db.all<TargetHistoryRecord[]>(
+      `SELECT * FROM target_history WHERE target_id = ? ORDER BY change_date DESC`,
+      [targetId]
+    );
+  }
+  return db.all<TargetHistoryRecord[]>(`SELECT * FROM target_history ORDER BY change_date DESC`);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Raw Documents Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface RawDocumentRecord {
+  day: string;
+  endpoint: string;
+  doc_id: string;
+  data: string;
+}
+
+export async function upsertRawDocument(
+  day: string,
+  endpoint: string,
+  docId: string,
+  data: any
+): Promise<void> {
+  const db = await getDb();
+  const dataStr = JSON.stringify(data);
+  await db.run(
+    `INSERT INTO raw_documents (day, endpoint, doc_id, data)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(day, endpoint, doc_id) DO UPDATE SET
+       data = excluded.data`,
+    [day, endpoint, docId, dataStr]
+  );
+}
+
+export async function getRawDocuments(
+  endpoint: string,
+  startDate?: string,
+  endDate?: string
+): Promise<any[]> {
+  const db = await getDb();
+  let query = `SELECT data FROM raw_documents WHERE endpoint = ?`;
+  const params: any[] = [endpoint];
+
+  if (startDate) {
+    query += ` AND day >= ?`;
+    params.push(startDate);
+  }
+  if (endDate) {
+    query += ` AND day <= ?`;
+    params.push(endDate);
+  }
+
+  query += ` ORDER BY day ASC`;
+  const rows = await db.all<{ data: string }[]>(query, params);
+  return rows.map((row) => JSON.parse(row.data));
+}
+
+// ─────────────────────────────────────────────────────────────
+// Self-Experiments Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface Experiment {
+  id: string;
+  title: string;
+  behavior_text: string;
+  metric_ids: string; // JSON array string
+  direction_hypothesis: string;
+  start_date: string;
+  duration_days: number;
+  status: string;
+  confounder_warning: string;
+}
+
+export interface ExperimentDay {
+  experiment_id: string;
+  day: string;
+  adherent: number;
+}
+
+export async function upsertExperiment(exp: Experiment): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO experiments (id, title, behavior_text, metric_ids, direction_hypothesis, start_date, duration_days, status, confounder_warning)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       title = excluded.title,
+       behavior_text = excluded.behavior_text,
+       metric_ids = excluded.metric_ids,
+       direction_hypothesis = excluded.direction_hypothesis,
+       start_date = excluded.start_date,
+       duration_days = excluded.duration_days,
+       status = excluded.status,
+       confounder_warning = excluded.confounder_warning`,
+    [
+      exp.id,
+      exp.title,
+      exp.behavior_text,
+      exp.metric_ids,
+      exp.direction_hypothesis,
+      exp.start_date,
+      exp.duration_days,
+      exp.status,
+      exp.confounder_warning,
+    ]
+  );
+}
+
+export async function getExperiments(): Promise<Experiment[]> {
+  const db = await getDb();
+  return db.all<Experiment[]>(`SELECT * FROM experiments ORDER BY start_date DESC`);
+}
+
+export async function upsertExperimentDay(dayRecord: ExperimentDay): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO experiment_days (experiment_id, day, adherent)
+     VALUES (?, ?, ?)
+     ON CONFLICT(experiment_id, day) DO UPDATE SET
+       adherent = excluded.adherent`,
+    [dayRecord.experiment_id, dayRecord.day, dayRecord.adherent]
+  );
+}
+
+export async function getExperimentDays(experimentId: string): Promise<ExperimentDay[]> {
+  const db = await getDb();
+  return db.all<ExperimentDay[]>(
+    `SELECT * FROM experiment_days WHERE experiment_id = ? ORDER BY day ASC`,
+    [experimentId]
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Anomalies Operations
+// ─────────────────────────────────────────────────────────────
+
+export interface AnomalyRecord {
+  day: string;
+  metric_id: string;
+  value: number;
+  z_score: number;
+}
+
+export async function upsertAnomaly(anomaly: AnomalyRecord): Promise<void> {
+  const db = await getDb();
+  await db.run(
+    `INSERT INTO anomalies (day, metric_id, value, z_score)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(day, metric_id) DO UPDATE SET
+       value = excluded.value,
+       z_score = excluded.z_score`,
+    [anomaly.day, anomaly.metric_id, anomaly.value, anomaly.z_score]
+  );
+}
+
+export async function getAnomalies(limit = 100): Promise<AnomalyRecord[]> {
+  const db = await getDb();
+  return db.all<AnomalyRecord[]>(
+    `SELECT * FROM anomalies ORDER BY day DESC LIMIT ?`,
+    [limit]
+  );
 }

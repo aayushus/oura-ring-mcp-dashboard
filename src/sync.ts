@@ -9,6 +9,7 @@ import {
   upsertReadiness,
   upsertActivity,
   upsertStress,
+  upsertRawDocument,
   getHistory,
 } from "./db.js";
 import { getToday, getDaysAgo } from "./utils/index.js";
@@ -25,16 +26,66 @@ export async function syncData(
     console.log(`[Sync] Syncing Oura data from ${startDate} to ${endDate}...`);
 
     // Fetch endpoints in parallel
-    const [sleepScores, sleepSessions, readiness, activity, stress] =
-      await Promise.all([
-        client.getDailySleep(startDate, endDate),
-        client.getSleep(startDate, endDate),
-        client.getDailyReadiness(startDate, endDate),
-        client.getDailyActivity(startDate, endDate),
-        client.getDailyStress(startDate, endDate),
-      ]);
+    const [
+      sleepScores,
+      sleepSessions,
+      readiness,
+      activity,
+      stress,
+      heartRate,
+      workouts,
+      sessions,
+      sleepTime,
+      dailySpo2,
+      vo2Max,
+      dailyResilience,
+      dailyCardiovascularAge,
+      enhancedTags,
+    ] = await Promise.all([
+      client.getDailySleep(startDate, endDate),
+      client.getSleep(startDate, endDate),
+      client.getDailyReadiness(startDate, endDate),
+      client.getDailyActivity(startDate, endDate),
+      client.getDailyStress(startDate, endDate),
+      client.getHeartRate(startDate, endDate),
+      client.getWorkouts(startDate, endDate),
+      client.getSessions(startDate, endDate),
+      client.getSleepTime(startDate, endDate),
+      client.getDailySpo2(startDate, endDate),
+      client.getVO2Max(startDate, endDate),
+      client.getDailyResilience(startDate, endDate),
+      client.getDailyCardiovascularAge(startDate, endDate),
+      client.getEnhancedTags(startDate, endDate),
+    ]);
 
     const days = new Set<string>();
+
+    // Helper to store raw docs
+    const saveRawDocs = async (endpoint: string, dataArray: any[]) => {
+      for (const doc of dataArray) {
+        const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
+        const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
+        await upsertRawDocument(day, endpoint, docId, doc);
+      }
+    };
+
+    // Store raw payloads for read-time logic
+    await Promise.all([
+      saveRawDocs("daily_sleep", sleepScores.data),
+      saveRawDocs("sleep", sleepSessions.data),
+      saveRawDocs("daily_readiness", readiness.data),
+      saveRawDocs("daily_activity", activity.data),
+      saveRawDocs("daily_stress", stress.data),
+      saveRawDocs("heartrate", heartRate.data),
+      saveRawDocs("workout", workouts.data),
+      saveRawDocs("session", sessions.data),
+      saveRawDocs("sleep_time", sleepTime.data),
+      saveRawDocs("daily_spo2", dailySpo2.data),
+      saveRawDocs("vO2_max", vo2Max.data),
+      saveRawDocs("daily_resilience", dailyResilience.data),
+      saveRawDocs("daily_cardiovascular_age", dailyCardiovascularAge.data),
+      saveRawDocs("enhanced_tag", enhancedTags.data),
+    ]);
 
     // 1. Process Sleep
     const sessionsByDay = new Map(sleepSessions.data.map((s) => [s.day, s]));
