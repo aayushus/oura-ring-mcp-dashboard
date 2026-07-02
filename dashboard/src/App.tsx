@@ -858,7 +858,7 @@ function App() {
                 )}
 
                 {activeTab === "daystrip" && (
-                  <DayStripView />
+                  <DayStripView hues={hues} />
                 )}
 
                 {activeTab === "settings" && (

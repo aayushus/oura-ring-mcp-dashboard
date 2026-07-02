@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, Alert } from "../components/components";
 import { DashboardLineChart, DashboardBarChart } from "./charts";
 
-export function DayStripView() {
+interface DayStripViewProps {
+  hues: any;
+}
+
+export function DayStripView({ hues }: DayStripViewProps) {
   const [day, setDay] = useState(new Date().toLocaleDateString("sv-SE"));
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -168,25 +172,26 @@ export function DayStripView() {
   }));
 
   return (
-    <div className="dashboard-stack" style={{ padding: "24px" }}>
-      
-      {/* Top Header Controls */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--divider-strong)", paddingBottom: "16px", marginBottom: "20px" }}>
-        <div>
-          <h2 style={{ margin: 0, fontSize: "1.6rem" }}>Unified 24-Hour Day-Strip</h2>
-          <p style={{ margin: "4px 0 0 0", fontSize: "0.85rem", opacity: 0.6 }}>
-            Aligned chronologically from 21:00 yesterday to 21:00 today.
-          </p>
+    <div className="dashboard-stack">
+      <div
+        className="halo-module-head"
+        style={{ "--hue": "var(--accent)" } as React.CSSProperties}
+      >
+        <span className="halo-module-overline">Aligned 24h Axis</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+          <h1 className="halo-module-title">Unified Day-Strip</h1>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Select Day:</label>
+            <input
+              type="date"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              style={{ padding: "8px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
+            />
+          </div>
         </div>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Select Day:</label>
-          <input
-            type="date"
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            style={{ padding: "8px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
-          />
-        </div>
+        <span className="rule" />
+        <p>Hypnogram, overnight HR/HRV, daytime movement, workouts, and tags aligned on one shared time scale (21:00 yesterday to 21:00 today).</p>
       </div>
 
       {error && (
@@ -219,8 +224,9 @@ export function DayStripView() {
                     {
                       dataKey: "value",
                       label: "Stage Code",
-                      color: "var(--hue-sleep)",
+                      color: hues.sleep,
                       showMark: false,
+                      curve: "stepAfter",
                     },
                   ]}
                   height={150}
@@ -247,7 +253,7 @@ export function DayStripView() {
                     {
                       dataKey: "bpm",
                       label: "BPM",
-                      color: "var(--hue-heart)",
+                      color: hues.heart,
                       showMark: false,
                     },
                   ]}
@@ -275,7 +281,7 @@ export function DayStripView() {
                     {
                       dataKey: "movement",
                       label: "Intensity",
-                      color: "var(--hue-activity)",
+                      color: hues.activity,
                     },
                   ]}
                   height={150}
