@@ -808,6 +808,7 @@ function App() {
                     cardioAge={data?.cardioAge || []}
                     vo2Max={data?.vo2Max || []}
                     profile={data?.targets}
+                    hues={hues}
                   />
                 )}
 

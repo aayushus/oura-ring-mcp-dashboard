@@ -152,7 +152,7 @@ export function CorrelationView({
                           ? "Medium"
                           : "Small";
                     
-                    const barColor = isPositive ? "var(--optimal)" : "var(--low)";
+                    const barColor = isPositive ? "var(--score-optimal)" : "var(--score-low)";
 
                     return (
                       <div

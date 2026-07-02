@@ -6,12 +6,14 @@ interface CardioViewProps {
   cardioAge: any[];
   vo2Max: any[];
   profile: any;
+  hues: any;
 }
 
 export function CardioView({
   cardioAge,
   vo2Max,
   profile,
+  hues,
 }: CardioViewProps) {
   // 1. Process Vascular Age metrics (C7.1)
   const latestCardio = cardioAge && cardioAge.length > 0 ? cardioAge[cardioAge.length - 1] : null;
@@ -20,7 +22,7 @@ export function CardioView({
 
   const diff = vascularAge - calendarAge;
   const diffLabel = diff <= 0 ? `${diff} yrs` : `+${diff} yrs`;
-  const diffColor = diff <= 0 ? "var(--optimal)" : diff <= 5 ? "var(--stress)" : "var(--low)";
+  const diffColor = diff <= 0 ? "var(--score-optimal)" : diff <= 5 ? "var(--score-fair)" : "var(--score-low)";
 
   // Format Vascular Age Trend
   const ageTrendData = cardioAge.map((c) => ({
@@ -133,7 +135,7 @@ export function CardioView({
                   {
                     dataKey: "value",
                     label: "Vascular Age (yrs)",
-                    color: "var(--optimal)",
+                    color: hues.readiness,
                     showMark: true,
                   },
                 ]}
@@ -161,7 +163,7 @@ export function CardioView({
                   {
                     dataKey: "value",
                     label: "VO2 Max",
-                    color: "var(--activity)",
+                    color: hues.activity,
                     showMark: true,
                   },
                 ]}

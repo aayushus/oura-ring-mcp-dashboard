@@ -41,10 +41,10 @@ export function ActivityView({
   const acwrValue = latestAcwrRecord ? latestAcwrRecord.ratio : 1.0;
   const acwrStatus =
     acwrValue > 1.5
-      ? { label: "Danger / Overreaching", color: "var(--low)" }
+      ? { label: "Danger / Overreaching", color: "var(--score-low)" }
       : acwrValue >= 0.8 && acwrValue <= 1.3
-        ? { label: "Optimal Training Zone", color: "var(--optimal)" }
-        : { label: "Under-training / Restore", color: "var(--stress)" };
+        ? { label: "Optimal Training Zone", color: "var(--score-optimal)" }
+        : { label: "Under-training / Restore", color: "var(--score-fair)" };
 
   // 3. Process 24-h Movement Strip (class_5_min) (C4.4)
   const latestRawAct = rawActivity && rawActivity.length > 0 ? rawActivity[rawActivity.length - 1] : null;

@@ -38,7 +38,7 @@ export function AnomaliesView() {
     <div className="dashboard-stack" style={{ maxWidth: "800px", margin: "0 auto", padding: "24px" }}>
       <div
         className="halo-module-head"
-        style={{ "--hue": "var(--low)" } as React.CSSProperties}
+        style={{ "--hue": "var(--score-low)" } as React.CSSProperties}
       >
         <span className="rule" />
         <p>Systemic biometric deviations and z-score warning feeds.</p>
@@ -95,7 +95,7 @@ export function AnomaliesView() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "var(--low)",
+                        color: "var(--score-low)",
                         fontSize: "1.2rem",
                         fontWeight: 700,
                       }}
@@ -110,7 +110,7 @@ export function AnomaliesView() {
                       <p style={{ fontSize: "0.85rem", opacity: 0.85, margin: "6px 0" }}>
                         Vitals value measured at <strong>{record.value}{unit}</strong>, representing a Z-score of <strong>{record.z_score > 0 ? "+" : ""}{record.z_score}</strong>.
                       </p>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--low)", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--score-low)", textTransform: "uppercase" }}>
                         {isSpike ? "Elevated Spike Alert" : "Depressed Dip Warning"}
                       </span>
                     </div>

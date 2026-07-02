@@ -255,7 +255,7 @@ export function ExperimentsView() {
                         
                         {/* Confounder Warning Alert */}
                         {exp.confounder_warning && (
-                          <div style={{ fontSize: "0.75rem", background: "rgba(251, 191, 36, 0.08)", color: "var(--stress)", border: "1px solid rgba(251,191,36,0.2)", borderRadius: "6px", padding: "8px", marginBottom: "12px" }}>
+                          <div style={{ fontSize: "0.75rem", background: "rgba(251, 191, 36, 0.08)", color: "var(--score-low)", border: "1px solid rgba(251,191,36,0.2)", borderRadius: "6px", padding: "8px", marginBottom: "12px" }}>
                             ⚠️ Confounder: {exp.confounder_warning}
                           </div>
                         )}
@@ -278,9 +278,9 @@ export function ExperimentsView() {
                                   borderRadius: "6px",
                                   border: "1px solid var(--divider)",
                                   background: isAdherent
-                                    ? "var(--optimal)"
+                                    ? "var(--score-optimal)"
                                     : logRecord
-                                      ? "var(--low)"
+                                      ? "var(--score-low)"
                                       : "rgba(0,0,0,0.05)",
                                   color: isAdherent || logRecord ? "#FFFFFF" : "inherit",
                                   cursor: isPast ? "pointer" : "default",
