@@ -130,10 +130,10 @@ export function InsightsView({
               <Kpi
                 key={entry.label}
                 label={entry.label}
-                value={entry.cur != null ? entry.format(entry.cur) : "—"}
+                value={entry.cur ? entry.format(entry.cur) : "—"}
                 unit={entry.unit}
                 note={
-                  entry.prev != null && entry.cur != null ? (
+                  entry.prev && entry.cur ? (
                     <DeltaChip
                       value={entry.cur - entry.prev}
                       higherIsBetter={entry.higherIsBetter}
