@@ -1,7 +1,9 @@
-import { Card, CardContent, CardHeader, Alert } from "../components/components";
-import { DeltaChip, Kpi, RingCard } from "../components/halo";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, Alert, Button } from "../components/components";
+import { DeltaChip, Kpi, RingCard, bandColor, scoreBand } from "../components/halo";
 import type { ReadinessRecord, SleepRecord, ActivityRecord, StressRecord, TabKey } from "../types";
 import { DashboardLineChart } from "./charts";
+import { SunburstGlyph } from "../components/SunburstGlyph";
 
 interface HomeViewProps {
   latestReadiness: ReadinessRecord | null;
@@ -26,6 +28,8 @@ interface HomeViewProps {
   illnessWarning?: boolean;
   worstContributor?: { source: string; name: string; score: number } | null;
   onMuteAlert?: (alertType: string) => void;
+  rawSleep: any[];
+  rawReadiness: any[];
 }
 
 export function HomeView({
@@ -51,6 +55,8 @@ export function HomeView({
   illnessWarning,
   worstContributor,
   onMuteAlert,
+  rawSleep,
+  rawReadiness,
 }: HomeViewProps) {
   return (
     <div className="dashboard-stack">
@@ -168,6 +174,104 @@ export function HomeView({
           }
         />
       </section>
+
+      {/* Contributors Breakdown Section */}
+      {(() => {
+        const [viewMode, setViewMode] = useState<"list" | "sunburst">("sunburst");
+
+        const latestRawSleep = latestSleep ? rawSleep.find((s) => s.day === latestSleep.day) : null;
+        const latestRawReadiness = latestReadiness ? rawReadiness.find((r) => r.day === latestReadiness.day) : null;
+
+        const sleepContribs = latestRawSleep?.contributors
+          ? Object.entries(latestRawSleep.contributors).map(([name, val]: any) => ({
+              name: name.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
+              score: val,
+            }))
+          : [];
+
+        const readinessContribs = latestRawReadiness?.contributors
+          ? Object.entries(latestRawReadiness.contributors).map(([name, val]: any) => ({
+              name: name.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
+              score: val,
+            }))
+          : [];
+
+        return (
+          <div style={{ marginTop: "24px" }}>
+            <Card>
+              <div style={{ padding: "16px 20px 8px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Contributors Breakdown</h3>
+                  <p style={{ margin: "2px 0 0 0", fontSize: "0.85rem", opacity: 0.6 }}>
+                    Detailed rating factors contributing to your overall recovery and sleep.
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: "6px" }}>
+                  <Button
+                    variant={viewMode === "list" ? "primary" : "secondary"}
+                    onClick={() => setViewMode("list")}
+                    style={{ padding: "4px 10px", fontSize: "0.75rem", height: "28px" }}
+                  >
+                    List View
+                  </Button>
+                  <Button
+                    variant={viewMode === "sunburst" ? "primary" : "secondary"}
+                    onClick={() => setViewMode("sunburst")}
+                    style={{ padding: "4px 10px", fontSize: "0.75rem", height: "28px" }}
+                  >
+                    Sunburst View
+                  </Button>
+                </div>
+              </div>
+              <CardContent>
+                <div style={{ padding: "16px 20px" }}>
+              {viewMode === "list" ? (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+                  <div>
+                    <strong style={{ display: "block", fontSize: "0.85rem", marginBottom: "12px", color: "var(--hue-sleep)" }}>Sleep Factors</strong>
+                    {sleepContribs.length === 0 ? <p style={{ opacity: 0.6, fontSize: "0.8rem" }}>Pending data...</p> : sleepContribs.map((c) => (
+                      <div key={c.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>{c.name}</span>
+                        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: bandColor(scoreBand(c.score)) }}>{c.score}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <strong style={{ display: "block", fontSize: "0.85rem", marginBottom: "12px", color: "var(--hue-readiness)" }}>Readiness Factors</strong>
+                    {readinessContribs.length === 0 ? <p style={{ opacity: 0.6, fontSize: "0.8rem" }}>Pending data...</p> : readinessContribs.map((c) => (
+                      <div key={c.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                        <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>{c.name}</span>
+                        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: bandColor(scoreBand(c.score)) }}>{c.score}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "24px", padding: "12px 0" }}>
+                  {latestSleep && sleepContribs.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--hue-sleep)" }}>Sleep Contributors</span>
+                      <SunburstGlyph score={latestSleep.score} contributors={sleepContribs} />
+                    </div>
+                  ) : (
+                    <p style={{ opacity: 0.6, fontSize: "0.85rem" }}>Sleep contributors pending...</p>
+                  )}
+                  {latestReadiness && readinessContribs.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--hue-readiness)" }}>Readiness Contributors</span>
+                      <SunburstGlyph score={latestReadiness.score} contributors={readinessContribs} />
+                    </div>
+                  ) : (
+                    <p style={{ opacity: 0.6, fontSize: "0.85rem" }}>Readiness contributors pending...</p>
+                  )}
+                </div>
+              )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      })()}
 
       <div className="halo-home-grid">
         <Card>

@@ -300,25 +300,27 @@ export interface HistorySummary {
 /**
  * Fetch combined health metrics for a date range (days ago)
  */
-export async function getHistory(limitDays = 30): Promise<HistorySummary> {
+export async function getHistory(limitDays = 30, endDay?: string): Promise<HistorySummary> {
   const db = await getDb();
+  const whereClause = endDay ? "WHERE day <= ?" : "";
+  const params = (clauseLimit: number) => endDay ? [endDay, clauseLimit] : [clauseLimit];
 
   // Query ranges based on day strings descending
   const sleep = await db.all<SleepRecord[]>(
-    `SELECT * FROM sleep_history ORDER BY day DESC LIMIT ?`,
-    [limitDays]
+    `SELECT * FROM sleep_history ${whereClause} ORDER BY day DESC LIMIT ?`,
+    params(limitDays)
   );
   const readiness = await db.all<ReadinessRecord[]>(
-    `SELECT * FROM readiness_history ORDER BY day DESC LIMIT ?`,
-    [limitDays]
+    `SELECT * FROM readiness_history ${whereClause} ORDER BY day DESC LIMIT ?`,
+    params(limitDays)
   );
   const activity = await db.all<ActivityRecord[]>(
-    `SELECT * FROM activity_history ORDER BY day DESC LIMIT ?`,
-    [limitDays]
+    `SELECT * FROM activity_history ${whereClause} ORDER BY day DESC LIMIT ?`,
+    params(limitDays)
   );
   const stress = await db.all<StressRecord[]>(
-    `SELECT * FROM stress_history ORDER BY day DESC LIMIT ?`,
-    [limitDays]
+    `SELECT * FROM stress_history ${whereClause} ORDER BY day DESC LIMIT ?`,
+    params(limitDays)
   );
 
   return {

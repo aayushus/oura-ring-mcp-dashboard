@@ -150,9 +150,10 @@ export async function startHttpServer(
   // ── Oura Health Dashboard API Routes ──────────────────────
 
   // Get health summary history (last 30 days) with advanced analytics
-  app.get("/api/dashboard/summary", async (_req: Request, res: Response) => {
+  app.get("/api/dashboard/summary", async (req: Request, res: Response) => {
     try {
-      let history = await getHistory(60); // fetch 60 days to compute ACWR and sleep debt properly
+      const endDay = (req.query.day as string) || undefined;
+      let history = await getHistory(60, endDay); // fetch 60 days to compute ACWR and sleep debt properly
 
       // Auto-sync if DB is empty and client is available
       const isEmpty = history.sleep.length === 0 && history.readiness.length === 0;

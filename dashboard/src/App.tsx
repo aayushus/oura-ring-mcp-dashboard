@@ -31,6 +31,7 @@ import {
   CorrelationIcon,
   ExperimentsIcon,
   TimelineIcon,
+  CompareIcon,
 } from "./components/Icons";
 
 import type { HistorySummary, TabKey, SleepRecord, ReadinessRecord, ActivityRecord } from "./types";
@@ -59,6 +60,7 @@ import { CorrelationView } from "./views/CorrelationView";
 import { ExperimentsView } from "./views/ExperimentsView";
 import { AnomaliesView } from "./views/AnomaliesView";
 import { DayStripView } from "./views/DayStripView";
+import { CompareView } from "./views/CompareView";
 import { CrosshairProvider } from "./context/CrosshairContext";
 import { CommandPalette } from "./components/CommandPalette";
 
@@ -71,14 +73,40 @@ function ScoreCell({ score }: { score: number }) {
   );
 }
 
+const getUrlDay = () => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("day") || new Date().toISOString().slice(0, 10);
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
+  const [selectedDay, setSelectedDay] = useState<string>(getUrlDay);
   const [data, setData] = useState<HistorySummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("day") !== selectedDay) {
+      params.set("day", selectedDay);
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, [selectedDay]);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const dayFromUrl = new URLSearchParams(window.location.search).get("day");
+      if (dayFromUrl && dayFromUrl !== selectedDay) {
+        setSelectedDay(dayFromUrl);
+      }
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    return () => window.removeEventListener("popstate", handleLocationChange);
+  }, [selectedDay]);
   const [comparePrevious, setComparePrevious] = useState(false);
   const [weeklyData, setWeeklyData] = useState<any>(null);
   const [alertPrefs, setAlertPrefs] = useState<any[]>([]);
@@ -122,17 +150,45 @@ function App() {
     }
   };
 
-  // Keyboard shortcut listener for Cmd+K / Ctrl+K
+  // Keyboard shortcut listener for Cmd+K / Ctrl+K and Time Travel Date Navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setIsPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      // Ignore key events inside editable elements
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable ||
+          target.tagName === "SELECT")
+      ) {
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        const current = new Date(selectedDay + "T00:00:00Z");
+        current.setUTCDate(current.getUTCDate() + (e.shiftKey ? -7 : -1));
+        setSelectedDay(current.toISOString().slice(0, 10));
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const current = new Date(selectedDay + "T00:00:00Z");
+        current.setUTCDate(current.getUTCDate() + (e.shiftKey ? 7 : 1));
+        setSelectedDay(current.toISOString().slice(0, 10));
+      } else if (e.key.toLowerCase() === "t") {
+        e.preventDefault();
+        setSelectedDay(new Date().toISOString().slice(0, 10));
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [selectedDay]);
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(() => {
     if (typeof document === "undefined") return "dark";
     const savedTheme = localStorage.getItem("oura-dashboard-theme");
@@ -206,7 +262,7 @@ function App() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/dashboard/summary");
+      const response = await fetch(`/api/dashboard/summary?day=${selectedDay}`);
       if (!response.ok) {
         throw new Error(`Failed to load summary: ${response.statusText}`);
       }
@@ -226,7 +282,7 @@ function App() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedDay]);
 
   async function handleSync() {
     try {
@@ -653,6 +709,7 @@ function App() {
     { key: "anomalies", label: "Anomalies", hue: "var(--low)", icon: <Warn size={20} /> },
     { key: "insights", label: "Insights", hue: "var(--ai)", icon: <InsightsIcon size={20} /> },
     { key: "daystrip", label: "24h Timeline", hue: "var(--accent)", icon: <TimelineIcon size={20} /> },
+    { key: "compare", label: "Comparison", hue: "var(--accent)", icon: <CompareIcon size={20} /> },
     { key: "settings", label: "Settings", hue: "var(--divider-strong)", icon: <SettingsIcon size={20} /> },
   ];
 
@@ -755,6 +812,8 @@ function App() {
                     illnessWarning={data?.illnessWarning && !alertPrefs.some((p: any) => p.alert_type === "illness_warning" && p.muted === 1)}
                     worstContributor={data?.worstContributor}
                     onMuteAlert={muteAlert}
+                    rawSleep={data?.rawSleep || []}
+                    rawReadiness={data?.rawReadiness || []}
                   />
                 )}
 
@@ -859,6 +918,10 @@ function App() {
 
                 {activeTab === "daystrip" && (
                   <DayStripView hues={hues} />
+                )}
+
+                {activeTab === "compare" && (
+                  <CompareView data={data} hues={hues} />
                 )}
 
                 {activeTab === "settings" && (

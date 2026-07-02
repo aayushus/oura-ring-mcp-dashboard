@@ -48,6 +48,7 @@ export interface HistorySummary {
   vo2Max?: any[];
   resilience?: any[];
   rawSleep?: any[];
+  rawReadiness?: any[];
   rawActivity?: any[];
   correlations?: Record<string, Record<string, number>>;
   tagEffects?: any[];
@@ -69,4 +70,5 @@ export type TabKey =
   | "anomalies"
   | "insights"
   | "daystrip"
+  | "compare"
   | "settings";

@@ -348,3 +348,12 @@ export function TimelineIcon({ size = 14, className, strokeWidth = 1.5 }: IconPr
   );
 }
 
+export function CompareIcon({ size = 14, className, strokeWidth = 1.5 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 14 14" {...svgBase} strokeWidth={strokeWidth} className={className}>
+      {/* 2 columns grid / comparison scales */}
+      <path d="M1 2.5h5.5v9H1zM7.5 2.5H13v9H7.5zM3 5.5h1.5M9.5 5.5h1.5M3 8.5h1.5M9.5 8.5h1.5" />
+    </svg>
+  );
+}
+
