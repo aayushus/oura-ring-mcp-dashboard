@@ -25,6 +25,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # dashboard/ is a separate npm-managed package (own package-lock.json,
+      # not part of the pnpm workspace) — pnpm install does not cover it
+      - name: Install dashboard dependencies
+        run: npm ci --prefix dashboard
+
       - name: Type check
         run: pnpm build
 
