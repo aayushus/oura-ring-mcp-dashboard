@@ -127,6 +127,9 @@ export function DashboardLineChart(props: EnrichedLineChartProps) {
           (containerWidth - margin.left - margin.right)
       : 0;
 
+  const primaryKey = series?.[0]?.dataKey ? String(series[0].dataKey) : "";
+  const annotations = primaryKey ? computeAnnotations(dataset || [], primaryKey) : [];
+
   return (
     <div
       ref={containerRef}
@@ -158,6 +161,30 @@ export function DashboardLineChart(props: EnrichedLineChartProps) {
             zIndex: 10,
           }}
         />
+      )}
+
+      {annotations.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px", padding: "0 10px" }}>
+          {annotations.map((ann, idx) => (
+            <span
+              key={idx}
+              style={{
+                fontSize: "0.68rem",
+                background: "rgba(255, 255, 255, 0.04)",
+                border: "1px solid var(--divider)",
+                borderRadius: "6px",
+                padding: "2px 8px",
+                color: "var(--text-3)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              <span style={{ color: ann.type === "z-score" ? "var(--hue-stress)" : "var(--accent)", fontWeight: 700 }}>•</span>
+              <strong>{ann.day}:</strong> {ann.label}
+            </span>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -260,6 +287,9 @@ export function DashboardBarChart(props: EnrichedBarChartProps) {
           (containerWidth - margin.left - margin.right)
       : 0;
 
+  const primaryKey = series?.[0]?.dataKey ? String(series[0].dataKey) : "";
+  const annotations = primaryKey ? computeAnnotations(dataset || [], primaryKey) : [];
+
   return (
     <div
       ref={containerRef}
@@ -292,6 +322,83 @@ export function DashboardBarChart(props: EnrichedBarChartProps) {
           }}
         />
       )}
+
+      {annotations.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px", padding: "0 10px" }}>
+          {annotations.map((ann, idx) => (
+            <span
+              key={idx}
+              style={{
+                fontSize: "0.68rem",
+                background: "rgba(255, 255, 255, 0.04)",
+                border: "1px solid var(--divider)",
+                borderRadius: "6px",
+                padding: "2px 8px",
+                color: "var(--text-3)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              <span style={{ color: ann.type === "z-score" ? "var(--hue-stress)" : "var(--accent)", fontWeight: 700 }}>•</span>
+              <strong>{ann.day}:</strong> {ann.label}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
+}
+
+function computeAnnotations(dataset: readonly any[], dataKey: string) {
+  if (!dataset || dataset.length === 0 || !dataKey) return [];
+  const values = dataset
+    .map((d) => d[dataKey])
+    .filter((v) => typeof v === "number" && !isNaN(v));
+  if (values.length === 0) return [];
+
+  const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+  const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
+  const stdDev = Math.sqrt(variance) || 1;
+
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+
+  const annotations: Array<{ day: string; label: string; z: number; type: string }> = [];
+
+  dataset.forEach((d) => {
+    const val = d[dataKey];
+    if (typeof val !== "number" || isNaN(val)) return;
+
+    const z = (val - mean) / stdDev;
+    const dayLabel = d.day || "";
+
+    if (Math.abs(z) >= 2) {
+      annotations.push({
+        day: dayLabel,
+        label: `Unusually ${z > 0 ? "high" : "low"} (${val}${z > 0 ? " ▲" : " ▼"})`,
+        z: Math.abs(z),
+        type: "z-score",
+      });
+    } else if (val === maxVal && values.length >= 6) {
+      annotations.push({
+        day: dayLabel,
+        label: `Period best (${val} ▲)`,
+        z: 1.5,
+        type: "max",
+      });
+    } else if (val === minVal && values.length >= 6) {
+      annotations.push({
+        day: dayLabel,
+        label: `Period lowest (${val} ▼)`,
+        z: 1.5,
+        type: "min",
+      });
+    }
+  });
+
+  // Sort by strength (z-score value) descending and limit to top 3
+  return annotations
+    .sort((a, b) => b.z - a.z)
+    .slice(0, 3);
 }

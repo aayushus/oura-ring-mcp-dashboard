@@ -61,6 +61,7 @@ import { ExperimentsView } from "./views/ExperimentsView";
 import { AnomaliesView } from "./views/AnomaliesView";
 import { DayStripView } from "./views/DayStripView";
 import { CompareView } from "./views/CompareView";
+import { WeeklyReportView } from "./views/WeeklyReportView";
 import { CrosshairProvider } from "./context/CrosshairContext";
 import { CommandPalette } from "./components/CommandPalette";
 
@@ -712,6 +713,12 @@ function App() {
     { key: "compare", label: "Comparison", hue: "var(--accent)", icon: <CompareIcon size={20} /> },
     { key: "settings", label: "Settings", hue: "var(--divider-strong)", icon: <SettingsIcon size={20} /> },
   ];
+
+  const isReportMode = new URLSearchParams(window.location.search).get("report") === "weekly";
+
+  if (isReportMode) {
+    return <WeeklyReportView />;
+  }
 
   return (
     <ThemeProvider theme={muiTheme}>
