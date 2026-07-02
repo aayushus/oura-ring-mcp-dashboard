@@ -25,33 +25,100 @@ An MCP server that connects your Oura Ring to Claude and other AI assistants. Ge
 
 ## Quick Start (Docker)
 
-### 1. Clone the repo
+Choose one of the following two deployment methods:
 
+### Method 1: Run Pre-built Image (Fastest, No Source Code Needed)
+
+You do not need to clone the repository. Simply create a directory, write a `.env` file, and run the container directly from the GitHub Container Registry:
+
+1. Create a directory and step into it:
+   ```bash
+   mkdir oura-dashboard && cd oura-dashboard
+   ```
+2. Create a `.env` file:
+   ```env
+   OURA_CLIENT_ID=your_client_id_here
+   OURA_CLIENT_SECRET=your_client_secret_here
+   PORT=3000
+   ```
+3. Create a `compose.yaml` file:
+   ```yaml
+   services:
+     db:
+       image: postgres:16-alpine
+       container_name: oura-db
+       restart: unless-stopped
+       environment:
+         - POSTGRES_USER=postgres
+         - POSTGRES_PASSWORD=postgres
+         - POSTGRES_DB=oura_health
+       volumes:
+         - ./db:/var/lib/postgresql/data
+       ports:
+         - "5432:5432"
+       healthcheck:
+         test: ["CMD-SHELL", "pg_isready -U postgres -d oura_health"]
+         interval: 10s
+         timeout: 5s
+         retries: 5
+
+     oura-mcp:
+       image: ghcr.io/aayushus/oura-ring-mcp-dashboard:latest
+       container_name: oura-mcp
+       restart: unless-stopped
+       ports:
+         - "3000:3000"
+       depends_on:
+         db:
+           condition: service_healthy
+       environment:
+         - NODE_ENV=production
+         - OURA_CLIENT_ID=${OURA_CLIENT_ID}
+         - OURA_CLIENT_SECRET=${OURA_CLIENT_SECRET}
+         - PORT=3000
+         - DATABASE_URL=postgresql://postgres:postgres@db:5432/oura_health
+       volumes:
+         - ./oura_credentials:/root/.oura-mcp
+   ```
+4. Start the stack:
+   ```bash
+   docker compose up -d
+   ```
+
+---
+
+### Method 2: Build & Run from Source Code (Local Development)
+
+Use this method if you want to modify the source code or build the image locally:
+
+1. Clone the repository and navigate into it:
+   ```bash
+   git clone https://github.com/aayushus/oura-ring-mcp-dashboard.git
+   cd oura-ring-mcp-dashboard
+   ```
+2. Copy the example configuration:
+   ```bash
+   cp .env.example .env
+   ```
+   Fill in your OAuth credentials (see [Authentication](#authentication) below).
+3. Start the dashboard stack:
+   ```bash
+   ./start.sh
+   ```
+
+You can control the local stack using these helper scripts:
 ```bash
-git clone https://github.com/aayushus/oura-ring-mcp-dashboard.git
-cd oura-ring-mcp-dashboard
+./stop.sh      # Stop the containers
+./restart.sh   # Rebuild and restart the stack
 ```
 
-### 2. Set up credentials
+---
 
-```bash
-cp .env.example .env
-```
-
-Then fill in your OAuth credentials (see [Authentication](#authentication) below).
-
-### 3. Start the server
-
-```bash
-./start.sh
-```
-
-The MCP server will be available at `http://localhost:3000/mcp`.
-
-```bash
-./stop.sh      # stop the server
-./restart.sh   # rebuild and restart
-```
+### Accessing the Dashboard & API
+Once running, the stack is available at:
+- **Dashboard UI**: `http://localhost:3000/dashboard`
+- **MCP Endpoint**: `http://localhost:3000/mcp`
+- **Health Check**: `http://localhost:3000/health`
 
 ---
 
