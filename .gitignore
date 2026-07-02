@@ -26,7 +26,7 @@ out/
 ~/.oura-mcp/
 credentials.json
 db/
-oura_credentials/oura-health.db*
+oura_credentials/
 
 # MCP registry auth tokens
 .mcpregistry_*
