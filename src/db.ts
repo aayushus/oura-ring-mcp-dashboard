@@ -357,6 +357,30 @@ export async function upsertStress(record: StressRecord): Promise<void> {
   );
 }
 
+export async function upsertStressBulk(records: StressRecord[]): Promise<void> {
+  if (!records || records.length === 0) return;
+  const db = await getDb();
+
+  // SQLite limits variables per query (default 999). 3 vars per record means max 333 records.
+  // Chunking by 100 is very safe.
+  const CHUNK_SIZE = 100;
+
+  for (let i = 0; i < records.length; i += CHUNK_SIZE) {
+    const chunk = records.slice(i, i + CHUNK_SIZE);
+    const placeholders = chunk.map(() => '(?, ?, ?)').join(',');
+    const values = chunk.flatMap(r => [r.day, r.stress_duration, r.recovery_duration]);
+
+    await db.run(
+      `INSERT INTO stress_history (day, stress_duration, recovery_duration)
+       VALUES ${placeholders}
+       ON CONFLICT(day) DO UPDATE SET
+         stress_duration = excluded.stress_duration,
+         recovery_duration = excluded.recovery_duration`,
+      values
+    );
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 // General History Queries
 // ─────────────────────────────────────────────────────────────
