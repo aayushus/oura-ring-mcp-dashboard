@@ -9,6 +9,7 @@ import {
   upsertReadiness,
   upsertActivity,
   upsertStress,
+  upsertStressBulk,
   upsertRawDocument,
   getHistory,
   upsertUserProfile,
@@ -156,13 +157,17 @@ export async function syncData(
     }
 
     // 4. Process Stress
-    for (const str of stress.data) {
+    const stressRecords = stress.data.map((str: any) => {
       days.add(str.day);
-      await upsertStress({
+      return {
         day: str.day,
         stress_duration: str.stress_high ?? 0,
         recovery_duration: str.recovery_high ?? 0,
-      });
+      };
+    });
+
+    if (stressRecords.length > 0) {
+      await upsertStressBulk(stressRecords);
     }
 
     console.log(`[Sync] Completed sync successfully. Synced ${days.size} days.`);
