@@ -271,6 +271,36 @@ export async function upsertSleep(record: SleepRecord): Promise<void> {
   );
 }
 
+export async function upsertActivities(records: ActivityRecord[]): Promise<void> {
+  if (records.length === 0) return;
+  const db = await getDb();
+
+  // Batch in chunks of 100 to avoid parameter limits in some DBs
+  const chunkSize = 100;
+  for (let i = 0; i < records.length; i += chunkSize) {
+    const chunk = records.slice(i, i + chunkSize);
+    const placeholders = chunk.map(() => "(?, ?, ?, ?, ?)").join(", ");
+    const params = chunk.flatMap(r => [
+      r.day,
+      r.score,
+      r.steps,
+      r.active_calories,
+      r.total_calories,
+    ]);
+
+    await db.run(
+      `INSERT INTO activity_history (day, score, steps, active_calories, total_calories)
+       VALUES ${placeholders}
+       ON CONFLICT(day) DO UPDATE SET
+         score = excluded.score,
+         steps = excluded.steps,
+         active_calories = excluded.active_calories,
+         total_calories = excluded.total_calories`,
+      params
+    );
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 // Readiness Operations
 // ─────────────────────────────────────────────────────────────
