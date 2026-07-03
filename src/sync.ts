@@ -72,11 +72,11 @@ export async function syncData(
     // Helper to store raw docs
     const saveRawDocs = async (endpoint: string, dataArray: any[]) => {
       if (!dataArray) return;
-      for (const doc of dataArray) {
+      await Promise.all(dataArray.map((doc: any) => {
         const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
         const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
-        await upsertRawDocument(day, endpoint, docId, doc);
-      }
+        return upsertRawDocument(day, endpoint, docId, doc);
+      }));
     };
 
     // Store raw payloads for read-time logic
@@ -114,11 +114,11 @@ export async function syncData(
 
     // 1. Process Sleep
     const sessionsByDay = new Map<string, any>(sleepSessions.data.map((s: any) => [s.day, s]));
-    for (const score of sleepScores.data) {
+    await Promise.all(sleepScores.data.map((score: any) => {
       days.add(score.day);
       const session = sessionsByDay.get(score.day);
 
-      await upsertSleep({
+      return upsertSleep({
         day: score.day,
         score: score.score ?? 0,
         duration: session?.total_sleep_duration ?? 0,
@@ -127,43 +127,43 @@ export async function syncData(
         light: session?.light_sleep_duration ?? 0,
         efficiency: session?.efficiency ?? score.contributors?.efficiency ?? 0,
       });
-    }
+    }));
 
     // 2. Process Readiness
-    for (const read of readiness.data) {
+    await Promise.all(readiness.data.map((read: any) => {
       days.add(read.day);
       const session = sessionsByDay.get(read.day);
 
-      await upsertReadiness({
+      return upsertReadiness({
         day: read.day,
         score: read.score ?? 0,
         hrv: session?.average_hrv ?? 0,
         rhr: session?.lowest_heart_rate ?? 0,
         temperature_deviation: read.temperature_deviation ?? 0,
       });
-    }
+    }));
 
     // 3. Process Activity
-    for (const act of activity.data) {
+    await Promise.all(activity.data.map((act: any) => {
       days.add(act.day);
-      await upsertActivity({
+      return upsertActivity({
         day: act.day,
         score: act.score ?? 0,
         steps: act.steps ?? 0,
         active_calories: act.active_calories ?? 0,
         total_calories: act.total_calories ?? 0,
       });
-    }
+    }));
 
     // 4. Process Stress
-    for (const str of stress.data) {
+    await Promise.all(stress.data.map((str: any) => {
       days.add(str.day);
-      await upsertStress({
+      return upsertStress({
         day: str.day,
         stress_duration: str.stress_high ?? 0,
         recovery_duration: str.recovery_high ?? 0,
       });
-    }
+    }));
 
     console.log(`[Sync] Completed sync successfully. Synced ${days.size} days.`);
     return { success: true, syncedDays: days.size };
