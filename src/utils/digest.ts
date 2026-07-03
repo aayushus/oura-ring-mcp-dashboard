@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 import nodemailer from "nodemailer";
 import {
   getDb,
@@ -10,7 +11,8 @@ import {
 } from "../db.js";
 
 // Path to log digests locally for demonstration/manual verification
-const DIGEST_FILE_LOG = "/Users/aayush/.gemini/antigravity/morning_digest_log.json";
+const CONFIG_DIR = path.join(os.homedir(), ".oura-mcp");
+const DIGEST_FILE_LOG = path.join(CONFIG_DIR, "morning_digest_log.json");
 
 interface DigestDetails {
   date: string;
