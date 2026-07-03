@@ -17,6 +17,28 @@ function addDays(dateStr: string, days: number): string {
   return date.toISOString().split("T")[0];
 }
 
+/**
+ * Checks if it's a single date query and expands the date range by the specified number of days.
+ * WORKAROUND: Oura API returns empty results for single-date queries (start == end)
+ * on many endpoints. We expand the range and filter client-side.
+ */
+function expandDateRangeIfSingleDate(
+  startDate: string,
+  endDate: string,
+  expandDays: number = 1
+): { isSingleDate: boolean; queryStart: string; queryEnd: string } {
+  const isSingleDate = startDate === endDate;
+  let queryStart = startDate;
+  let queryEnd = endDate;
+
+  if (isSingleDate) {
+    queryStart = addDays(startDate, -expandDays);
+    queryEnd = addDays(endDate, expandDays);
+  }
+
+  return { isSingleDate, queryStart, queryEnd };
+}
+
 // Re-export commonly used types for convenience
 export type SleepSession = components["schemas"]["PublicModifiedSleepModel"];
 export type DailySleep = components["schemas"]["PublicDailySleep"];
@@ -99,17 +121,10 @@ export class OuraClient {
   }
 
   async getSleep(startDate: string, endDate: string) {
-    // WORKAROUND: Oura API returns empty results for single-date queries (start == end)
-    // on the /sleep endpoint. We expand the range by ±1 day and filter client-side.
-    const isSingleDate = startDate === endDate;
-
-    let queryStart = startDate;
-    let queryEnd = endDate;
-
-    if (isSingleDate) {
-      queryStart = addDays(startDate, -1);
-      queryEnd = addDays(endDate, 1);
-    }
+    const { isSingleDate, queryStart, queryEnd } = expandDateRangeIfSingleDate(
+      startDate,
+      endDate
+    );
 
     const response = await this.fetch<OuraResponse<SleepSession>>("sleep", {
       start_date: queryStart,
@@ -142,17 +157,10 @@ export class OuraClient {
   // ─────────────────────────────────────────────────────────────
 
   async getDailyActivity(startDate: string, endDate: string) {
-    // WORKAROUND: Oura API returns empty results for single-date queries (start == end)
-    // on the /daily_activity endpoint. We expand the range by ±1 day and filter client-side.
-    const isSingleDate = startDate === endDate;
-
-    let queryStart = startDate;
-    let queryEnd = endDate;
-
-    if (isSingleDate) {
-      queryStart = addDays(startDate, -1);
-      queryEnd = addDays(endDate, 1);
-    }
+    const { isSingleDate, queryStart, queryEnd } = expandDateRangeIfSingleDate(
+      startDate,
+      endDate
+    );
 
     const response = await this.fetch<OuraResponse<DailyActivity>>("daily_activity", {
       start_date: queryStart,
@@ -196,17 +204,10 @@ export class OuraClient {
   // ─────────────────────────────────────────────────────────────
 
   async getWorkouts(startDate: string, endDate: string) {
-    // WORKAROUND: Oura API returns empty results for single-date queries (start == end)
-    // on the /workout endpoint. We expand the range by ±1 day and filter client-side.
-    const isSingleDate = startDate === endDate;
-
-    let queryStart = startDate;
-    let queryEnd = endDate;
-
-    if (isSingleDate) {
-      queryStart = addDays(startDate, -1);
-      queryEnd = addDays(endDate, 1);
-    }
+    const { isSingleDate, queryStart, queryEnd } = expandDateRangeIfSingleDate(
+      startDate,
+      endDate
+    );
 
     const response = await this.fetch<OuraResponse<Workout>>("workout", {
       start_date: queryStart,
@@ -272,17 +273,10 @@ export class OuraClient {
   // ─────────────────────────────────────────────────────────────
 
   async getTags(startDate: string, endDate: string) {
-    // WORKAROUND: Oura API returns empty results for single-date queries (start == end)
-    // on the /tag endpoint. We expand the range by ±1 day and filter client-side.
-    const isSingleDate = startDate === endDate;
-
-    let queryStart = startDate;
-    let queryEnd = endDate;
-
-    if (isSingleDate) {
-      queryStart = addDays(startDate, -1);
-      queryEnd = addDays(endDate, 1);
-    }
+    const { isSingleDate, queryStart, queryEnd } = expandDateRangeIfSingleDate(
+      startDate,
+      endDate
+    );
 
     const response = await this.fetch<OuraResponse<Tag>>("tag", {
       start_date: queryStart,
@@ -300,18 +294,11 @@ export class OuraClient {
   }
 
   async getEnhancedTags(startDate: string, endDate: string) {
-    // WORKAROUND: Oura API returns empty results for narrow date ranges on /enhanced_tag.
-    // Unlike other endpoints (±1 day), this one needs at least ±2 days to work.
-    // We expand by ±3 days to be safe and filter client-side.
-    const isSingleDate = startDate === endDate;
-
-    let queryStart = startDate;
-    let queryEnd = endDate;
-
-    if (isSingleDate) {
-      queryStart = addDays(startDate, -3);
-      queryEnd = addDays(endDate, 3);
-    }
+    const { isSingleDate, queryStart, queryEnd } = expandDateRangeIfSingleDate(
+      startDate,
+      endDate,
+      3
+    );
 
     const response = await this.fetch<OuraResponse<EnhancedTag>>("enhanced_tag", {
       start_date: queryStart,
@@ -334,17 +321,10 @@ export class OuraClient {
   // ─────────────────────────────────────────────────────────────
 
   async getSessions(startDate: string, endDate: string) {
-    // WORKAROUND: Oura API returns empty results for single-date queries (start == end)
-    // on the /session endpoint. We expand the range by ±1 day and filter client-side.
-    const isSingleDate = startDate === endDate;
-
-    let queryStart = startDate;
-    let queryEnd = endDate;
-
-    if (isSingleDate) {
-      queryStart = addDays(startDate, -1);
-      queryEnd = addDays(endDate, 1);
-    }
+    const { isSingleDate, queryStart, queryEnd } = expandDateRangeIfSingleDate(
+      startDate,
+      endDate
+    );
 
     const response = await this.fetch<OuraResponse<Session>>("session", {
       start_date: queryStart,
