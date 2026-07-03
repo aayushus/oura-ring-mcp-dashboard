@@ -10,6 +10,7 @@ import {
   upsertActivity,
   upsertStress,
   upsertRawDocument,
+  upsertRawDocuments,
   getHistory,
   upsertUserProfile,
   getUserProfile,
@@ -71,12 +72,13 @@ export async function syncData(
 
     // Helper to store raw docs
     const saveRawDocs = async (endpoint: string, dataArray: any[]) => {
-      if (!dataArray) return;
-      for (const doc of dataArray) {
+      if (!dataArray || dataArray.length === 0) return;
+      const docs = dataArray.map(doc => {
         const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
         const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
-        await upsertRawDocument(day, endpoint, docId, doc);
-      }
+        return { day, endpoint, docId, data: doc };
+      });
+      await upsertRawDocuments(docs);
     };
 
     // Store raw payloads for read-time logic

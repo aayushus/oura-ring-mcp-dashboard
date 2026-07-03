@@ -554,6 +554,33 @@ export async function upsertRawDocument(
   );
 }
 
+export async function upsertRawDocuments(
+  docs: { day: string; endpoint: string; docId: string; data: any }[]
+): Promise<void> {
+  if (docs.length === 0) return;
+  const db = await getDb();
+
+  const chunkSize = 200;
+  for (let i = 0; i < docs.length; i += chunkSize) {
+    const chunk = docs.slice(i, i + chunkSize);
+    const placeholders = chunk.map(() => "(?, ?, ?, ?)").join(", ");
+    const values = chunk.flatMap(d => [
+      d.day,
+      d.endpoint,
+      d.docId,
+      JSON.stringify(d.data)
+    ]);
+
+    await db.run(
+      `INSERT INTO raw_documents (day, endpoint, doc_id, data)
+       VALUES ${placeholders}
+       ON CONFLICT(day, endpoint, doc_id) DO UPDATE SET
+         data = excluded.data`,
+      values
+    );
+  }
+}
+
 export async function getRawDocuments(
   endpoint: string,
   startDate?: string,
