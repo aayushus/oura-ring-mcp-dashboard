@@ -8,6 +8,7 @@ import {
   upsertSleep,
   upsertReadiness,
   upsertActivity,
+  upsertActivities,
   upsertStress,
   upsertRawDocument,
   getHistory,
@@ -144,16 +145,17 @@ export async function syncData(
     }
 
     // 3. Process Activity
-    for (const act of activity.data) {
+    const activityRecords = activity.data.map((act: any) => {
       days.add(act.day);
-      await upsertActivity({
+      return {
         day: act.day,
         score: act.score ?? 0,
         steps: act.steps ?? 0,
         active_calories: act.active_calories ?? 0,
         total_calories: act.total_calories ?? 0,
-      });
-    }
+      };
+    });
+    await upsertActivities(activityRecords);
 
     // 4. Process Stress
     for (const str of stress.data) {
