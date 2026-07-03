@@ -137,8 +137,14 @@ export async function refreshAccessToken(
  * Revoke an access token
  */
 export async function revokeToken(accessToken: string): Promise<void> {
-  const response = await fetch(`${REVOKE_URL}?access_token=${accessToken}`, {
+  const response = await fetch(REVOKE_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      access_token: accessToken,
+    }),
   });
 
   if (!response.ok) {
