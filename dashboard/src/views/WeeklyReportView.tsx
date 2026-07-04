@@ -185,20 +185,8 @@ export function WeeklyReportView() {
 
       {/* Print Trigger Button (Visible only on screen, hidden on print) */}
       <div className="no-print" style={{ marginTop: "30px", textAlign: "center" }}>
-        <button
-          onClick={() => window.print()}
-          style={{
-            padding: "10px 24px",
-            background: "#000000",
-            color: "#FFFFFF",
-            border: "none",
-            borderRadius: "6px",
-            fontSize: "0.9rem",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Print Report
+        <button type="button" className="halo-btn halo-btn-primary" onClick={() => window.print()}>
+          Print report
         </button>
       </div>
     </div>

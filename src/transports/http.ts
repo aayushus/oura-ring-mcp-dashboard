@@ -27,10 +27,17 @@ import {
   OuraMcpOAuthProvider,
   type OuraMcpOAuthProviderOptions,
 } from "../auth/mcp-oauth-provider.js";
-import type { OuraClient } from "../client.js";
+import { OuraClient } from "../client.js";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { getSetting, setSetting, getOuraCredentials } from "../auth/settings.js";
+import { requestContextStorage } from "../auth/context.js";
+import cookieParser from "cookie-parser";
+import { authRouter } from "../auth/routes.js";
+import { requireAuth, requireAdmin, csrfGuard } from "../auth/web.js";
+import { getOuraConnection, getUserIdByMcpApiKey, updateMcpApiKeyLastUsed } from "../auth/db.js";
 import {
+  getDb,
   getHistory,
   getUserProfile,
   getUserTargets,
@@ -45,8 +52,9 @@ import {
   upsertAnomaly,
   getAlertPreferences,
   setAlertMute,
+  getSyncLog,
 } from "../db.js";
-import { syncData, startSyncScheduler } from "../sync.js";
+import { syncData, startSyncScheduler, getActiveSyncJob, isSyncRunning } from "../sync.js";
 import { getToday, getDaysAgo } from "../utils/index.js";
 import { runWeeklyTargetJob } from "../utils/targets.js";
 import {
@@ -119,6 +127,47 @@ export async function startHttpServer(
     );
   }
 
+  let bearerAuth: express.RequestHandler | null = null;
+
+  const customBearerAuth = async (req: Request, res: Response, next: express.NextFunction) => {
+    if (req.path === "/health" || req.path === "/healthz") return next();
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      res.status(401).json({ error: "Missing Authorization header" });
+      return;
+    }
+    const [scheme, token] = authHeader.split(" ");
+    if (scheme !== "Bearer" || !token) {
+      res.status(401).json({ error: "Invalid Authorization scheme" });
+      return;
+    }
+
+    // 1. Static/legacy secret fallback
+    if (secret && token === secret) {
+      req.user = { id: 1, role: "admin" } as any;
+      return next();
+    }
+
+    // 2. Custom multi-user MCP API keys
+    if (token.startsWith("halo_")) {
+      const crypto = await import("node:crypto");
+      const hash = crypto.createHash("sha256").update(token).digest("hex");
+      const userId = await getUserIdByMcpApiKey(hash);
+      if (userId) {
+        updateMcpApiKeyLastUsed(hash).catch(err => console.error("Failed to update last used:", err));
+        req.user = { id: userId, role: "member" } as any;
+        return next();
+      }
+    }
+
+    // 3. Oura OAuth token verification fallback
+    if (bearerAuth) {
+      return bearerAuth(req, res, next);
+    }
+
+    res.status(401).json({ error: "Invalid credentials" });
+  };
+
   const app = express();
 
   // Trust Railway's load balancer (fixes X-Forwarded-For rate limit errors)
@@ -126,6 +175,16 @@ export async function startHttpServer(
 
   // Parse JSON bodies
   app.use(express.json());
+
+  // Parse cookies for session auth
+  app.use(cookieParser());
+
+  // Mount Authentication endpoints
+  app.use("/api/auth", authRouter);
+  app.get("/api/me", authRouter); // Also route GET /api/me to the authRouter
+
+  // Protect all dashboard API endpoints
+  app.use("/api/dashboard", requireAuth, csrfGuard);
 
   // CORS for remote clients
   app.use((req, res, next) => {
@@ -153,20 +212,21 @@ export async function startHttpServer(
   app.get("/api/dashboard/summary", async (req: Request, res: Response) => {
     try {
       const endDay = (req.query.day as string) || undefined;
-      let history = await getHistory(365, endDay); // fetch 365 days to support year-view heatmaps, ACWR, and sleep debt properly
+      const userId = req.user?.id ?? 1;
+      let history = await getHistory(365, endDay, userId); // fetch 365 days to support year-view heatmaps, ACWR, and sleep debt properly
 
       // Auto-sync if DB is empty and client is available
       const isEmpty = history.sleep.length === 0 && history.readiness.length === 0;
       if (isEmpty && ouraClient) {
         console.error("[HTTP] Database empty, triggering auto-sync...");
-        const syncResult = await syncData(ouraClient, getDaysAgo(30), getToday());
+        const syncResult = await syncData(ouraClient, getDaysAgo(30), getToday(), "auto", userId);
         if (syncResult.success) {
-          history = await getHistory(365);
+          history = await getHistory(365, undefined, userId);
         }
       }
 
       // Calculate sleep need and step targets
-      const targets = await getUserTargets();
+      const targets = await getUserTargets(userId);
       const sleepNeed = targets?.sleep_need_seconds ?? 27900; // default 7.75h
 
       const sleepDebt = calculateSleepDebt(history.sleep, sleepNeed);
@@ -175,16 +235,16 @@ export async function startHttpServer(
 
       // Save computed anomalies to database
       for (const anomaly of computedAnomalies) {
-        await upsertAnomaly(anomaly);
+        await upsertAnomaly(anomaly, userId);
       }
 
       // Fetch raw endpoints from database
-      const rawTags = await getRawDocuments("enhanced_tag");
-      const rawSleep = await getRawDocuments("daily_sleep");
-      const rawWorkouts = await getRawDocuments("workout");
-      const rawCardioAge = await getRawDocuments("daily_cardiovascular_age");
-      const rawVo2Max = await getRawDocuments("vO2_max");
-      const rawResilience = await getRawDocuments("daily_resilience");
+      const rawTags = await getRawDocuments("enhanced_tag", undefined, undefined, userId);
+      const rawSleep = await getRawDocuments("daily_sleep", undefined, undefined, userId);
+      const rawWorkouts = await getRawDocuments("workout", undefined, undefined, userId);
+      const rawCardioAge = await getRawDocuments("daily_cardiovascular_age", undefined, undefined, userId);
+      const rawVo2Max = await getRawDocuments("vO2_max", undefined, undefined, userId);
+      const rawResilience = await getRawDocuments("daily_resilience", undefined, undefined, userId);
 
       const tagEffects = calculateTagEffects(rawTags, history.sleep, history.readiness);
       const correlations = calculatePearsonCorrelations(history.sleep, history.readiness, history.activity);
@@ -209,7 +269,7 @@ export async function startHttpServer(
 
       // Worst contributor extraction
       const latestRawSleep = rawSleep[rawSleep.length - 1];
-      const latestRawReadiness = (await getRawDocuments("daily_readiness")).slice(-1)[0] || null;
+      const latestRawReadiness = (await getRawDocuments("daily_readiness", undefined, undefined, userId)).slice(-1)[0] || null;
 
       let worstContributor = null;
       let worstScore = 100;
@@ -247,16 +307,22 @@ export async function startHttpServer(
         tagEffects,
         correlations,
         rawSleep: rawSleep.slice(-10),
-        rawReadiness: (await getRawDocuments("daily_readiness")).slice(-10),
+        rawReadiness: (await getRawDocuments("daily_readiness", undefined, undefined, userId)).slice(-10),
         workouts: rawWorkouts.slice(-20),
         cardioAge: rawCardioAge.slice(-30),
         vo2Max: rawVo2Max.slice(-30),
         resilience: rawResilience.slice(-30),
         worstContributor,
-        rawActivity: (await getRawDocuments("daily_activity")).slice(-10),
+        rawActivity: (await getRawDocuments("daily_activity", undefined, undefined, userId)).slice(-10),
         targets,
-        profile: await getUserProfile(),
-        alertPreferences: await getAlertPreferences(),
+        profile: await getUserProfile(userId),
+        alertPreferences: await getAlertPreferences(userId),
+        flags: {
+          signupsEnabled: process.env.ALLOW_SIGNUPS !== "false",
+          isFirstRun: false,
+          ouraAppConfigured: !!(await getOuraCredentials()).clientId && !!(await getOuraCredentials()).clientSecret,
+          ouraConnected: !!(await getOuraConnection(userId)),
+        },
       });
     } catch (err) {
       console.error("Dashboard summary API error:", err);
@@ -265,9 +331,10 @@ export async function startHttpServer(
   });
 
   // Get anomaly alerts log list
-  app.get("/api/dashboard/anomalies", async (_req: Request, res: Response) => {
+  app.get("/api/dashboard/anomalies", async (req: Request, res: Response) => {
     try {
-      const records = await getAnomalies(50);
+      const userId = req.user?.id ?? 1;
+      const records = await getAnomalies(50, userId);
       res.json(records);
     } catch (err) {
       console.error("Get anomalies list API error:", err);
@@ -276,12 +343,13 @@ export async function startHttpServer(
   });
 
   // Get active self-experiments list
-  app.get("/api/dashboard/experiments", async (_req: Request, res: Response) => {
+  app.get("/api/dashboard/experiments", async (req: Request, res: Response) => {
     try {
-      const exps = await getExperiments();
+      const userId = req.user?.id ?? 1;
+      const exps = await getExperiments(userId);
       const enriched = await Promise.all(
         exps.map(async (exp) => {
-          const loggedDays = await getExperimentDays(exp.id);
+          const loggedDays = await getExperimentDays(exp.id, userId);
           return {
             ...exp,
             metric_ids: JSON.parse(exp.metric_ids),
@@ -299,6 +367,7 @@ export async function startHttpServer(
   // Register new self-experiment config
   app.post("/api/dashboard/experiments", async (req: Request, res: Response) => {
     try {
+      const userId = req.user?.id ?? 1;
       const {
         title,
         behavior_text,
@@ -327,7 +396,7 @@ export async function startHttpServer(
         confounder_warning: confounder_warning || "",
       };
 
-      await upsertExperiment(exp);
+      await upsertExperiment(exp, userId);
       res.json({
         ...exp,
         metric_ids: metric_ids || [],
@@ -342,6 +411,7 @@ export async function startHttpServer(
   // Log adherence compliance status for a specific day
   app.post("/api/dashboard/experiments/:id/log", async (req: Request, res: Response) => {
     try {
+      const userId = req.user?.id ?? 1;
       const id = req.params.id as string;
       const { day, adherent } = req.body;
 
@@ -354,7 +424,7 @@ export async function startHttpServer(
         experiment_id: id,
         day,
         adherent: Number(adherent),
-      });
+      }, userId);
 
       res.json({ success: true });
     } catch (err) {
@@ -364,33 +434,57 @@ export async function startHttpServer(
   });
 
   // Manually trigger sync from dashboard UI
-  app.post("/api/dashboard/sync", async (_req: Request, res: Response) => {
+  app.post("/api/dashboard/sync", async (req: Request, res: Response) => {
     try {
+      const userId = req.user?.id ?? 1;
       if (!ouraClient) {
         res.status(400).json({ error: "Oura client not initialized" });
         return;
       }
-
-      const syncResult = await syncData(ouraClient, getDaysAgo(365), getToday());
-      if (!syncResult.success) {
-        res.status(500).json({ error: syncResult.error || "Sync failed" });
+      if (isSyncRunning()) {
+        res.status(409).json({ error: "A sync is already running" });
         return;
       }
 
-      const history = await getHistory(30);
-      res.json({ success: true, history });
+      const syncResult = await syncData(ouraClient, getDaysAgo(365), getToday(), "manual", userId);
+      if (!syncResult.success) {
+        res.status(500).json({ error: syncResult.error || "Sync failed", summary: syncResult });
+        return;
+      }
+
+      const history = await getHistory(30, undefined, userId);
+      res.json({ success: true, history, summary: syncResult });
     } catch (err) {
       console.error("Dashboard sync API error:", err);
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
   });
 
+  // Live state of the current (or most recent) sync run — polled by the sync drawer
+  app.get("/api/dashboard/sync/status", (_req: Request, res: Response) => {
+    res.json({ running: isSyncRunning(), job: getActiveSyncJob() });
+  });
+
+  // Persisted history of past sync runs
+  app.get("/api/dashboard/sync/log", async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id ?? 1;
+      const limit = Math.min(parseInt(String(req.query.limit ?? "20"), 10) || 20, 100);
+      res.json(await getSyncLog(limit, userId));
+    } catch (err) {
+      console.error("Sync log API error:", err);
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Export full historical biometrics in JSON or CSV format
   // Export full historical biometrics in JSON or CSV format
   app.get("/api/dashboard/export", async (req: Request, res: Response) => {
     try {
-      const history = await getHistory(1000);
-      const anomalies = await getAnomalies();
-      const targetHistory = await getTargetHistory();
+      const userId = req.user?.id ?? 1;
+      const history = await getHistory(1000, undefined, userId);
+      const anomalies = await getAnomalies(100, userId);
+      const targetHistory = await getTargetHistory(undefined, userId);
       const format = req.query.format === "csv" ? "csv" : "json";
 
       if (format === "json") {
@@ -423,6 +517,7 @@ export async function startHttpServer(
   app.get("/api/dashboard/daystrip", async (req: Request, res: Response) => {
     try {
       const day = (req.query.day as string) || getToday();
+      const userId = req.user?.id ?? 1;
       
       // Calculate D-1
       const date = new Date(day + "T00:00:00Z");
@@ -430,11 +525,11 @@ export async function startHttpServer(
       const prevDay = date.toISOString().slice(0, 10);
 
       // Fetch raw datasets
-      const sleepDocs = await getRawDocuments("sleep", prevDay, day);
-      const activityDocs = await getRawDocuments("daily_activity", prevDay, day);
-      const heartrateDocs = await getRawDocuments("heartrate", prevDay, day);
-      const workoutDocs = await getRawDocuments("workout", prevDay, day);
-      const sessionDocs = await getRawDocuments("session", prevDay, day);
+      const sleepDocs = await getRawDocuments("sleep", prevDay, day, userId);
+      const activityDocs = await getRawDocuments("daily_activity", prevDay, day, userId);
+      const heartrateDocs = await getRawDocuments("heartrate", prevDay, day, userId);
+      const workoutDocs = await getRawDocuments("workout", prevDay, day, userId);
+      const sessionDocs = await getRawDocuments("session", prevDay, day, userId);
       
       res.json({
         day,
@@ -452,9 +547,10 @@ export async function startHttpServer(
   });
 
   // Get weekly narrative summary
-  app.get("/api/dashboard/weekly", async (_req: Request, res: Response) => {
+  app.get("/api/dashboard/weekly", async (req: Request, res: Response) => {
     try {
-      const history = await getHistory(14); // Fetch 14 days
+      const userId = req.user?.id ?? 1;
+      const history = await getHistory(14, undefined, userId); // Fetch 14 days
       const sleep = history.sleep;
       const readiness = history.readiness;
       const activity = history.activity;
@@ -539,9 +635,10 @@ export async function startHttpServer(
   });
 
   // Get alert preferences
-  app.get("/api/dashboard/alerts/prefs", async (_req: Request, res: Response) => {
+  app.get("/api/dashboard/alerts/prefs", async (req: Request, res: Response) => {
     try {
-      const prefs = await getAlertPreferences();
+      const userId = req.user?.id ?? 1;
+      const prefs = await getAlertPreferences(userId);
       res.json(prefs);
     } catch (err) {
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
@@ -551,20 +648,88 @@ export async function startHttpServer(
   // Mute an alert
   app.post("/api/dashboard/alerts/mute", async (req: Request, res: Response) => {
     try {
+      const userId = req.user?.id ?? 1;
       const { alert_type, muted } = req.body;
-      await setAlertMute(alert_type, muted ? 1 : 0);
+      await setAlertMute(alert_type, muted ? 1 : 0, userId);
       res.json({ success: true, alert_type, muted });
     } catch (err) {
       res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
     }
   });
 
-  // Get user profile, targets, and targets changelog history
-  app.get("/api/dashboard/targets", async (_req: Request, res: Response) => {
+  // Get App Settings (Oura Client Configuration status)
+  app.get("/api/dashboard/settings", async (_req: Request, res: Response) => {
     try {
-      const profile = await getUserProfile();
-      const targets = await getUserTargets();
-      const history = await getTargetHistory();
+      const clientId = await getSetting("oura_client_id");
+      const clientSecret = await getSetting("oura_client_secret");
+      res.json({
+        oura_client_id: clientId || "",
+        oura_client_secret_configured: !!clientSecret,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Save App Settings
+  app.post("/api/dashboard/settings", async (req: Request, res: Response) => {
+    try {
+      const { oura_client_id, oura_client_secret } = req.body;
+      const userId = req.user?.id ?? 1;
+
+      if (oura_client_id !== undefined) {
+        await setSetting("oura_client_id", oura_client_id, userId);
+      }
+      if (oura_client_secret) {
+        await setSetting("oura_client_secret", oura_client_secret, userId);
+      }
+
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get all users (Admin Only)
+  app.get("/api/dashboard/users", requireAdmin, async (_req: Request, res: Response) => {
+    try {
+      const db = await getDb();
+      const users = await db.all("SELECT id, name, email, role, disabled, created_at FROM users ORDER BY id ASC");
+      res.json(users);
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Toggle user disabled status (Admin Only)
+  app.post("/api/dashboard/users/:id/toggle-disabled", requireAdmin, async (req: Request, res: Response) => {
+    try {
+      const targetId = Number(req.params.id);
+      if (req.user && targetId === req.user.id) {
+        res.status(400).json({ error: "Cannot disable your own administrator account" });
+        return;
+      }
+      const db = await getDb();
+      const user = await db.get("SELECT disabled FROM users WHERE id = ?", [targetId]);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+      const newStatus = user.disabled === 1 ? 0 : 1;
+      await db.run("UPDATE users SET disabled = ? WHERE id = ?", [newStatus, targetId]);
+      res.json({ success: true, disabled: newStatus });
+    } catch (err) {
+      res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    }
+  });
+
+  // Get user profile, targets, and targets changelog history
+  app.get("/api/dashboard/targets", async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id ?? 1;
+      const profile = await getUserProfile(userId);
+      const targets = await getUserTargets(userId);
+      const history = await getTargetHistory(undefined, userId);
       res.json({ profile, targets, history });
     } catch (err) {
       console.error("Get dashboard targets API error:", err);
@@ -575,6 +740,7 @@ export async function startHttpServer(
   // Save onboarding profile data and trigger initial targets calculation
   app.post("/api/dashboard/onboarding", async (req: Request, res: Response) => {
     try {
+      const userId = req.user?.id ?? 1;
       const {
         age,
         weight_kg,
@@ -607,14 +773,14 @@ export async function startHttpServer(
         target_wake_time,
         goal,
         training_days: Number(training_days),
-      });
+      }, userId);
 
       // Run weekly targets calculation job immediately
-      await runWeeklyTargetJob();
+      await runWeeklyTargetJob(userId);
 
-      const profile = await getUserProfile();
-      const targets = await getUserTargets();
-      const history = await getTargetHistory();
+      const profile = await getUserProfile(userId);
+      const targets = await getUserTargets(userId);
+      const history = await getTargetHistory(undefined, userId);
 
       res.json({ profile, targets, history });
     } catch (err) {
@@ -639,24 +805,30 @@ export async function startHttpServer(
         "Claude.ai connector will not work. Use MCP_SECRET for Claude Desktop."
     );
 
-    if (secret) {
-      // Simple bearer token auth (legacy)
-      app.use((req, res, next) => {
-        if (req.path === "/health") return next();
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-          res.status(401).json({ error: "Missing Authorization header" });
-          return;
-        }
-        const [scheme, token] = authHeader.split(" ");
-        if (scheme !== "Bearer" || token !== secret) {
-          res.status(401).json({ error: "Invalid credentials" });
-          return;
-        }
-        next();
-      });
-      console.error("Static bearer token authentication enabled");
-    }
+    app.use((req, res, next) => {
+      if (req.path === "/" || req.path === "/mcp") {
+        return customBearerAuth(req, res, next);
+      }
+      next();
+    });
+
+    app.use(async (req, res, next) => {
+      if (req.path === "/" || req.path === "/mcp") {
+        const userId = req.user?.id ?? 1;
+        let userClient = ouraClient;
+        try {
+          const conn = await getOuraConnection(userId);
+          if (conn) {
+            userClient = new OuraClient({ accessToken: conn.access_token });
+          }
+        } catch (e) {}
+        return requestContextStorage.run({ userId, ouraClient: userClient }, () => {
+          next();
+        });
+      }
+      next();
+    });
+    console.error("Static bearer token and custom API key authentication enabled");
   } else {
     // Oura OAuth configured — set up full OAuth 2.1 flow
     const providerOptions: OuraMcpOAuthProviderOptions = {
@@ -728,7 +900,7 @@ export async function startHttpServer(
     });
 
     // Protect MCP endpoint with bearer auth
-    const bearerAuth = requireBearerAuth({ verifier: oauthProvider });
+    bearerAuth = requireBearerAuth({ verifier: oauthProvider });
 
     // ── MCP Endpoint ─────────────────────────────────────────
 
@@ -787,13 +959,30 @@ export async function startHttpServer(
       }
     };
 
+    const injectContext = async (req: Request, res: Response, next: express.NextFunction) => {
+      const userId = req.user?.id ?? 1;
+      let userClient = ouraClient;
+      try {
+        const conn = await getOuraConnection(userId);
+        if (conn) {
+          userClient = new OuraClient({ accessToken: conn.access_token });
+        }
+      } catch (e) {
+        console.error("[Context] Failed to load user Oura client:", e);
+      }
+
+      requestContextStorage.run({ userId, ouraClient: userClient }, () => {
+        next();
+      });
+    };
+
     // Mount MCP handlers at both / and /mcp for compatibility
-    app.post("/", bearerAuth, mcpHandler);
-    app.get("/", bearerAuth, mcpHandler);
-    app.delete("/", bearerAuth, mcpDeleteHandler);
-    app.post("/mcp", bearerAuth, mcpHandler);
-    app.get("/mcp", bearerAuth, mcpHandler);
-    app.delete("/mcp", bearerAuth, mcpDeleteHandler);
+    app.post("/", customBearerAuth, injectContext, mcpHandler);
+    app.get("/", customBearerAuth, injectContext, mcpHandler);
+    app.delete("/", customBearerAuth, injectContext, mcpDeleteHandler);
+    app.post("/mcp", customBearerAuth, injectContext, mcpHandler);
+    app.get("/mcp", customBearerAuth, injectContext, mcpHandler);
+    app.delete("/mcp", customBearerAuth, injectContext, mcpDeleteHandler);
 
     console.error("OAuth 2.1 authentication enabled (Oura proxy)");
     if (secret) {

@@ -202,16 +202,17 @@ export function DayStripView({ hues }: DayStripViewProps) {
         className="halo-module-head"
         style={{ "--hue": "var(--accent)" } as React.CSSProperties}
       >
-        <span className="halo-module-overline">Aligned 24h Axis</span>
+        <span className="halo-module-overline">One shared time axis</span>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-          <h1 className="halo-module-title">Unified Day-Strip</h1>
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <label style={{ fontSize: "0.85rem", opacity: 0.7 }}>Select Day:</label>
+          <h1 className="halo-module-title">Day-strip</h1>
+          <div className="halo-module-actions">
             <input
+              className="halo-input"
               type="date"
+              aria-label="Select day"
               value={day}
               onChange={(e) => setDay(e.target.value)}
-              style={{ padding: "8px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
+              style={{ width: "auto" }}
             />
           </div>
         </div>

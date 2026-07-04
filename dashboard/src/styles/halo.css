@@ -247,6 +247,229 @@
 .halo-module-head .rule { width: 32px; height: 2px; border-radius: 1px; background: var(--hue, var(--accent)); }
 .halo-module-head h2 { font-size: var(--t-title); font-weight: 500; letter-spacing: -0.01em; }
 .halo-module-head p { font-size: var(--t-caption); color: var(--text-3); }
+.halo-module-overline {
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+h1.halo-module-title, .halo-module-title {
+  font-size: var(--t-title);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-default);
+  margin: 0;
+}
+.halo-module-actions { display: flex; gap: 10px; align-items: center; }
+
+/* ═══ Card aliases — views use .halo-card, keep it identical to .card ═══ */
+.halo-card {
+  background: var(--bg-card);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-card);
+  padding: 24px;
+}
+.halo-card-title {
+  font-size: var(--t-headline);
+  font-weight: 500;
+  color: var(--text-default);
+  margin: 0 0 4px;
+}
+.halo-card-desc { font-size: var(--t-caption); color: var(--text-3); margin: 0 0 16px; }
+
+/* ═══ Forms — the native control language (DESIGN 4.4) ═══ */
+.halo-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+.halo-field > label {
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.halo-form { display: flex; flex-direction: column; gap: 16px; }
+.halo-form-row { display: flex; gap: 16px; }
+
+.halo-input, .halo-select, .halo-textarea,
+.card input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.card select, .card textarea,
+.halo-card input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.halo-card select, .halo-card textarea {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  font-family: var(--f-sans);
+  font-size: var(--t-body);
+  color: var(--text-default);
+  background: var(--bg-input-h);
+  border: 1px solid var(--divider-strong);
+  border-radius: var(--r-control);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.halo-textarea, .card textarea, .halo-card textarea {
+  height: auto;
+  min-height: 72px;
+  padding: 10px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+select.halo-select[multiple], .card select[multiple], .halo-card select[multiple] {
+  height: auto;
+  padding: 6px;
+}
+.halo-input:hover, .halo-select:hover, .halo-textarea:hover,
+.card input:hover, .card select:hover, .card textarea:hover,
+.halo-card input:hover, .halo-card select:hover, .halo-card textarea:hover {
+  border-color: var(--text-4);
+}
+.halo-input:focus, .halo-select:focus, .halo-textarea:focus,
+.card input:focus, .card select:focus, .card textarea:focus,
+.halo-card input:focus, .halo-card select:focus, .halo-card textarea:focus {
+  border-color: var(--accent);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+.halo-input::placeholder, .halo-textarea::placeholder,
+.card input::placeholder, .card textarea::placeholder,
+.halo-card input::placeholder, .halo-card textarea::placeholder {
+  color: var(--text-placeholder);
+}
+
+/* ═══ Buttons — raw <button> counterpart of the Button component ═══ */
+.halo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  font-family: var(--f-sans);
+  font-size: var(--t-caption);
+  font-weight: 500;
+  border-radius: var(--r-control);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+              border-color var(--dur-fast) var(--ease);
+}
+.halo-btn:disabled { opacity: 0.5; cursor: default; }
+.halo-btn-primary { background: var(--accent); color: var(--accent-text); }
+.halo-btn-primary:hover:not(:disabled) { background: var(--accent-h); }
+.halo-btn-secondary {
+  background: transparent;
+  border-color: var(--divider-strong);
+  color: var(--text-2);
+}
+.halo-btn-secondary:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-default); }
+.halo-btn-ghost { background: transparent; color: var(--text-3); }
+.halo-btn-ghost:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-default); }
+.halo-btn-sm { height: 28px; padding: 0 12px; font-size: var(--t-micro); }
+.halo-btn-block { width: 100%; }
+
+/* ═══ Selectable chip (metric pickers, filters) ═══ */
+.halo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  font-size: var(--t-caption);
+  font-weight: 500;
+  color: var(--text-3);
+  background: transparent;
+  border: 1px solid var(--divider-strong);
+  border-radius: var(--r-chip);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+}
+.halo-chip:hover { color: var(--text-default); border-color: var(--text-4); }
+.halo-chip[data-active="true"] {
+  color: var(--chip-hue, var(--accent));
+  border-color: var(--chip-hue, var(--accent));
+  background: color-mix(in srgb, var(--chip-hue, var(--accent)) 12%, transparent);
+  font-weight: 500;
+}
+
+/* ═══ Day chip (experiment adherence calendar) ═══ */
+.halo-day-chip {
+  min-width: 44px;
+  height: 30px;
+  padding: 0 8px;
+  font-size: var(--t-micro);
+  font-variant-numeric: tabular-nums;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--divider-strong);
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+}
+.halo-day-chip:hover:not(:disabled) { border-color: var(--text-4); color: var(--text-default); }
+.halo-day-chip:disabled { opacity: 0.35; cursor: default; }
+.halo-day-chip[data-state="adherent"] {
+  background: var(--bg-green);
+  border-color: var(--score-optimal);
+  color: var(--score-optimal);
+}
+.halo-day-chip[data-state="missed"] {
+  background: rgba(255, 107, 94, 0.12);
+  border-color: var(--score-low);
+  color: var(--score-low);
+}
+
+/* ═══ Mini stat tile (calculated targets etc.) ═══ */
+.halo-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.halo-mini-stat {
+  padding: 12px 14px;
+  border: 1px solid var(--divider);
+  border-radius: var(--r-inner);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.halo-mini-stat.wide { grid-column: 1 / -1; }
+.halo-mini-stat .label {
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.halo-mini-stat .value {
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--text-default);
+  font-variant-numeric: tabular-nums;
+}
+.halo-mini-stat .note { font-size: var(--t-micro); color: var(--text-3); }
+
+/* ═══ Changelog rows (target history) ═══ */
+.halo-changelog { display: flex; flex-direction: column; }
+.halo-changelog-item { padding: 12px 0; border-bottom: 1px solid var(--divider); }
+.halo-changelog-item:last-child { border-bottom: none; }
+.halo-changelog-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--t-micro);
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+.halo-changelog-meta .target { font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
+.halo-changelog-change { font-size: var(--t-body); color: var(--text-default); font-variant-numeric: tabular-nums; }
+.halo-changelog-reason { font-size: var(--t-caption); color: var(--text-2); margin-top: 2px; }
+
+/* ═══ Utilities ═══ */
+.halo-muted { color: var(--text-3); }        /* muted via color, never opacity */
+.halo-scroll { max-height: 320px; overflow-y: auto; padding-right: 8px; }
+.halo-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+.halo-stack-20 { display: flex; flex-direction: column; gap: 20px; }
 
 /* ═══ Metric table (replaces DataGrid) ═══ */
 .halo-table { width: 100%; border-collapse: collapse; }
@@ -426,6 +649,129 @@
   align-items: start;
 }
 .halo-home-rail { display: flex; flex-direction: column; gap: 20px; }
+
+/* ═══ Sync drawer (Option D) ═══ */
+.halo-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 40;
+}
+.halo-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 92vw;
+  background: var(--bg-card);
+  border-left: 1px solid var(--divider);
+  z-index: 41;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: halo-drawer-in var(--dur-base) var(--ease);
+}
+@keyframes halo-drawer-in {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.halo-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.halo-drawer-title { font-size: var(--t-headline); font-weight: 500; color: var(--text-default); }
+
+.halo-sync-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-4);
+}
+.halo-sync-dot.success, .halo-sync-dot.done { background: var(--score-optimal); }
+.halo-sync-dot.partial { background: var(--score-fair); }
+.halo-sync-dot.error { background: var(--score-low); }
+.halo-sync-dot.running {
+  background: var(--accent);
+  animation: halo-pulse 1.2s ease-in-out infinite;
+}
+@keyframes halo-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.halo-sync-current {
+  border: 1px solid var(--divider);
+  border-radius: var(--r-inner);
+  padding: 14px 16px;
+}
+.halo-sync-current-head { display: flex; align-items: center; gap: 10px; }
+.halo-sync-current-title { flex: 1; font-size: var(--t-body); font-weight: 500; color: var(--text-default); }
+.halo-sync-current-sub { font-size: var(--t-micro); color: var(--text-3); margin: 4px 0 0 18px; }
+.halo-sync-trigger {
+  font-size: var(--t-micro);
+  font-weight: 500;
+  color: var(--text-3);
+  background: var(--bg-gray);
+  border-radius: var(--r-chip);
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+.halo-sync-groups { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.halo-sync-group { display: flex; align-items: center; gap: 10px; }
+.halo-sync-group-name { flex: 1; font-size: var(--t-caption); color: var(--text-2); }
+.halo-sync-group-meta { font-size: var(--t-micro); color: var(--text-3); text-align: right; }
+.halo-sync-error {
+  font-size: var(--t-micro);
+  color: var(--score-low);
+  margin-top: 8px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.halo-sync-history { display: flex; flex-direction: column; }
+.halo-sync-row {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--divider);
+  align-items: baseline;
+}
+.halo-sync-row:last-child { border-bottom: none; }
+.halo-sync-row .halo-sync-dot { align-self: center; }
+.halo-sync-row-main { flex: 1; min-width: 0; }
+.halo-sync-row-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--t-caption);
+  color: var(--text-default);
+  font-variant-numeric: tabular-nums;
+}
+.halo-sync-row-sub { font-size: var(--t-micro); color: var(--text-3); margin-top: 2px; }
+
+.halo-sync-foot {
+  margin-top: auto;
+  padding-top: 20px;
+  font-size: var(--t-micro);
+  color: var(--text-4);
+  line-height: 1.5;
+}
+
+/* freshness chip is now a button that opens the drawer */
+button.halo-fresh {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--r-chip);
+  transition: background var(--dur-fast) var(--ease);
+}
+button.halo-fresh:hover { background: var(--bg-hover); }
 
 /* ═══ Responsive — rail becomes a bottom bar ═══ */
 @media (max-width: 768px) {

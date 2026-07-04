@@ -42,7 +42,10 @@ export function ExperimentsView() {
       setError(null);
       const res = await fetch("/api/dashboard/experiments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
         body: JSON.stringify({
           title,
           behavior_text: behavior,
@@ -73,7 +76,10 @@ export function ExperimentsView() {
       const newStatus = !currentStatus;
       const res = await fetch(`/api/dashboard/experiments/${expId}/log`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
         body: JSON.stringify({
           day,
           adherent: newStatus ? 1 : 0,
@@ -111,112 +117,128 @@ export function ExperimentsView() {
     <div className="dashboard-stack">
       <div
         className="halo-module-head"
-        style={{ "--hue": "var(--optimal)" } as React.CSSProperties}
+        style={{ "--hue": "var(--ai)" } as React.CSSProperties}
       >
-        <span className="halo-module-overline">Scientific Protocol</span>
-        <h1 className="halo-module-title">Self-Experiments</h1>
+        <span className="halo-module-overline">Lab</span>
+        <h1 className="halo-module-title">Self-experiments</h1>
         <span className="rule" />
-        <p>Run controlled N-of-1 self-experiments to scientifically measure the impact of habits on sleep or recovery.</p>
+        <p>Change one habit for a set period and measure what it actually does to your sleep and recovery.</p>
       </div>
 
       {error && (
-        <Alert variant="warn" title="Experiment Error">
+        <Alert variant="warn" title="Experiment issue">
           {error}
         </Alert>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px", alignItems: "start" }}>
-        
-        {/* Setup Wizard */}
+      <div className="halo-grid-2">
+        {/* Setup wizard */}
         <Card>
           <CardHeader
-            title="Setup Self-Experiment"
-            description="Run controlled N-of-1 self-experiments to scientifically measure the impact of habits on sleep or recovery."
+            title="Start an experiment"
+            description="Pick a behavior, a duration, and the metrics to judge it by"
           />
           <CardContent>
-            <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", opacity: 0.8, marginBottom: "6px" }}>Experiment Title</label>
+            <form className="halo-form" onSubmit={handleCreate}>
+              <div className="halo-field">
+                <label htmlFor="exp-title">Title</label>
                 <input
+                  id="exp-title"
                   type="text"
-                  placeholder="e.g. No caffeine after 2:00 PM"
+                  placeholder="No caffeine after 2pm"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
                   required
                 />
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", opacity: 0.8, marginBottom: "6px" }}>Core Behavior to Log</label>
+              <div className="halo-field">
+                <label htmlFor="exp-behavior">Behavior to log daily</label>
                 <textarea
-                  placeholder="e.g. Sleep with a weighted blanket, log if adhered or not."
+                  id="exp-behavior"
+                  placeholder="Sleep with a weighted blanket — log whether you stuck to it."
                   value={behavior}
                   onChange={(e) => setBehavior(e.target.value)}
                   rows={2}
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit", fontFamily: "inherit" }}
                   required
                 />
               </div>
 
-              <div style={{ display: "flex", gap: "16px" }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", fontSize: "0.85rem", opacity: 0.8, marginBottom: "6px" }}>Start Date</label>
+              <div className="halo-form-row">
+                <div className="halo-field">
+                  <label htmlFor="exp-start">Start date</label>
                   <input
+                    id="exp-start"
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
                     required
                   />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", fontSize: "0.85rem", opacity: 0.8, marginBottom: "6px" }}>Duration (days)</label>
+                <div className="halo-field">
+                  <label htmlFor="exp-duration">Duration (days)</label>
                   <input
+                    id="exp-duration"
                     type="number"
+                    min="7"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
                     required
                   />
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", opacity: 0.8, marginBottom: "6px" }}>Metric to Measure</label>
-                <select
-                  multiple
-                  value={metricIds}
-                  onChange={(e) => setMetricIds(Array.from(e.target.selectedOptions, (o) => o.value))}
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit", height: "100px" }}
-                >
-                  <option value="sleep_score">Sleep Score</option>
-                  <option value="readiness_score">Readiness Score</option>
-                  <option value="hrv">HRV Average</option>
-                  <option value="rhr">RHR Average</option>
-                  <option value="deep_sleep">Deep Sleep Duration</option>
-                  <option value="rem_sleep">REM Sleep Duration</option>
-                </select>
+              <div className="halo-field">
+                <label>Metrics to measure</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {[
+                    { id: "sleep_score", label: "Sleep score" },
+                    { id: "readiness_score", label: "Readiness" },
+                    { id: "hrv", label: "HRV" },
+                    { id: "rhr", label: "Resting HR" },
+                    { id: "deep_sleep", label: "Deep sleep" },
+                    { id: "rem_sleep", label: "REM sleep" },
+                  ].map((m) => {
+                    const active = metricIds.includes(m.id);
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        className="halo-chip"
+                        data-active={active}
+                        style={{ "--chip-hue": "var(--ai)" } as React.CSSProperties}
+                        onClick={() =>
+                          setMetricIds(
+                            active
+                              ? metricIds.filter((id) => id !== m.id)
+                              : [...metricIds, m.id]
+                          )
+                        }
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", opacity: 0.8, marginBottom: "6px" }}>Hypothesized Confounders / Warnings</label>
+              <div className="halo-field">
+                <label htmlFor="exp-confounder">Known confounders (optional)</label>
                 <input
+                  id="exp-confounder"
                   type="text"
-                  placeholder="e.g. Alcohol ingestion will skew results."
+                  placeholder="Alcohol will skew results"
                   value={confounder}
                   onChange={(e) => setConfounder(e.target.value)}
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--divider-strong)", background: "rgba(0,0,0,0.1)", color: "inherit" }}
                 />
               </div>
 
               <button
                 type="submit"
-                className="halo-btn halo-btn-primary"
-                disabled={submitting}
-                style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: 600 }}
+                className="halo-btn halo-btn-primary halo-btn-block"
+                disabled={submitting || metricIds.length === 0}
               >
-                {submitting ? "Starting..." : "Start Experiment"}
+                {submitting ? "Starting…" : "Start experiment"}
               </button>
             </form>
           </CardContent>
@@ -227,14 +249,14 @@ export function ExperimentsView() {
           
           <Card>
             <CardHeader
-              title="Active Experiments"
-              description="Review progress and mark daily habit compliance checkboxes"
+              title="Active experiments"
+              description="Tap a day to log whether you stuck to the habit"
             />
             <CardContent>
               {experiments.length === 0 ? (
-                <p style={{ opacity: 0.6 }}>No experiments configured yet. Launch one above!</p>
+                <p className="halo-muted">No experiments yet — start one on the left.</p>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
                   {experiments.map((exp) => {
                     // Calculate adherence rate
                     const totalLogged = exp.loggedDays?.length ?? 0;
@@ -251,50 +273,41 @@ export function ExperimentsView() {
                     }
 
                     return (
-                      <div key={exp.id} style={{ borderBottom: "1px solid var(--divider)", paddingBottom: "16px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "8px" }}>
-                          <h3 style={{ margin: 0, fontSize: "1.1rem" }}>{exp.title}</h3>
-                          <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--accent)" }}>
-                            {adherenceRate}% Adherence
+                      <div key={exp.id} className="halo-changelog-item">
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                          <span style={{ fontSize: "var(--t-body)", fontWeight: 500 }}>{exp.title}</span>
+                          <span className="halo-delta flat" style={{ flexShrink: 0 }}>
+                            {totalLogged > 0 ? `${adherenceRate}% adherence` : "not logged yet"}
                           </span>
                         </div>
-                        <p style={{ fontSize: "0.85rem", opacity: 0.8, margin: "4px 0 12px 0" }}>
+                        <p style={{ fontSize: "var(--t-caption)", color: "var(--text-2)", margin: "0 0 12px" }}>
                           {exp.behavior_text}
                         </p>
-                        
-                        {/* Confounder Warning Alert */}
+
                         {exp.confounder_warning && (
-                          <div style={{ fontSize: "0.75rem", background: "rgba(251, 191, 36, 0.08)", color: "var(--score-low)", border: "1px solid rgba(251,191,36,0.2)", borderRadius: "6px", padding: "8px", marginBottom: "12px" }}>
-                            ⚠️ Confounder: {exp.confounder_warning}
+                          <div className="halo-finding warn" style={{ padding: "10px 14px", marginBottom: 12 }}>
+                            <span className="halo-finding-body">Watch out for: {exp.confounder_warning}</span>
                           </div>
                         )}
 
-                        <div style={{ fontSize: "0.8rem", fontWeight: 600, opacity: 0.7, marginBottom: "8px" }}>Adherence Calendar Log</div>
-                        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                        <div className="halo-module-overline" style={{ marginBottom: 8 }}>
+                          Daily log
+                        </div>
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                           {datesList.map((day) => {
                             const isPast = new Date(day) <= new Date();
                             const logRecord = exp.loggedDays?.find((l: any) => l.day === day);
                             const isAdherent = logRecord ? logRecord.adherent === 1 : false;
+                            const state = isAdherent ? "adherent" : logRecord ? "missed" : "pending";
 
                             return (
                               <button
                                 key={day}
+                                type="button"
+                                className="halo-day-chip"
+                                data-state={state}
                                 onClick={() => handleLogAdherence(exp.id, day, isAdherent)}
                                 disabled={!isPast}
-                                style={{
-                                  padding: "6px 8px",
-                                  fontSize: "0.75rem",
-                                  borderRadius: "6px",
-                                  border: "1px solid var(--divider)",
-                                  background: isAdherent
-                                    ? "var(--score-optimal)"
-                                    : logRecord
-                                      ? "var(--score-low)"
-                                      : "rgba(0,0,0,0.05)",
-                                  color: isAdherent || logRecord ? "#FFFFFF" : "inherit",
-                                  cursor: isPast ? "pointer" : "default",
-                                  opacity: isPast ? 1 : 0.4,
-                                }}
                                 title={day}
                               >
                                 {day.slice(-2)}

@@ -6,6 +6,12 @@ import { DashboardLineChart } from "./charts";
 import { SunburstGlyph } from "../components/SunburstGlyph";
 
 interface HomeViewProps {
+  flags?: {
+    signupsEnabled: boolean;
+    isFirstRun: boolean;
+    ouraAppConfigured: boolean;
+    ouraConnected: boolean;
+  };
   latestReadiness: ReadinessRecord | null;
   latestSleep: SleepRecord | null;
   latestActivity: ActivityRecord | null;
@@ -33,6 +39,7 @@ interface HomeViewProps {
 }
 
 export function HomeView({
+  flags,
   latestReadiness,
   latestSleep,
   latestActivity,
@@ -58,6 +65,65 @@ export function HomeView({
   rawSleep,
   rawReadiness,
 }: HomeViewProps) {
+  const hasNoData = !latestReadiness && !latestSleep && !latestActivity;
+
+  if (hasNoData) {
+    return (
+      <div className="dashboard-stack" style={{ maxWidth: "680px", margin: "40px auto" }}>
+        <div className="halo-card" style={{ padding: "40px", background: "rgba(20, 22, 29, 0.7)", backdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
+          <h1 style={{ fontSize: "28px", fontWeight: 700, marginBottom: "8px", background: "linear-gradient(135deg, #ffffff 0%, #aeb3b7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            Welcome to Halo MCP
+          </h1>
+          <p style={{ color: "rgba(235, 240, 248, 0.6)", fontSize: "15px", marginBottom: "32px", lineHeight: "1.6" }}>
+            To begin visualising your sleep, readiness, and activity, follow the steps below to connect your Oura Ring.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#27ae60", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600 }}>✓</div>
+              <div>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 1: Create Admin Account</h3>
+                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)" }}>Your administrator profile is active.</p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraAppConfigured ? "#27ae60" : "#b55fe6", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
+                {flags?.ouraAppConfigured ? "✓" : "2"}
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 2: Oura App Credentials</h3>
+                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)", marginBottom: "12px", lineHeight: "1.4" }}>
+                  {flags?.ouraAppConfigured ? "Developer credentials successfully saved." : "Provide your Oura Client ID and Secret in settings so other users can authorize their rings."}
+                </p>
+                {!flags?.ouraAppConfigured && (
+                  <Button variant="primary" onClick={() => setActiveTab("settings")}>Configure settings</Button>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraConnected ? "#27ae60" : (flags?.ouraAppConfigured ? "#b55fe6" : "rgba(255,255,255,0.1)"), color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
+                {flags?.ouraConnected ? "✓" : "3"}
+              </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 3: Link Oura Ring Account</h3>
+                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)", marginBottom: "12px", lineHeight: "1.4" }}>
+                  {flags?.ouraConnected ? "Oura Ring account connected!" : "Authenticate with Oura to authorize daily sync."}
+                </p>
+                {!flags?.ouraConnected && (
+                  <Button variant="primary" disabled={!flags?.ouraAppConfigured} onClick={() => setActiveTab("settings")}>
+                    Connect Oura Ring
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-stack">
       {illnessWarning && (
@@ -65,9 +131,11 @@ export function HomeView({
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
             <span>Your biometric markers (RHR, HRV, or body temperature deviation) indicate significant strain. Consider prioritizing recovery and reducing training intensity.</span>
             {onMuteAlert && (
-              <button 
+              <button
+                type="button"
+                className="halo-btn halo-btn-ghost halo-btn-sm"
+                style={{ marginLeft: 16, flexShrink: 0 }}
                 onClick={() => onMuteAlert("illness_warning")}
-                style={{ marginLeft: "16px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "6px", color: "inherit", padding: "4px 8px", fontSize: "0.75rem", cursor: "pointer" }}
               >
                 Mute
               </button>

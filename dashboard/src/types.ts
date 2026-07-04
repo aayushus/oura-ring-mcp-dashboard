@@ -53,6 +53,7 @@ export interface HistorySummary {
   correlations?: Record<string, Record<string, number>>;
   tagEffects?: any[];
   targets?: any;
+  flags?: any;
   profile?: any;
 }
 

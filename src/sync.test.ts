@@ -48,18 +48,48 @@ describe("Sync Coordinator", () => {
       "2024-01-02"
     );
 
-    // Should fail overall since Promise.all fails if one fails
-    expect(result.success).toBe(false);
+    // One failing endpoint no longer aborts the run — it becomes "partial"
+    expect(result.success).toBe(true);
+    expect(result.status).toBe("partial");
     expect(result.error).toContain("API Timeout");
+    const sleepEndpoint = result.endpoints.find((e) => e.key === "sleep");
+    expect(sleepEndpoint?.status).toBe("error");
+    expect(sleepEndpoint?.error).toContain("API Timeout");
+    // Other endpoints still landed
+    expect(result.endpoints.filter((e) => e.status === "done").length).toBeGreaterThan(0);
+  });
+
+  it("should report new vs already-known days", async () => {
+    const mockClient = createMockOuraClient();
+
+    const first = await syncData(
+      mockClient as unknown as OuraClient,
+      "2024-01-01",
+      "2024-01-02"
+    );
+    expect(first.status).toBe("success");
+    expect(first.newDays).toBe(first.syncedDays); // empty DB: everything is new
+
+    const second = await syncData(
+      mockClient as unknown as OuraClient,
+      "2024-01-01",
+      "2024-01-02"
+    );
+    expect(second.newDays).toBe(0); // same range again: nothing new
+    expect(second.syncedDays).toBe(first.syncedDays);
   });
 
   it("should initialize background sync job", () => {
     const mockClient = createMockOuraClient();
-    
+
     // Spy on syncData called during backfill
     const syncSpy = vi.spyOn({ syncData }, "syncData").mockResolvedValue({
       success: true,
+      status: "success",
       syncedDays: 30,
+      newDays: 0,
+      totalRecords: 0,
+      endpoints: [],
     });
 
     const cronTask = startSyncScheduler(mockClient as unknown as OuraClient);

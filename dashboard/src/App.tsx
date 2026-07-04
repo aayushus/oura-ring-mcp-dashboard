@@ -35,7 +35,15 @@ import {
 } from "./components/Icons";
 
 import type { HistorySummary, TabKey, SleepRecord, ReadinessRecord, ActivityRecord } from "./types";
-import { HUES, TAB_TITLES } from "./constants";
+import { SyncDrawer } from "./components/SyncDrawer";
+
+interface SyncSummary {
+  status: string;
+  syncedDays: number;
+  newDays: number;
+  totalRecords: number;
+}
+import { HUES } from "./constants";
 import {
   formatDayLabel,
   formatLongDate,
@@ -64,6 +72,7 @@ import { CompareView } from "./views/CompareView";
 import { WeeklyReportView } from "./views/WeeklyReportView";
 import { CrosshairProvider } from "./context/CrosshairContext";
 import { CommandPalette } from "./components/CommandPalette";
+import { AuthScreen } from "./components/AuthScreen";
 
 function ScoreCell({ score }: { score: number }) {
   const band = scoreBand(score);
@@ -80,6 +89,11 @@ const getUrlDay = () => {
 };
 
 function App() {
+  const [user, setUser] = useState<any | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isFirstRun, setIsFirstRun] = useState(false);
+  const [signupsEnabled, setSignupsEnabled] = useState(true);
+
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [selectedDay, setSelectedDay] = useState<string>(getUrlDay);
   const [data, setData] = useState<HistorySummary | null>(null);
@@ -87,6 +101,8 @@ function App() {
   const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(() => localStorage.getItem("last_synced_time"));
+  const [syncDrawerOpen, setSyncDrawerOpen] = useState(false);
+  const [lastSummary, setLastSummary] = useState<SyncSummary | null>(null);
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
@@ -141,7 +157,10 @@ function App() {
     try {
       const res = await fetch("/api/dashboard/alerts/mute", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
         body: JSON.stringify({ alert_type: alertType, muted: true }),
       });
       if (res.ok) {
@@ -286,16 +305,47 @@ function App() {
     }
   }
 
+  const checkUser = async () => {
+    try {
+      const res = await fetch("/api/me");
+      const json = await res.json();
+      if (res.ok && json.user) {
+        setUser(json.user);
+        setSignupsEnabled(json.flags?.signupsEnabled ?? true);
+        setIsFirstRun(false);
+      } else {
+        setUser(null);
+        setSignupsEnabled(json.flags?.signupsEnabled ?? true);
+        setIsFirstRun(json.flags?.isFirstRun ?? false);
+      }
+    } catch (e) {
+      console.error(e);
+      setUser(null);
+    } finally {
+      setAuthChecked(true);
+    }
+  };
+
   useEffect(() => {
-    fetchData();
-  }, [selectedDay]);
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchData();
+    }
+  }, [selectedDay, user]);
 
   async function handleSync() {
     try {
       setSyncing(true);
+      setSyncDrawerOpen(true); // show the live run as it happens
       setError(null);
 
-      const response = await fetch("/api/dashboard/sync", { method: "POST" });
+      const response = await fetch("/api/dashboard/sync", {
+        method: "POST",
+        headers: { "X-Requested-With": "fetch" }
+      });
       if (!response.ok) {
         const errJson = await response.json().catch(() => ({}));
         throw new Error(errJson.error || `Sync failed: ${response.statusText}`);
@@ -304,6 +354,9 @@ function App() {
       const result = await response.json();
       if (result.success && result.history) {
         setData(result.history as HistorySummary);
+      }
+      if (result.summary) {
+        setLastSummary(result.summary as SyncSummary);
       }
     } catch (err) {
       const isOffline = err instanceof TypeError || String(err).includes("Failed to fetch") || String(err).includes("fetch failed");
@@ -723,6 +776,52 @@ function App() {
 
   const isReportMode = new URLSearchParams(window.location.search).get("report") === "weekly";
 
+  if (!authChecked) {
+    return (
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        backgroundColor: "#0b0c10",
+        color: "#ffffff",
+        fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+        fontSize: "16px",
+        fontWeight: 500
+      }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+          <div style={{
+            width: "36px",
+            height: "36px",
+            border: "3px solid rgba(255,255,255,0.1)",
+            borderTopColor: "#b55fe6",
+            borderRadius: "50%",
+            animation: "spin 1s linear infinite"
+          }} />
+          <span>Verifying secure session...</span>
+        </div>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <AuthScreen
+        isFirstRun={isFirstRun}
+        signupsEnabled={signupsEnabled}
+        onSuccess={(u) => {
+          setUser(u);
+          setIsFirstRun(false);
+        }}
+      />
+    );
+  }
+
   if (isReportMode) {
     return <WeeklyReportView />;
   }
@@ -754,21 +853,29 @@ function App() {
               <div className="halo-topbar-overline">
                 {heroDate ? formatLongDate(heroDate) : "Awaiting first sync"}
               </div>
-              <div className="halo-topbar-title">
-                {activeTab === "home" ? greeting() : TAB_TITLES[activeTab]}
-              </div>
+              {/* views render their own module head; only Home gets a topbar title */}
+              {activeTab === "home" && (
+                <div className="halo-topbar-title">{greeting()}</div>
+              )}
             </div>
             <div className="halo-topbar-right">
-              <span className={`halo-fresh ${isFresh ? "" : "stale"}`}>
+              <button
+                type="button"
+                className={`halo-fresh ${isFresh ? "" : "stale"}`}
+                onClick={() => setSyncDrawerOpen(true)}
+                title="Open sync activity"
+              >
                 <span className="dot" />
                 {syncing
-                  ? "Syncing past year (365 days)..."
-                  : isFresh
-                    ? `Up to date${lastSyncedTime ? ` (${lastSyncedTime})` : ""}`
-                    : heroDate
-                      ? `Data through ${formatDayLabel(heroDate)}`
-                      : "No data yet"}
-              </span>
+                  ? "Syncing…"
+                  : lastSummary && lastSummary.newDays > 0
+                    ? `Up to date · +${lastSummary.newDays} new day${lastSummary.newDays === 1 ? "" : "s"}`
+                    : isFresh
+                      ? `Up to date${lastSyncedTime ? ` (${lastSyncedTime})` : ""}`
+                      : heroDate
+                        ? `Data through ${formatDayLabel(heroDate)}`
+                        : "No data yet"}
+              </button>
               <Button
                 variant={comparePrevious ? "primary" : "secondary"}
                 onClick={() => setComparePrevious((prev) => !prev)}
@@ -778,10 +885,29 @@ function App() {
               </Button>
               <ThemeToggle />
               <Button variant="primary" onClick={handleSync} disabled={syncing}>
-                {syncing ? "Syncing (365d)..." : "Sync now"}
+                {syncing ? "Syncing…" : "Sync now"}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={async () => {
+                  await fetch("/api/auth/logout", {
+                    method: "POST",
+                    headers: { "X-Requested-With": "fetch" }
+                  });
+                  setUser(null);
+                }}
+                style={{ height: "30px", fontSize: "12.5px" }}
+              >
+                Logout
               </Button>
             </div>
           </header>
+
+          <SyncDrawer
+            open={syncDrawerOpen}
+            onClose={() => setSyncDrawerOpen(false)}
+            onSyncFinished={fetchData}
+          />
 
           <div className="workspace dashboard-workspace">
             {error && (
@@ -804,6 +930,7 @@ function App() {
               <>
                 {activeTab === "home" && (
                   <HomeView
+                    flags={data?.flags || { signupsEnabled: true, isFirstRun: false, ouraAppConfigured: false, ouraConnected: false }}
                     latestReadiness={latestReadiness}
                     latestSleep={latestSleep}
                     latestActivity={latestActivity}
@@ -939,7 +1066,11 @@ function App() {
                 )}
 
                 {activeTab === "settings" && (
-                  <SettingsView />
+                  <SettingsView
+                    user={user}
+                    flags={data?.flags || { signupsEnabled: true, isFirstRun: false, ouraAppConfigured: false, ouraConnected: false }}
+                    onRefreshFlags={checkUser}
+                  />
                 )}
               </>
             )}

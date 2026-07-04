@@ -1045,15 +1045,16 @@
   border-radius: var(--r-md);
   padding: 2px;
   gap: 2px;
+  height: 30px;
+  box-sizing: border-box;
+  width: 68px;
+  align-items: center;
 }
 .theme-toggle button {
-  flex: 1;
-  height: 22px;
+  width: 30px;
+  height: 26px;
   border: none;
   background: transparent;
-  font-family: var(--f-sans);
-  font-size: var(--t-micro);
-  font-weight: 500;
   color: var(--text-3);
   cursor: pointer;
   border-radius: var(--r-xs);
@@ -1061,8 +1062,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  letter-spacing: -0.003em;
 }
 .theme-toggle button.on {
   background: var(--bg-app);

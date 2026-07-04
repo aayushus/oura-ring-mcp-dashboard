@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "../components/components";
+import { Card, CardContent, CardHeader } from "../components/components";
 import { DashboardLineChart } from "./charts";
 import { METRIC_REGISTRY } from "../constants";
 import type { HistorySummary } from "../types";
@@ -56,8 +56,8 @@ export function CompareView({ data, hues }: CompareViewProps) {
         className="halo-module-head"
         style={{ "--hue": "var(--accent)" } as React.CSSProperties}
       >
-        <span className="halo-module-overline">Multi-Metric Alignment</span>
-        <h1 className="halo-module-title">Small-Multiples Lab</h1>
+        <span className="halo-module-overline">Metrics side by side</span>
+        <h1 className="halo-module-title">Compare</h1>
         <span className="rule" />
         <p>Compare up to 8 core sleep, readiness, and movement trends simultaneously on a unified timeline.</p>
       </div>
@@ -66,29 +66,20 @@ export function CompareView({ data, hues }: CompareViewProps) {
       <div style={{ marginBottom: "20px" }}>
         <Card>
           <CardContent>
-            <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-              <span style={{ fontSize: "0.85rem", fontWeight: 600, opacity: 0.8 }}>
-                Select Metrics to Compare (2 - 8):
-              </span>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <span className="halo-module-overline">Metrics to compare (2–8)</span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {COMPARABLE_METRICS.map((m) => {
                   const isSelected = selectedIds.includes(m.id);
                   const activeColor = hues[m.colorKey] || "var(--accent)";
                   return (
                     <button
                       key={m.id}
+                      type="button"
+                      className="halo-chip"
+                      data-active={isSelected}
+                      style={{ "--chip-hue": activeColor } as React.CSSProperties}
                       onClick={() => handleToggle(m.id)}
-                      style={{
-                        padding: "6px 12px",
-                        borderRadius: "20px",
-                        border: `1px solid ${isSelected ? activeColor : "var(--divider-strong)"}`,
-                        background: isSelected ? `${activeColor}15` : "transparent",
-                        color: isSelected ? activeColor : "var(--text-3)",
-                        fontSize: "0.8rem",
-                        fontWeight: isSelected ? 600 : 500,
-                        cursor: "pointer",
-                        transition: "all 120ms var(--ease)",
-                      }}
                     >
                       {m.label}
                     </button>
@@ -100,20 +91,12 @@ export function CompareView({ data, hues }: CompareViewProps) {
         </Card>
       </div>
 
-      {/* Small multiples comparison grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "20px",
-          width: "100%",
-        }}
-      >
-        {COMPARABLE_METRICS.filter((m) => selectedIds.includes(m.id)).map((metric) => {
+      {/* Stacked full-width panels — same pattern as the 24h timeline */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        {COMPARABLE_METRICS.filter((m) => selectedIds.includes(m.id)).map((metric, index) => {
           const registry = METRIC_REGISTRY[metric.id];
           const rawRows = (data as any)[metric.dataset] || [];
-          
-          // Build dataset specifically formatted for this small multiple chart
+
           const chartDataset = rawRows.map((r: any) => ({
             day: formatDayLabel(r.day),
             value: metric.format ? metric.format(r[metric.dataKey]) : r[metric.dataKey],
@@ -122,42 +105,32 @@ export function CompareView({ data, hues }: CompareViewProps) {
           const color = hues[metric.colorKey] || "var(--accent)";
 
           return (
-            <div key={metric.id} style={{ display: "flex", flexDirection: "column" }}>
-              <Card>
-                <div style={{ padding: "16px 16px 8px 16px" }}>
-                  <strong style={{ display: "block", fontSize: "0.85rem", fontWeight: 600 }}>
-                    {metric.label}
-                  </strong>
-                  {registry && (
-                    <span style={{ fontSize: "0.75rem", opacity: 0.6, display: "block", marginTop: "2px" }}>
-                      {registry.explain}
-                    </span>
-                  )}
+            <Card key={metric.id}>
+              <CardHeader
+                title={`${index + 1}. ${metric.label}`}
+                description={registry?.explain}
+              />
+              <CardContent>
+                <div className="chart-frame" style={{ height: "210px" }}>
+                  <DashboardLineChart
+                    className="dashboard-chart"
+                    dataset={chartDataset}
+                    xAxis={[{ scaleType: "point", dataKey: "day" }]}
+                    grid={{ horizontal: true }}
+                    hideLegend
+                    series={[
+                      {
+                        dataKey: "value",
+                        label: metric.label,
+                        color: color,
+                        showMark: false,
+                      },
+                    ]}
+                    height={190}
+                  />
                 </div>
-                <CardContent>
-                  <div style={{ padding: "0 16px 16px 16px", flex: 1 }}>
-                    <div className="chart-frame" style={{ height: "130px" }}>
-                      <DashboardLineChart
-                        className="dashboard-chart"
-                        dataset={chartDataset}
-                        xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                        grid={{ horizontal: true }}
-                        hideLegend
-                        series={[
-                          {
-                            dataKey: "value",
-                            label: metric.label,
-                            color: color,
-                            showMark: chartDataset.length < 15,
-                          },
-                        ]}
-                        height={110}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>

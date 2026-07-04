@@ -250,8 +250,8 @@ export function calculateBmr(profile: UserProfile): number {
 /**
  * Main weekly recompute job
  */
-export async function runWeeklyTargetJob(): Promise<void> {
-  const profile = await getUserProfile();
+export async function runWeeklyTargetJob(userId: number = 1): Promise<void> {
+  const profile = await getUserProfile(userId);
   if (!profile) {
     console.log("[Target Engine] No user profile configured. Skipping targets calculation.");
     return;
@@ -259,17 +259,17 @@ export async function runWeeklyTargetJob(): Promise<void> {
 
   console.log("[Target Engine] Running weekly recompute target metrics...");
 
-  const previousTargets = await getUserTargets();
+  const previousTargets = await getUserTargets(userId);
 
   const startDate = getDaysAgo(60);
   const endDate = getToday();
 
   // Load raw data from database
-  const readinessScores = await getRawDocuments("daily_readiness", startDate, endDate);
-  const sleepSessions = await getRawDocuments("sleep", startDate, endDate);
-  const sleepScores = await getRawDocuments("daily_sleep", startDate, endDate);
-  const dailyActivities = await getRawDocuments("daily_activity", getDaysAgo(30), endDate);
-  const hrSamples = await getRawDocuments("heartrate", getDaysAgo(90), endDate);
+  const readinessScores = await getRawDocuments("daily_readiness", startDate, endDate, userId);
+  const sleepSessions = await getRawDocuments("sleep", startDate, endDate, userId);
+  const sleepScores = await getRawDocuments("daily_sleep", startDate, endDate, userId);
+  const dailyActivities = await getRawDocuments("daily_activity", getDaysAgo(30), endDate, userId);
+  const hrSamples = await getRawDocuments("heartrate", getDaysAgo(90), endDate, userId);
 
   // 1. Calculate Sleep Need
   const { sleepNeed, reason: sleepReason } = calculateSleepNeed(
@@ -304,7 +304,7 @@ export async function runWeeklyTargetJob(): Promise<void> {
   };
 
   // Upsert new targets
-  await upsertUserTargets(newTargets);
+  await upsertUserTargets(newTargets, userId);
   const todayStr = getToday();
 
   // Log changes to history if different
@@ -312,7 +312,7 @@ export async function runWeeklyTargetJob(): Promise<void> {
     if (previousTargets.sleep_need_seconds !== sleepNeed) {
       const oldVal = `${(previousTargets.sleep_need_seconds / 3600).toFixed(2)}h`;
       const newVal = `${(sleepNeed / 3600).toFixed(2)}h`;
-      await addTargetHistory("sleep_need", oldVal, newVal, sleepReason, todayStr);
+      await addTargetHistory("sleep_need", oldVal, newVal, sleepReason, todayStr, userId);
     }
     if (previousTargets.step_goal !== stepGoal) {
       await addTargetHistory(
@@ -320,7 +320,8 @@ export async function runWeeklyTargetJob(): Promise<void> {
         previousTargets.step_goal.toString(),
         stepGoal.toString(),
         stepReason,
-        todayStr
+        todayStr,
+        userId
       );
     }
   } else {
@@ -330,14 +331,16 @@ export async function runWeeklyTargetJob(): Promise<void> {
       "Seed",
       `${(sleepNeed / 3600).toFixed(2)}h`,
       "Initial calculation seed.",
-      todayStr
+      todayStr,
+      userId
     );
     await addTargetHistory(
       "step_goal",
       "Seed",
       stepGoal.toString(),
       "Initial calculation seed.",
-      todayStr
+      todayStr,
+      userId
     );
   }
 

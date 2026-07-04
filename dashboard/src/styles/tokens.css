@@ -11,6 +11,8 @@
  */
 
 :root {
+  color-scheme: dark; /* native inputs, pickers, scrollbars follow the theme */
+
   /* ── Surfaces — elevation = lightness step, never shadows ── */
   --bg-app: #0B0C10;
   --bg-card: #14161D;
@@ -144,6 +146,7 @@
 
 /* ── Light theme ("lite mode") ──────────────────────────── */
 [data-theme="light"] {
+  color-scheme: light;
   --bg-app: #F5F6F8;
   --bg-card: #FFFFFF;
   --bg-elevated: #FFFFFF;

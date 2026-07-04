@@ -90,7 +90,7 @@ export function CorrelationView({
                               fontSize: "0.8rem",
                               fontWeight: 600,
                               textTransform: "capitalize",
-                              background: "rgba(0,0,0,0.05)",
+                              background: "var(--bg-hover)",
                             }}
                           >
                             {formatKeyName(k1)}
@@ -161,7 +161,7 @@ export function CorrelationView({
                           padding: "12px",
                           border: "1px solid var(--divider)",
                           borderRadius: "10px",
-                          background: "rgba(0,0,0,0.02)",
+                          background: "var(--bg-hover)",
                         }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>

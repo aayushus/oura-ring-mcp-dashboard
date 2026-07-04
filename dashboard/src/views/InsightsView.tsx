@@ -35,27 +35,18 @@ export function InsightsView({
         className="halo-module-head"
         style={{ "--hue": "var(--ai)" } as React.CSSProperties}
       >
-        <span className="halo-module-overline">Insights Engine</span>
+        <span className="halo-module-overline">What your data says</span>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-          <h1 className="halo-module-title">AI Insights & Decisions</h1>
-          <button
-            onClick={() => window.open("/?report=weekly", "_blank")}
-            style={{
-              padding: "6px 12px",
-              background: "var(--bg-elevated)",
-              border: "1px solid var(--divider-strong)",
-              borderRadius: "8px",
-              color: "var(--accent)",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 150ms var(--ease)",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.borderColor = "var(--accent)")}
-            onMouseOut={(e) => (e.currentTarget.style.borderColor = "var(--divider-strong)")}
-          >
-            ⎙ Print Report
-          </button>
+          <h1 className="halo-module-title">Insights</h1>
+          <div className="halo-module-actions">
+            <button
+              type="button"
+              className="halo-btn halo-btn-secondary halo-btn-sm"
+              onClick={() => window.open("/?report=weekly", "_blank")}
+            >
+              Weekly report
+            </button>
+          </div>
         </div>
         <span className="rule" />
         <p>Current recovery posture, key risks, and next best actions.</p>

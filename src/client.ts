@@ -5,6 +5,7 @@
 
 import type { components } from "./types/oura-api.js";
 import { OuraApiError } from "./utils/errors.js";
+import { getContextOuraClient } from "./auth/context.js";
 
 const BASE_URL = "https://api.ouraring.com/v2/usercollection";
 
@@ -48,7 +49,7 @@ export interface OuraResponse<T> {
 }
 
 export class OuraClient {
-  private accessToken: string;
+  public accessToken: string;
 
   constructor(config: OuraClientConfig) {
     this.accessToken = config.accessToken;
@@ -73,9 +74,12 @@ export class OuraClient {
       });
     }
 
+    const contextClient = getContextOuraClient();
+    const token = contextClient ? contextClient.accessToken : this.accessToken;
+
     const response = await fetch(url.toString(), {
       headers: {
-        Authorization: `Bearer ${this.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 

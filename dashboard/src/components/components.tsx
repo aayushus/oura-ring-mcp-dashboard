@@ -1057,11 +1057,11 @@ export function ThemeToggle() {
 
   return (
     <div className="theme-toggle">
-      <button className={theme === 'light' ? 'on' : ''} onClick={() => apply('light')}>
-        <Sun size={10} />Light
+      <button className={theme === 'light' ? 'on' : ''} onClick={() => apply('light')} title="Light Mode">
+        <Sun size={14} />
       </button>
-      <button className={theme === 'dark' ? 'on' : ''} onClick={() => apply('dark')}>
-        <Moon size={10} />Dark
+      <button className={theme === 'dark' ? 'on' : ''} onClick={() => apply('dark')} title="Dark Mode">
+        <Moon size={14} />
       </button>
     </div>
   );
