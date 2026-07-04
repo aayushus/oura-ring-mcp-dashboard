@@ -188,7 +188,11 @@ export async function startHttpServer(
 
   // CORS for remote clients
   app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",").map(o => o.trim()) || [];
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+      res.header("Access-Control-Allow-Origin", origin);
+    }
     res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
     res.header(
       "Access-Control-Allow-Headers",
