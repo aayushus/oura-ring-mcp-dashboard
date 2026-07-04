@@ -8,7 +8,7 @@
 
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { randomBytes } from "node:crypto";
-import { exec } from "node:child_process";
+import { execFile } from "node:child_process";
 import { platform } from "node:os";
 import {
   buildAuthorizationUrl,
@@ -25,21 +25,25 @@ const DEFAULT_PORT = 3000;
  */
 function openBrowser(url: string): void {
   const plat = platform();
-  let cmd: string;
+  let command: string;
+  let args: string[];
 
   switch (plat) {
     case "darwin":
-      cmd = `open "${url}"`;
+      command = "open";
+      args = [url];
       break;
     case "win32":
-      cmd = `start "" "${url}"`;
+      command = "rundll32";
+      args = ["url.dll,FileProtocolHandler", url];
       break;
     default:
       // Linux and others
-      cmd = `xdg-open "${url}"`;
+      command = "xdg-open";
+      args = [url];
   }
 
-  exec(cmd, (error) => {
+  execFile(command, args, (error) => {
     if (error) {
       console.error(`Failed to open browser: ${error.message}`);
       console.log(`\nPlease manually open this URL:\n${url}`);
