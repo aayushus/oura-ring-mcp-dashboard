@@ -4,6 +4,7 @@ import {
   calculateACWR,
   detectBiometricAnomalies,
   calculatePearsonCorrelations,
+  calculateTagEffects,
 } from "../src/utils/analysis/dashboard.js";
 import type { SleepRecord, ReadinessRecord, ActivityRecord } from "../src/db.js";
 
@@ -81,5 +82,62 @@ describe("Dashboard Advanced Analysis Equations", () => {
     expect(matrix.sleep_score.sleep_score).toBe(1.0);
     // sleep_score and readiness_score both went down, positive correlation
     expect(matrix.sleep_score.readiness_score).toBeGreaterThan(0);
+  });
+  it("should calculate tag effects (Cohen's d) correctly", () => {
+    // 4 days total: 2 with tag 'alcohol', 2 without
+    const rawTags = [
+      { day: "2024-01-01", tags: ["alcohol"] },
+      { start_day: "2024-01-02", text: "alcohol" }, // Tests both 'day'/'start_day' and 'tags'/'text'
+      { day: "2024-01-03", tags: ["sauna"] }, // Will not have enough data to be calculated
+      // Day 4 has no tags
+    ];
+
+    const sleep: SleepRecord[] = [
+      { day: "2024-01-01", score: 60, duration: 20000, deep: 2000, rem: 2000, light: 10000, efficiency: 80 },
+      { day: "2024-01-02", score: 62, duration: 21000, deep: 2000, rem: 2000, light: 10000, efficiency: 80 },
+      { day: "2024-01-03", score: 90, duration: 28800, deep: 3600, rem: 3600, light: 10000, efficiency: 90 },
+      { day: "2024-01-04", score: 92, duration: 29000, deep: 3600, rem: 3600, light: 10000, efficiency: 90 },
+    ];
+
+    const readiness: ReadinessRecord[] = [
+      { day: "2024-01-01", score: 60, hrv: 40, rhr: 65, temperature_deviation: 0 },
+      { day: "2024-01-02", score: 62, hrv: 42, rhr: 64, temperature_deviation: 0 },
+      { day: "2024-01-03", score: 90, hrv: 60, rhr: 55, temperature_deviation: 0 },
+      { day: "2024-01-04", score: 92, hrv: 62, rhr: 54, temperature_deviation: 0 },
+    ];
+
+    const results = calculateTagEffects(rawTags, sleep, readiness);
+
+    // Should only return results for 'alcohol' (requires >= 2 samples with and >= 2 without)
+    expect(results).toHaveLength(2); // one for sleep_score, one for readiness_score
+
+    const sleepResult = results.find((r) => r.metric === "sleep_score");
+    expect(sleepResult).toBeDefined();
+    expect(sleepResult?.tag).toBe("alcohol");
+    expect(sleepResult?.withCount).toBe(2);
+    expect(sleepResult?.withoutCount).toBe(2);
+    expect(sleepResult?.withAvg).toBe(61); // (60 + 62) / 2
+    expect(sleepResult?.withoutAvg).toBe(91); // (90 + 92) / 2
+    expect(sleepResult?.cohensD).toBeLessThan(0); // Lower score when tag is present
+
+    const readinessResult = results.find((r) => r.metric === "readiness_score");
+    expect(readinessResult).toBeDefined();
+    expect(readinessResult?.tag).toBe("alcohol");
+    expect(readinessResult?.withCount).toBe(2);
+    expect(readinessResult?.withoutCount).toBe(2);
+    expect(readinessResult?.withAvg).toBe(61);
+    expect(readinessResult?.withoutAvg).toBe(91);
+    expect(readinessResult?.cohensD).toBeLessThan(0);
+  });
+
+  it("should return empty array for calculateTagEffects when no tags provided", () => {
+    const sleep: SleepRecord[] = [
+      { day: "2024-01-01", score: 60, duration: 20000, deep: 2000, rem: 2000, light: 10000, efficiency: 80 }
+    ];
+    const readiness: ReadinessRecord[] = [
+      { day: "2024-01-01", score: 60, hrv: 40, rhr: 65, temperature_deviation: 0 }
+    ];
+    const results = calculateTagEffects([], sleep, readiness);
+    expect(results).toEqual([]);
   });
 });
