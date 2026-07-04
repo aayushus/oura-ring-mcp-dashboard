@@ -74,34 +74,49 @@ export async function runMigration() {
 
       if (rows.length === 0) continue;
 
-      // Migrate each row to PostgreSQL
-      for (const row of rows) {
-        const columnsStr = table.columns.join(", ");
-        const placeholders = table.columns.map((_, idx) => `$${idx + 1}`).join(", ");
-        const values = table.columns.map(col => row[col]);
+      // Migrate rows to PostgreSQL in batches
+      let conflictClause = "";
+      if (table.name === "sleep_history" || table.name === "readiness_history" || table.name === "activity_history" || table.name === "stress_history") {
+        conflictClause = "ON CONFLICT(day) DO NOTHING";
+      } else if (table.name === "user_profile" || table.name === "user_targets") {
+        conflictClause = "ON CONFLICT(id) DO NOTHING";
+      } else if (table.name === "raw_documents") {
+        conflictClause = "ON CONFLICT(day, endpoint, doc_id) DO NOTHING";
+      } else if (table.name === "experiments") {
+        conflictClause = "ON CONFLICT(id) DO NOTHING";
+      } else if (table.name === "experiment_days") {
+        conflictClause = "ON CONFLICT(experiment_id, day) DO NOTHING";
+      } else if (table.name === "anomalies") {
+        conflictClause = "ON CONFLICT(day, metric_id) DO NOTHING";
+      } else if (table.name === "digest_log") {
+        conflictClause = "ON CONFLICT(date) DO NOTHING";
+      } else if (table.name === "alert_prefs") {
+        conflictClause = "ON CONFLICT(alert_type) DO NOTHING";
+      } else if (table.name === "target_history") {
+        conflictClause = "ON CONFLICT(id) DO NOTHING";
+      }
 
-        let conflictClause = "";
-        if (table.name === "sleep_history" || table.name === "readiness_history" || table.name === "activity_history" || table.name === "stress_history") {
-          conflictClause = "ON CONFLICT(day) DO NOTHING";
-        } else if (table.name === "user_profile" || table.name === "user_targets") {
-          conflictClause = "ON CONFLICT(id) DO NOTHING";
-        } else if (table.name === "raw_documents") {
-          conflictClause = "ON CONFLICT(day, endpoint, doc_id) DO NOTHING";
-        } else if (table.name === "experiments") {
-          conflictClause = "ON CONFLICT(id) DO NOTHING";
-        } else if (table.name === "experiment_days") {
-          conflictClause = "ON CONFLICT(experiment_id, day) DO NOTHING";
-        } else if (table.name === "anomalies") {
-          conflictClause = "ON CONFLICT(day, metric_id) DO NOTHING";
-        } else if (table.name === "digest_log") {
-          conflictClause = "ON CONFLICT(date) DO NOTHING";
-        } else if (table.name === "alert_prefs") {
-          conflictClause = "ON CONFLICT(alert_type) DO NOTHING";
-        } else if (table.name === "target_history") {
-          conflictClause = "ON CONFLICT(id) DO NOTHING";
+      const columnsStr = table.columns.join(", ");
+      const BATCH_SIZE = 1000;
+
+      for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+        const batch = rows.slice(i, i + BATCH_SIZE);
+
+        const values: any[] = [];
+        const placeholdersGroup: string[] = [];
+
+        let paramIdx = 1;
+        for (const row of batch) {
+          const rowPlaceholders: string[] = [];
+          for (const col of table.columns) {
+            values.push(row[col]);
+            rowPlaceholders.push(`$${paramIdx}`);
+            paramIdx++;
+          }
+          placeholdersGroup.push(`(${rowPlaceholders.join(", ")})`);
         }
 
-        const insertSql = `INSERT INTO ${table.name} (${columnsStr}) VALUES (${placeholders}) ${conflictClause}`;
+        const insertSql = `INSERT INTO ${table.name} (${columnsStr}) VALUES ${placeholdersGroup.join(", ")} ${conflictClause}`;
         await pgClient.query(insertSql, values);
       }
       console.log(`[Migration] Successfully completed migration of table '${table.name}'.`);
