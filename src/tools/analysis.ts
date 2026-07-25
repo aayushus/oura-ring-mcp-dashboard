@@ -626,12 +626,32 @@ export function registerAnalysisTools(server: McpServer, client: OuraClient) {
             }
           }
 
+          // Restructure regularTags array into a Set of strings per day
+          const regularTagsByDay = new Map<string, Set<string>>();
           for (const t of regularTags) {
-            for (const tagName of t.tags) {
-              if (tagName.toLowerCase().includes(tagLower)) {
-                daysWithTag.add(t.day);
-              }
+            let daySet = regularTagsByDay.get(t.day);
+            if (!daySet) {
+              daySet = new Set<string>();
+              regularTagsByDay.set(t.day, daySet);
             }
+            for (const tagName of t.tags) {
+              daySet.add(tagName.toLowerCase());
+            }
+          }
+
+          for (const [day, tagsSet] of regularTagsByDay.entries()) {
+             // O(1) exact match lookup
+             if (tagsSet.has(tagLower)) {
+                daysWithTag.add(day);
+             } else {
+                // Fallback to substring matching to preserve existing behavior
+                for (const tagName of tagsSet) {
+                   if (tagName.includes(tagLower)) {
+                      daysWithTag.add(day);
+                      break;
+                   }
+                }
+             }
           }
 
           if (daysWithTag.size === 0) {
