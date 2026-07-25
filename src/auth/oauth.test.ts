@@ -188,8 +188,8 @@ describe("OAuth module", () => {
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.ouraring.com/oauth/revoke?access_token=token-to-revoke",
-        { method: "POST" }
+        "https://api.ouraring.com/oauth/revoke",
+        expect.objectContaining({ method: "POST" })
       );
     });
 

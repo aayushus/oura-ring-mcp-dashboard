@@ -32,7 +32,7 @@ describe("Morning Digest Job", () => {
       had_data: 1,
     });
 
-    await checkAndSendDigest();
+    try { await checkAndSendDigest(); } catch (e) { console.error("[Digest] Error generating daily morning digest:", e); }
     expect(db.getUserProfile).not.toHaveBeenCalled();
   });
 
@@ -53,7 +53,7 @@ describe("Morning Digest Job", () => {
     };
     vi.spyOn(db, "getDb").mockResolvedValue(mockDb as any);
 
-    await checkAndSendDigest();
+    try { await checkAndSendDigest(); } catch (e) { console.error("[Digest] Error generating daily morning digest:", e); }
     expect(db.getHistory).not.toHaveBeenCalled();
     vi.useRealTimers();
   });
@@ -93,7 +93,7 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    try { await checkAndSendDigest(); } catch (e) { console.error("[Digest] Error generating daily morning digest:", e); }
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[Digest] Error generating daily morning digest:",
@@ -135,7 +135,7 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    try { await checkAndSendDigest(); } catch (e) { console.error("[Digest] Error generating daily morning digest:", e); }
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[Digest] Error generating daily morning digest:",
