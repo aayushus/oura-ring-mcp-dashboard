@@ -54,11 +54,42 @@ describe("OuraClient", () => {
     });
   });
 
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      expect(client.accessToken).toBe(TEST_TOKEN);
+      client.setAccessToken("new-token");
+      expect(client.accessToken).toBe("new-token");
+    });
+  });
+
   // ─────────────────────────────────────────────────────────────
   // Fetch behavior tests
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should use contextClient accessToken if available", async () => {
+      const { requestContextStorage } = await import("./auth/context.js");
+      const contextClient = new OuraClient({ accessToken: "context-token-123" });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => personalInfoResponse,
+      });
+
+      await requestContextStorage.run({ ouraClient: contextClient, userId: 1 }, async () => {
+        await client.getPersonalInfo();
+      });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: "Bearer context-token-123",
+          },
+        })
+      );
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
