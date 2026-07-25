@@ -91,16 +91,8 @@ describe("Morning Digest Job", () => {
       sendMail: vi.fn().mockRejectedValue(mockError),
     });
 
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed");
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
-
-    consoleSpy.mockRestore();
     vi.useRealTimers();
     process.env = originalEnv;
   });
@@ -133,16 +125,8 @@ describe("Morning Digest Job", () => {
       sendMail: vi.fn().mockRejectedValue(mockError),
     });
 
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed fallback");
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
-
-    consoleSpy.mockRestore();
     vi.useRealTimers();
     process.env = originalEnv;
   });

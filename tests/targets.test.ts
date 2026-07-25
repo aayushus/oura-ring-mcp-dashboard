@@ -140,27 +140,30 @@ describe("runWeeklyTargetJob", () => {
     expect(db.getUserTargets).toHaveBeenCalled();
     expect(db.getRawDocuments).toHaveBeenCalledTimes(5); // readinessScores, sleepSessions, sleepScores, dailyActivities, hrSamples
     expect(db.upsertUserTargets).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sleep_need_seconds: expect.any(Number),
-        recommended_bedtime: expect.any(String),
-        step_goal: expect.any(Number),
-        max_hr: expect.any(Number),
-        bmr_kcal: expect.any(Number),
-      })
+      {
+        bmr_kcal: 1648.75,
+        max_hr: 187,
+        recommended_bedtime: "23:15",
+        sleep_need_seconds: 27900,
+        step_goal: 10000,
+      },
+      1
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "sleep_need",
       "Seed",
-      expect.any(String),
+      "7.75h",
       "Initial calculation seed.",
-      expect.any(String)
+      expect.any(String),
+      1
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "step_goal",
       "Seed",
-      expect.any(String),
+      "10000",
       "Initial calculation seed.",
-      expect.any(String)
+      expect.any(String),
+      1
     );
   });
 
@@ -206,16 +209,18 @@ describe("runWeeklyTargetJob", () => {
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "sleep_need",
       "7.75h", // old value from prevTargets
-      expect.any(String), // new value
-      expect.any(String), // reason
-      expect.any(String)  // date
+      "8.00h",
+      "Your best mornings followed ~8.50h nights (15 nights with readiness ≥ 80).",
+      expect.any(String),
+      1
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "step_goal",
       "8000",
+      "9000",
+      "Computed step target based on 10% stretch over your trailing median steps of 10000.",
       expect.any(String),
-      expect.any(String),
-      expect.any(String)
+      1
     );
   });
 
