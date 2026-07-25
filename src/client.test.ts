@@ -5,6 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
+import * as authContext from "./auth/context.js";
 
 // Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
@@ -52,6 +53,11 @@ describe("OuraClient", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
     });
+
+    it("should set access token", () => {
+      client.setAccessToken("new-token");
+      expect(client.accessToken).toBe("new-token");
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -72,6 +78,26 @@ describe("OuraClient", () => {
         expect.objectContaining({
           headers: {
             Authorization: `Bearer ${TEST_TOKEN}`,
+          },
+        })
+      );
+    });
+
+    it("should use contextClient accessToken if available", async () => {
+      vi.spyOn(authContext, "getContextOuraClient").mockReturnValueOnce({ accessToken: "context-token" } as any);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      await client.getSleep("2024-01-15", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-token`,
           },
         })
       );
