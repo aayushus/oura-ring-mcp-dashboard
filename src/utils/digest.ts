@@ -141,7 +141,11 @@ export async function checkAndSendDigest(): Promise<void> {
   };
 
   // 5. Send Digest via Channels
-  await dispatchDigest(digest);
+  try {
+    await dispatchDigest(digest);
+  } catch (err) {
+    throw err;
+  }
 
   // 6. Log success to DB
   await upsertDigestLog({
@@ -161,7 +165,12 @@ async function sendFallbackDigest(date: string): Promise<void> {
     <p>Please open the Oura phone app to trigger data synchronization with the cloud.</p>
   `;
   
-  await sendEmail("Oura Morning Digest — Action Required", fallbackHtml);
+  try {
+    await sendEmail("Oura Morning Digest — Action Required", fallbackHtml);
+  } catch (err) {
+    throw err;
+  }
+
   logToFile({
     date,
     message: "No sleep data yet — open the Oura app to sync.",
