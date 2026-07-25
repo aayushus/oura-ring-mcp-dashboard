@@ -932,16 +932,25 @@ export async function finalizeSyncLog(
   );
 }
 
+type SyncLogDbRow = Omit<SyncLogEntry, "endpoints"> & {
+  user_id: number;
+  endpoints: string | null;
+};
+
 export async function getSyncLog(limit = 20, userId: number = 1): Promise<SyncLogEntry[]> {
   const db = await getDb();
-  const rows = await db.all<any[]>(
+  const rows = await db.all<SyncLogDbRow[]>(
     `SELECT * FROM sync_log WHERE user_id = ? ORDER BY started_at DESC, id DESC LIMIT ?`,
     [userId, limit]
   );
-  return rows.map((row) => ({
-    ...row,
-    endpoints: row.endpoints ? JSON.parse(row.endpoints) : [],
-  }));
+  return rows.map((row) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { user_id, ...rest } = row;
+    return {
+      ...rest,
+      endpoints: row.endpoints ? JSON.parse(row.endpoints) : [],
+    };
+  });
 }
 
 /**
