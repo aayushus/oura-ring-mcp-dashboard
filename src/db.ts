@@ -651,7 +651,7 @@ export async function upsertRawDocument(
   day: string,
   endpoint: string,
   docId: string,
-  data: any,
+  data: unknown,
   userId: number = 1
 ): Promise<void> {
   const db = await getDb();
