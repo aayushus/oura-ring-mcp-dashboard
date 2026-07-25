@@ -1,9 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader } from "../components/components";
 import { DashboardLineChart } from "./charts";
 import { METRIC_REGISTRY } from "../constants";
 import type { HistorySummary } from "../types";
 import { formatDayLabel } from "../utils";
+
+function CompareChartCard({ metric, index, data, hues }: { metric: any, index: number, data: HistorySummary, hues: any }) {
+  const registry = METRIC_REGISTRY[metric.id];
+
+  const chartDataset = useMemo(() => {
+    const rawRows = (data as any)[metric.dataset] || [];
+    return rawRows.map((r: any) => ({
+      day: formatDayLabel(r.day),
+      value: metric.format ? metric.format(r[metric.dataKey]) : r[metric.dataKey],
+    }));
+  }, [data, metric]);
+
+  const color = hues[metric.colorKey] || "var(--accent)";
+
+  return (
+    <Card key={metric.id}>
+      <CardHeader
+        title={`${index + 1}. ${metric.label}`}
+        description={registry?.explain}
+      />
+      <CardContent>
+        <div className="chart-frame" style={{ height: "210px" }}>
+          <DashboardLineChart
+            className="dashboard-chart"
+            dataset={chartDataset}
+            xAxis={[{ scaleType: "point", dataKey: "day" }]}
+            grid={{ horizontal: true }}
+            hideLegend
+            series={[
+              {
+                dataKey: "value",
+                label: metric.label,
+                color: color,
+                showMark: false,
+              },
+            ]}
+            height={190}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 interface CompareViewProps {
   data: HistorySummary | null;
@@ -93,46 +136,9 @@ export function CompareView({ data, hues }: CompareViewProps) {
 
       {/* Stacked full-width panels — same pattern as the 24h timeline */}
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        {COMPARABLE_METRICS.filter((m) => selectedIds.includes(m.id)).map((metric, index) => {
-          const registry = METRIC_REGISTRY[metric.id];
-          const rawRows = (data as any)[metric.dataset] || [];
-
-          const chartDataset = rawRows.map((r: any) => ({
-            day: formatDayLabel(r.day),
-            value: metric.format ? metric.format(r[metric.dataKey]) : r[metric.dataKey],
-          }));
-
-          const color = hues[metric.colorKey] || "var(--accent)";
-
-          return (
-            <Card key={metric.id}>
-              <CardHeader
-                title={`${index + 1}. ${metric.label}`}
-                description={registry?.explain}
-              />
-              <CardContent>
-                <div className="chart-frame" style={{ height: "210px" }}>
-                  <DashboardLineChart
-                    className="dashboard-chart"
-                    dataset={chartDataset}
-                    xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                    grid={{ horizontal: true }}
-                    hideLegend
-                    series={[
-                      {
-                        dataKey: "value",
-                        label: metric.label,
-                        color: color,
-                        showMark: false,
-                      },
-                    ]}
-                    height={190}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {COMPARABLE_METRICS.filter((m) => selectedIds.includes(m.id)).map((metric, index) => (
+          <CompareChartCard key={metric.id} metric={metric} index={index} data={data} hues={hues} />
+        ))}
       </div>
     </div>
   );
