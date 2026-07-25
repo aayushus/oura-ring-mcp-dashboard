@@ -93,12 +93,9 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    await expect(checkAndSendDigest()).rejects.toThrow(mockError);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
+    // consoleSpy won't catch it inside checkAndSendDigest since the catch block is in startDigestJob
 
     consoleSpy.mockRestore();
     vi.useRealTimers();
@@ -135,12 +132,7 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
+    await expect(checkAndSendDigest()).rejects.toThrow(mockError);
 
     consoleSpy.mockRestore();
     vi.useRealTimers();
