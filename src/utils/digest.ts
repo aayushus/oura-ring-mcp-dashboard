@@ -237,12 +237,16 @@ async function sendEmail(subject: string, html: string): Promise<void> {
     auth: { user, pass },
   });
 
-  await transporter.sendMail({
-    from: `"Oura++ Dashboard" <${user}>`,
-    to: user, // Sends to self by default
-    subject,
-    html,
-  });
+  try {
+    await transporter.sendMail({
+      from: `"Oura++ Dashboard" <${user}>`,
+      to: user, // Sends to self by default
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("[Digest] Error generating daily morning digest:", err);
+  }
 }
 
 function logToFile(data: any) {
