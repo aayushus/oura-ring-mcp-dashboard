@@ -687,7 +687,7 @@ export async function getRawDocuments(
 
   query += ` ORDER BY day ASC`;
   const rows = await db.all<{ data: string }[]>(query, params);
-  return rows.map((row: any) => JSON.parse(row.data));
+  return rows.map((row) => JSON.parse(row.data));
 }
 
 // ─────────────────────────────────────────────────────────────
