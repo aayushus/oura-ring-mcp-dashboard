@@ -808,3 +808,52 @@ describe("OuraClient", () => {
     });
   });
 });
+
+describe("OuraClient token updates", () => {
+  it("should update access token when setAccessToken is called", () => {
+    const client = new OuraClient({ accessToken: "old-token" });
+    client.setAccessToken("new-token");
+    expect((client as any).accessToken).toBe("new-token");
+  });
+});
+
+  it("should use fallback token when contextClient is not present", async () => {
+    // getContextOuraClient returns null when outside of ALS context, which we are in these tests
+    const client = new OuraClient({ accessToken: "fallback-token" });
+    const mockFetch = vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({}),
+    } as any);
+
+    await client.getPersonalInfo();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: { Authorization: "Bearer fallback-token" },
+      })
+    );
+  });
+
+  it("should use context client token when contextClient is present", async () => {
+    const client = new OuraClient({ accessToken: "fallback-token" });
+    const mockFetch = vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({}),
+    } as any);
+
+    // Mock the imported context storage function manually
+    const contextMod = await import("./auth/context.js");
+    vi.spyOn(contextMod, "getContextOuraClient").mockReturnValueOnce({
+      accessToken: "context-token",
+    } as any);
+
+    await client.getPersonalInfo();
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: { Authorization: "Bearer context-token" },
+      })
+    );
+  });
