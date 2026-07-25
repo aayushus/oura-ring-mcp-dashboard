@@ -29,7 +29,39 @@ import personalInfoResponse from "../tests/fixtures/oura-personal-info-response.
 const TEST_TOKEN = "test-access-token-123";
 const BASE_URL = "https://api.ouraring.com/v2/usercollection";
 
+
+import { requestContextStorage } from "./auth/context.js";
+
 describe("OuraClient", () => {
+  it("should use context client access token if available", async () => {
+    const client = new OuraClient({ accessToken: "fallback-token" });
+    const contextClient = { accessToken: "context-token" };
+
+    // Mock fetch to check the token
+    (global.fetch as any).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ data: [] }),
+    });
+
+    await requestContextStorage.run({ userId: 1, ouraClient: contextClient }, async () => {
+      await client.getDailySleep("2024-01-01", "2024-01-02");
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: "Bearer context-token",
+          }),
+        })
+      );
+    });
+  });
+
+  it("should allow setting a new access token", () => {
+    const client = new OuraClient({ accessToken: "old-token" });
+    client.setAccessToken("new-token");
+    expect(client.accessToken).toBe("new-token");
+  });
+
   let client: OuraClient;
   let mockFetch: ReturnType<typeof vi.fn>;
 
