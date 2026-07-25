@@ -58,7 +58,7 @@ const SYNC_ENDPOINTS: Array<{
   label: string;
   group: string;
   optional?: boolean;
-  fetch: (client: OuraClient, start: string, end: string) => Promise<any>;
+  fetch: (client: OuraClient, start: string, end: string) => Promise<unknown>;
 }> = [
   { key: "daily_sleep", label: "Sleep scores", group: "Sleep", fetch: (c, s, e) => c.getDailySleep(s, e) },
   { key: "sleep", label: "Sleep sessions", group: "Sleep", fetch: (c, s, e) => c.getSleep(s, e) },
@@ -160,7 +160,7 @@ export async function syncData(
         try {
           const response = await endpoint.fetch(client, startDate, endDate);
           const records =
-            response == null ? 0 : Array.isArray(response.data) ? response.data.length : 1;
+            response == null ? 0 : (typeof response === "object" && "data" in response && Array.isArray((response as any).data)) ? (response as any).data.length : 1;
           results[endpoint.key] = response;
           state.status = "done";
           state.records = records;
