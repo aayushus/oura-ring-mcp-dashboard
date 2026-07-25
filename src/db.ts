@@ -891,7 +891,7 @@ export async function insertSyncLog(entry: {
   end_date: string;
 }, userId: number = 1): Promise<number> {
   const db = await getDb();
-  const result = await db.run(
+  const result: any = await db.run(
     `INSERT INTO sync_log (user_id, started_at, trigger_source, start_date, end_date, status)
      VALUES (?, ?, ?, ?, ?, 'running')`,
     [userId, entry.started_at, entry.trigger_source, entry.start_date, entry.end_date]
