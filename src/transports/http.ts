@@ -272,8 +272,8 @@ export async function startHttpServer(
       }
 
       // Worst contributor extraction
-      const latestRawSleep = rawSleep[rawSleep.length - 1];
-      const latestRawReadiness = (await getRawDocuments("daily_readiness", undefined, undefined, userId)).slice(-1)[0] || null;
+      const latestRawSleep = rawSleep[rawSleep.length - 1] as { contributors?: Record<string, number> } | undefined;
+      const latestRawReadiness = ((await getRawDocuments("daily_readiness", undefined, undefined, userId)).slice(-1)[0] || null) as { contributors?: Record<string, number> } | null;
 
       let worstContributor = null;
       let worstScore = 100;
@@ -714,7 +714,7 @@ export async function startHttpServer(
         return;
       }
       const db = await getDb();
-      const user = await db.get("SELECT disabled FROM users WHERE id = ?", [targetId]);
+      const user = await db.get<{ disabled: number }>("SELECT disabled FROM users WHERE id = ?", [targetId]);
       if (!user) {
         res.status(404).json({ error: "User not found" });
         return;

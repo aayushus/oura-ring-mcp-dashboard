@@ -208,14 +208,16 @@ describe("runWeeklyTargetJob", () => {
       "7.75h", // old value from prevTargets
       expect.any(String), // new value
       expect.any(String), // reason
-      expect.any(String)  // date
+      expect.any(String), // date
+      expect.any(Number)  // user_id
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "step_goal",
       "8000",
       expect.any(String),
       expect.any(String),
-      expect.any(String)
+      expect.any(String),
+      expect.any(Number)
     );
   });
 
