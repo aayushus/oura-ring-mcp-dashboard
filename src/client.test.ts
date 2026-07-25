@@ -43,6 +43,13 @@ describe("OuraClient", () => {
     vi.restoreAllMocks();
   });
 
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      client.setAccessToken("new-token");
+      expect((client as any).accessToken).toBe("new-token");
+    });
+  });
+
   // ─────────────────────────────────────────────────────────────
   // Constructor tests
   // ─────────────────────────────────────────────────────────────
@@ -72,6 +79,30 @@ describe("OuraClient", () => {
         expect.objectContaining({
           headers: {
             Authorization: `Bearer ${TEST_TOKEN}`,
+          },
+        })
+      );
+    });
+
+    it("should override Authorization header if context has a token", async () => {
+      const { requestContextStorage } = await import("./auth/context.js");
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      await requestContextStorage.run(
+        { userId: 1, ouraClient: { accessToken: "context-token" } },
+        async () => {
+          await client.getSleep("2024-01-15", "2024-01-15");
+        }
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-token`,
           },
         })
       );
