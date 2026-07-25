@@ -29,13 +29,14 @@ interface DigestDetails {
 }
 
 export async function checkAndSendDigest(): Promise<void> {
-  const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local format
+  try {
+    const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local format
 
-  // 1. Check if already dispatched today
-  const existingLog = await getDigestLog(today);
-  if (existingLog) {
-    return;
-  }
+    // 1. Check if already dispatched today
+    const existingLog = await getDigestLog(today);
+    if (existingLog) {
+      return;
+    }
 
   // 2. Fetch User Profile for target wake time
   const profile = await getUserProfile();
@@ -67,11 +68,11 @@ export async function checkAndSendDigest(): Promise<void> {
       return;
     }
 
-    // Fallback after 3 hours
-    console.log(`[Digest] Sleep data still missing after 3 hours. Dispatching fallback alert.`);
-    await sendFallbackDigest(today);
-    return;
-  }
+      // Fallback after 3 hours
+      console.log(`[Digest] Sleep data still missing after 3 hours. Dispatching fallback alert.`);
+      await sendFallbackDigest(today);
+      return;
+    }
 
   // 4. Generate Full Metrics Digest
   const history = await getHistory(7);
@@ -140,18 +141,21 @@ export async function checkAndSendDigest(): Promise<void> {
     timestamp: new Date().toISOString(),
   };
 
-  // 5. Send Digest via Channels
-  await dispatchDigest(digest);
+    // 5. Send Digest via Channels
+    await dispatchDigest(digest);
 
-  // 6. Log success to DB
-  await upsertDigestLog({
-    date: today,
-    channel: "Email/LocalFile",
-    sent_at: new Date().toISOString(),
-    had_data: 1,
-  });
-  console.log(`[Digest] Successfully dispatched biometrics digest for ${today}`);
+    // 6. Log success to DB
+    await upsertDigestLog({
+      date: today,
+      channel: "Email/LocalFile",
+      sent_at: new Date().toISOString(),
+      had_data: 1,
+    });
+    console.log(`[Digest] Successfully dispatched biometrics digest for ${today}`);
 
+  } catch (error) {
+    console.error("[Digest] Error generating daily morning digest:", error);
+  }
 }
 
 async function sendFallbackDigest(date: string): Promise<void> {

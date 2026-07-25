@@ -187,10 +187,15 @@ describe("OAuth module", () => {
       await revokeToken("token-to-revoke");
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.ouraring.com/oauth/revoke?access_token=token-to-revoke",
-        { method: "POST" }
-      );
+
+      const callArgs = mockFetch.mock.calls[0];
+      expect(callArgs[0]).toBe("https://api.ouraring.com/oauth/revoke");
+      expect(callArgs[1].method).toBe("POST");
+      expect(callArgs[1].headers).toEqual({
+        "Content-Type": "application/x-www-form-urlencoded",
+      });
+      const body = callArgs[1].body as URLSearchParams;
+      expect(body.get("access_token")).toBe("token-to-revoke");
     });
 
     it("should throw an error when token revocation fails", async () => {
