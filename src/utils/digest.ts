@@ -29,6 +29,14 @@ interface DigestDetails {
 }
 
 export async function checkAndSendDigest(): Promise<void> {
+  try {
+    await _checkAndSendDigest();
+  } catch (error) {
+    console.error("[Digest] Error generating daily morning digest:", error);
+  }
+}
+
+async function _checkAndSendDigest(): Promise<void> {
   const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local format
 
   // 1. Check if already dispatched today
