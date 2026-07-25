@@ -69,7 +69,11 @@ export async function checkAndSendDigest(): Promise<void> {
 
     // Fallback after 3 hours
     console.log(`[Digest] Sleep data still missing after 3 hours. Dispatching fallback alert.`);
-    await sendFallbackDigest(today);
+    try {
+      await sendFallbackDigest(today);
+    } catch (e) {
+      throw e; // Bubble up for error handling
+    }
     return;
   }
 
@@ -237,12 +241,17 @@ async function sendEmail(subject: string, html: string): Promise<void> {
     auth: { user, pass },
   });
 
-  await transporter.sendMail({
-    from: `"Oura++ Dashboard" <${user}>`,
-    to: user, // Sends to self by default
-    subject,
-    html,
-  });
+  try {
+    await transporter.sendMail({
+      from: `"Oura++ Dashboard" <${user}>`,
+      to: user, // Sends to self by default
+      subject,
+      html,
+    });
+  } catch (error) {
+    console.error("[Digest] Failed to send email:", error);
+    throw error;
+  }
 }
 
 function logToFile(data: any) {
