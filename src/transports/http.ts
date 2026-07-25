@@ -496,16 +496,17 @@ export async function startHttpServer(
         res.setHeader("Content-Disposition", "attachment; filename=oura_dashboard_export.json");
         res.json({ history, anomalies, targetHistory });
       } else {
-        let csv = "date,metric,value\n";
+        const lines = ["date,metric,value"];
         history.sleep.forEach((r) => {
-          csv += `${r.day},sleep_score,${r.score}\n`;
+          lines.push(`${r.day},sleep_score,${r.score}`);
         });
         history.readiness.forEach((r) => {
-          csv += `${r.day},readiness_score,${r.score}\n`;
+          lines.push(`${r.day},readiness_score,${r.score}`);
         });
         history.activity.forEach((r) => {
-          csv += `${r.day},activity_score,${r.score}\n`;
+          lines.push(`${r.day},activity_score,${r.score}`);
         });
+        const csv = lines.join("\n") + "\n";
         
         res.setHeader("Content-Type", "text/csv");
         res.setHeader("Content-Disposition", "attachment; filename=oura_dashboard_export.csv");
