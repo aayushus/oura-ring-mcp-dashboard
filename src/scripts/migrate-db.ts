@@ -16,7 +16,12 @@ const containerPath = join(homedir(), ".oura-mcp", "oura-health.db");
 let sqliteFile = existsSync(containerPath) ? containerPath : (existsSync(localHostPath) ? localHostPath : null);
 
 export async function runMigration() {
-  const dbUrl = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/oura_health";
+  const dbUrl = process.env.DATABASE_URL;
+
+  if (!dbUrl) {
+    console.log("[Migration] No DATABASE_URL provided. Skipping migration.");
+    return;
+  }
   
   console.log(`[Migration] Target PostgreSQL URL: ${dbUrl}`);
   console.log(`[Migration] Source SQLite Database: ${sqliteFile}`);
