@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   AIFinding,
@@ -618,7 +618,7 @@ function App() {
     return entries.filter((e) => e.cur != null);
   })();
 
-  const anomalies = (() => {
+  const anomalies = useMemo(() => {
     if (!data || data.readiness.length < 7) return [];
     const out: Array<{
       day: string;
@@ -682,7 +682,7 @@ function App() {
     }
 
     return out.sort((a, b) => b.day.localeCompare(a.day)).slice(0, 8);
-  })();
+  }, [data]);
 
   const sleepColumns: MetricColumn<SleepRecord>[] = [
     { key: "day", label: "Day", render: (row) => formatDayLabel(row.day) },
