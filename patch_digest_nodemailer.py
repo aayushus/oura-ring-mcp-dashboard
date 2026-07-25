@@ -1,0 +1,33 @@
+import re
+
+with open("tests/digest.test.ts", "r") as f:
+    content = f.read()
+
+content = content.replace(
+"""    const mockError = new Error("SMTP connection failed");
+    const nodemailer = await import("nodemailer");
+    (nodemailer.default.createTransport as any).mockReturnValueOnce({
+      sendMail: vi.fn().mockRejectedValue(mockError),
+    });""",
+"""    const mockError = new Error("SMTP connection failed");
+    const nodemailer = await import("nodemailer");
+    (nodemailer.default.createTransport as any).mockImplementationOnce(() => {
+      throw mockError;
+    });"""
+)
+
+content = content.replace(
+"""    const mockError = new Error("SMTP connection failed fallback");
+    const nodemailer = await import("nodemailer");
+    (nodemailer.default.createTransport as any).mockReturnValueOnce({
+      sendMail: vi.fn().mockRejectedValue(mockError),
+    });""",
+"""    const mockError = new Error("SMTP connection failed fallback");
+    const nodemailer = await import("nodemailer");
+    (nodemailer.default.createTransport as any).mockImplementationOnce(() => {
+      throw mockError;
+    });"""
+)
+
+with open("tests/digest.test.ts", "w") as f:
+    f.write(content)

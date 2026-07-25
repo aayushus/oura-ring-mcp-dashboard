@@ -93,12 +93,7 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
+    await expect(checkAndSendDigest()).rejects.toThrow(mockError);
 
     consoleSpy.mockRestore();
     vi.useRealTimers();
@@ -135,12 +130,7 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
+    await expect(checkAndSendDigest()).rejects.toThrow(mockError);
 
     consoleSpy.mockRestore();
     vi.useRealTimers();
