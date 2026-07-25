@@ -5,6 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
+import { requestContextStorage } from "./auth/context.js";
 
 // Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
@@ -54,11 +55,38 @@ describe("OuraClient", () => {
     });
   });
 
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      client.setAccessToken("new-token-456");
+      expect((client as any).accessToken).toBe("new-token-456");
+    });
+  });
+
   // ─────────────────────────────────────────────────────────────
   // Fetch behavior tests
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should use context client token if available", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      await requestContextStorage.run({ userId: 1, ouraClient: { accessToken: "context-token-789" } }, async () => {
+        await client.getSleep("2024-01-15", "2024-01-15");
+      });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-token-789`,
+          },
+        })
+      );
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
