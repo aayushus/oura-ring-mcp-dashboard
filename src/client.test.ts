@@ -59,6 +59,25 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should allow updating access token via setAccessToken", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      client.setAccessToken("new-token");
+      await client.getSleep("2024-01-15", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: "Bearer new-token",
+          },
+        })
+      );
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -127,6 +146,19 @@ describe("OuraClient", () => {
 
       await expect(client.getDailyActivity("2024-01-15", "2024-01-15")).rejects.toThrow(
         "Access denied: Your token doesn't have permission for this data"
+      );
+    });
+
+    it("should throw a default OuraApiError for generic errors (e.g., 400 Bad Request)", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: "Bad Request",
+        text: () => Promise.resolve("Missing parameter"),
+      });
+
+      await expect(client.getDailyActivity("2024-01-15", "2024-01-15")).rejects.toThrow(
+        "Invalid request: Missing parameter"
       );
     });
   });
