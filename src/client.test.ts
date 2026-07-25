@@ -47,6 +47,14 @@ describe("OuraClient", () => {
   // Constructor tests
   // ─────────────────────────────────────────────────────────────
 
+
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      client.setAccessToken("new-token");
+      expect(client['accessToken']).toBe("new-token");
+    });
+  });
+
   describe("constructor", () => {
     it("should create client with access token", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
@@ -794,6 +802,45 @@ describe("OuraClient", () => {
       expect(result).toEqual(personalInfoResponse);
       expect(result.email).toBe("test@example.com");
     });
+
+
+    it("should throw OuraApiError with standard properties on failed fetch without JSON", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: async () => { throw new Error("not json"); },
+        text: async () => "Service Unavailable",
+      });
+
+      try {
+        await client.getPersonalInfo();
+      } catch (err: any) {
+        expect(err.name).toBe("OuraApiError");
+        expect(err.status).toBe(503);
+      }
+    });
+
+
+
+    it("should use context client access token if available", async () => {
+      const { requestContextStorage } = await import("./auth/context.js");
+
+      const testContext = { userId: 1, ouraClient: { accessToken: "context-token" } };
+
+      await requestContextStorage.run(testContext, async () => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve(personalInfoResponse),
+        });
+
+        await client.getPersonalInfo();
+
+        const callArgs = mockFetch.mock.calls[0];
+        const headers = callArgs[1].headers;
+        expect(headers.Authorization).toBe("Bearer context-token");
+      });
+    });
+
 
     it("should call personal_info endpoint", async () => {
       mockFetch.mockResolvedValueOnce({
