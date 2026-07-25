@@ -294,13 +294,15 @@ export function ExperimentsView() {
                           Daily log
                         </div>
                         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                          {datesList.map((day) => {
-                            const isPast = new Date(day) <= new Date();
-                            const logRecord = exp.loggedDays?.find((l: any) => l.day === day);
-                            const isAdherent = logRecord ? logRecord.adherent === 1 : false;
-                            const state = isAdherent ? "adherent" : logRecord ? "missed" : "pending";
+                          {(() => {
+                            const loggedDaysMap = new Map(exp.loggedDays?.map((l: any) => [l.day, l]) || []);
+                            return datesList.map((day) => {
+                              const isPast = new Date(day) <= new Date();
+                              const logRecord = loggedDaysMap.get(day) as any;
+                              const isAdherent = logRecord ? logRecord.adherent === 1 : false;
+                              const state = isAdherent ? "adherent" : logRecord ? "missed" : "pending";
 
-                            return (
+                              return (
                               <button
                                 key={day}
                                 type="button"
@@ -312,8 +314,9 @@ export function ExperimentsView() {
                               >
                                 {day.slice(-2)}
                               </button>
-                            );
-                          })}
+                              );
+                            });
+                          })()}
                         </div>
                       </div>
                     );
