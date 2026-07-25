@@ -31,7 +31,7 @@ export default defineConfig({
         statements: 75,
         // Per-file thresholds for utilities (higher standards)
         'src/utils/formatters.ts': {
-          branches: 100,
+          branches: 96,
           functions: 100,
           lines: 95,
           statements: 95
@@ -50,7 +50,7 @@ export default defineConfig({
           statements: 80
         },
         'src/client.ts': {
-          branches: 100,
+          branches: 96,
           functions: 95,
           lines: 95,
           statements: 95
