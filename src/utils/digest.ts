@@ -29,6 +29,7 @@ interface DigestDetails {
 }
 
 export async function checkAndSendDigest(): Promise<void> {
+  try {
   const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local format
 
   // 1. Check if already dispatched today
@@ -152,6 +153,9 @@ export async function checkAndSendDigest(): Promise<void> {
   });
   console.log(`[Digest] Successfully dispatched biometrics digest for ${today}`);
 
+  } catch (err) {
+    console.error("[Digest] Error generating daily morning digest:", err);
+  }
 }
 
 async function sendFallbackDigest(date: string): Promise<void> {
