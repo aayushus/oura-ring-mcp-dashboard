@@ -5,6 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
+import { requestContextStorage } from "./auth/context.js";
 
 // Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
@@ -51,6 +52,15 @@ describe("OuraClient", () => {
     it("should create client with access token", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
+      expect(newClient.accessToken).toBe("my-token");
+    });
+  });
+
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      expect(client.accessToken).toBe(TEST_TOKEN);
+      client.setAccessToken("new-token-456");
+      expect(client.accessToken).toBe("new-token-456");
     });
   });
 
@@ -59,6 +69,29 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should use contextClient token if available in AsyncLocalStorage", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      await requestContextStorage.run(
+        { userId: 1, ouraClient: { accessToken: "context-override-token" } },
+        async () => {
+          await client.getSleep("2024-01-15", "2024-01-15");
+        }
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-override-token`,
+          },
+        })
+      );
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
