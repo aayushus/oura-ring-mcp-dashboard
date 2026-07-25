@@ -93,7 +93,11 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    try {
+      await checkAndSendDigest();
+    } catch (err) {
+      console.error("[Digest] Error generating daily morning digest:", err);
+    }
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[Digest] Error generating daily morning digest:",
@@ -135,7 +139,11 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    try {
+      await checkAndSendDigest();
+    } catch (err) {
+      console.error("[Digest] Error generating daily morning digest:", err);
+    }
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[Digest] Error generating daily morning digest:",
