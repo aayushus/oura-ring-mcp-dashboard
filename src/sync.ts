@@ -52,6 +52,15 @@ export interface SyncResult {
   error?: string;
 }
 
+interface OuraRawDocument {
+  id?: string;
+  day?: string;
+  start_day?: string;
+  timestamp?: string;
+  start_datetime?: string;
+  [key: string]: unknown;
+}
+
 /** Endpoint descriptors — key/label/group drive the sync drawer UI. */
 const SYNC_ENDPOINTS: Array<{
   key: string;
@@ -183,7 +192,7 @@ export async function syncData(
     const days = new Set<string>();
 
     // Store raw payloads for read-time logic
-    const saveRawDocs = async (endpoint: string, dataArray: any[] | undefined) => {
+    const saveRawDocs = async (endpoint: string, dataArray: OuraRawDocument[] | undefined) => {
       if (!dataArray) return;
       for (const doc of dataArray) {
         const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
