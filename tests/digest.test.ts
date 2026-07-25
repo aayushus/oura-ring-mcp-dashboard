@@ -93,10 +93,10 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed");
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
+      "[Digest] Failed to send email digest:",
       mockError
     );
 
@@ -135,10 +135,10 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed fallback");
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
+      "[Digest] Failed to send fallback email:",
       mockError
     );
 

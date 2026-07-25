@@ -1,0 +1,30 @@
+<<<<<<< SEARCH
+    await checkAndSendDigest();
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[Digest] Failed to send email digest:",
+      mockError
+    );
+=======
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[Digest] Failed to send email digest:",
+      mockError
+    );
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+    await checkAndSendDigest();
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[Digest] Failed to send fallback email:",
+      mockError
+    );
+=======
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed fallback");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[Digest] Failed to send fallback email:",
+      mockError
+    );
+>>>>>>> REPLACE

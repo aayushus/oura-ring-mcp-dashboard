@@ -161,7 +161,12 @@ async function sendFallbackDigest(date: string): Promise<void> {
     <p>Please open the Oura phone app to trigger data synchronization with the cloud.</p>
   `;
   
-  await sendEmail("Oura Morning Digest — Action Required", fallbackHtml);
+  try {
+    await sendEmail("Oura Morning Digest — Action Required", fallbackHtml);
+  } catch (err) {
+    console.error("[Digest] Failed to send fallback email:", err);
+    throw err;
+  }
   logToFile({
     date,
     message: "No sleep data yet — open the Oura app to sync.",
@@ -214,7 +219,12 @@ async function dispatchDigest(digest: DigestDetails): Promise<void> {
     </div>
   `;
 
-  await sendEmail(subject, html);
+  try {
+    await sendEmail(subject, html);
+  } catch (err) {
+    console.error("[Digest] Failed to send email digest:", err);
+    throw err;
+  }
   logToFile(digest);
 }
 
