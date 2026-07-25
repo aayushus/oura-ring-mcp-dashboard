@@ -88,7 +88,7 @@ describe("Morning Digest Job", () => {
     const mockError = new Error("SMTP connection failed");
     const nodemailer = await import("nodemailer");
     (nodemailer.default.createTransport as any).mockReturnValueOnce({
-      sendMail: vi.fn().mockRejectedValue(mockError),
+      sendMail: vi.fn().mockImplementation(() => Promise.reject(mockError)),
     });
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -125,7 +125,7 @@ describe("Morning Digest Job", () => {
     const mockError = new Error("SMTP connection failed fallback");
     const nodemailer = await import("nodemailer");
     (nodemailer.default.createTransport as any).mockReturnValueOnce({
-      sendMail: vi.fn().mockRejectedValue(mockError),
+      sendMail: vi.fn().mockImplementation(() => Promise.reject(mockError)),
     });
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
