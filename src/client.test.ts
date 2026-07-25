@@ -1,3 +1,4 @@
+import * as context from "../src/auth/context.js";
 /**
  * Tests for OuraClient
  *
@@ -30,6 +31,33 @@ const TEST_TOKEN = "test-access-token-123";
 const BASE_URL = "https://api.ouraring.com/v2/usercollection";
 
 describe("OuraClient", () => {
+  describe("Context client", () => {
+    it("should use context client access token if available", async () => {
+      const mockContextClient = new OuraClient({ accessToken: "context-token" });
+      vi.spyOn(context, "getContextOuraClient").mockReturnValue(mockContextClient);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      });
+
+      await client.getSleep("2024-01-01", "2024-01-02");
+
+      const calledInit = mockFetch.mock.calls[0][1];
+      expect(calledInit.headers.Authorization).toBe("Bearer context-token");
+
+      vi.mocked(context.getContextOuraClient).mockRestore();
+    });
+  });
+
+
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      client.setAccessToken("new-token");
+      expect((client as any).accessToken).toBe("new-token");
+    });
+  });
+
   let client: OuraClient;
   let mockFetch: ReturnType<typeof vi.fn>;
 
@@ -134,6 +162,24 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
   // Sleep endpoints
   // ─────────────────────────────────────────────────────────────
+
+
+  describe("fetch parameters", () => {
+    it("should append query parameters correctly", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      });
+
+      // Call any method that triggers fetch with params
+      await client.getSleep("2024-01-01", "2024-01-02");
+
+      const calledUrl = mockFetch.mock.calls[0][0];
+      const url = new URL(calledUrl);
+      expect(url.searchParams.get("start_date")).toBe("2024-01-01");
+      expect(url.searchParams.get("end_date")).toBe("2024-01-02");
+    });
+  });
 
   describe("getSleep", () => {
     it("should fetch sleep data for date range", async () => {
