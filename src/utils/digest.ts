@@ -108,13 +108,13 @@ export async function checkAndSendDigest(): Promise<void> {
   let worstContributor = "Restfulness";
   let contributorTip = "Ensure your bedroom is dark, quiet, and cool to minimize nighttime wakeups.";
 
-  const latestRawSleep = await db.get("SELECT * FROM raw_documents WHERE day = ? AND endpoint = 'sleep'", [today]);
+  const latestRawSleep = await db.get<{ data: string }>("SELECT * FROM raw_documents WHERE day = ? AND endpoint = 'sleep'", [today]);
   if (latestRawSleep) {
     try {
       const doc = JSON.parse(latestRawSleep.data);
-      if (doc.contributors) {
+      if (doc.contributors && typeof doc.contributors === "object") {
         let minScore = 100;
-        for (const [name, val] of Object.entries(doc.contributors)) {
+        for (const [name, val] of Object.entries(doc.contributors as Record<string, unknown>)) {
           if (typeof val === "number" && val < minScore) {
             minScore = val;
             worstContributor = name.replace(/_/g, " ");

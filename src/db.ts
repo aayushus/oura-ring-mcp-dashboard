@@ -15,9 +15,9 @@ const DB_FILE = process.env.NODE_ENV === "test" ? ":memory:" : join(CONFIG_DIR, 
 
 export interface DatabaseWrapper {
   exec(sql: string): Promise<void>;
-  all<T = any>(sql: string, params?: any[]): Promise<T>;
-  get<T = any>(sql: string, params?: any[]): Promise<T | undefined>;
-  run(sql: string, params?: any[]): Promise<{ changes?: number; lastID?: number }>;
+  all<T = unknown>(sql: string, params?: unknown[]): Promise<T>;
+  get<T = unknown>(sql: string, params?: unknown[]): Promise<T | undefined>;
+  run(sql: string, params?: unknown[]): Promise<{ changes?: number; lastID?: number }>;
   close(): Promise<void>;
 }
 
@@ -80,17 +80,17 @@ export async function getDb(): Promise<DatabaseWrapper> {
           await pool.query(stmt);
         }
       },
-      async all<T = any>(sql: string, params: any[] = []) {
+      async all<T = unknown>(sql: string, params: unknown[] = []) {
         const pgSql = translateQuery(sql);
         const res = await pool.query(pgSql, params);
         return res.rows as unknown as T;
       },
-      async get<T = any>(sql: string, params: any[] = []) {
+      async get<T = unknown>(sql: string, params: unknown[] = []) {
         const pgSql = translateQuery(sql);
         const res = await pool.query(pgSql, params);
         return (res.rows[0] ?? undefined) as unknown as T | undefined;
       },
-      async run(sql: string, params: any[] = []) {
+      async run(sql: string, params: unknown[] = []) {
         const pgSql = translateQuery(sql);
         const res = await pool.query(pgSql, params);
         return { changes: res.rowCount ?? undefined, lastID: 0 };
@@ -111,13 +111,13 @@ export async function getDb(): Promise<DatabaseWrapper> {
       async exec(sql: string) {
         await sqliteDb.exec(sql);
       },
-      async all<T = any>(sql: string, params: any[] = []) {
+      async all<T = unknown>(sql: string, params: unknown[] = []) {
         return sqliteDb.all(sql, params) as Promise<T>;
       },
-      async get<T = any>(sql: string, params: any[] = []) {
+      async get<T = unknown>(sql: string, params: unknown[] = []) {
         return sqliteDb.get(sql, params) as Promise<T | undefined>;
       },
-      async run(sql: string, params: any[] = []) {
+      async run(sql: string, params: unknown[] = []) {
         return sqliteDb.run(sql, params);
       },
       async close() {
@@ -651,7 +651,7 @@ export async function upsertRawDocument(
   day: string,
   endpoint: string,
   docId: string,
-  data: any,
+  data: unknown,
   userId: number = 1
 ): Promise<void> {
   const db = await getDb();
@@ -670,11 +670,11 @@ export async function getRawDocuments(
   startDate?: string,
   endDate?: string,
   userId: number = 1
-): Promise<any[]> {
+): Promise<unknown[]> {
   const activeUserId = resolveUserId(userId);
   const db = await getDb();
   let query = `SELECT data FROM raw_documents WHERE user_id = ? AND endpoint = ?`;
-  const params: any[] = [activeUserId, endpoint];
+  const params: unknown[] = [activeUserId, endpoint];
 
   if (startDate) {
     query += ` AND day >= ?`;
@@ -687,7 +687,7 @@ export async function getRawDocuments(
 
   query += ` ORDER BY day ASC`;
   const rows = await db.all<{ data: string }[]>(query, params);
-  return rows.map((row: any) => JSON.parse(row.data));
+  return rows.map((row: { data: string }) => JSON.parse(row.data));
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -891,7 +891,7 @@ export async function insertSyncLog(entry: {
   end_date: string;
 }, userId: number = 1): Promise<number> {
   const db = await getDb();
-  const result: any = await db.run(
+  const result = await db.run(
     `INSERT INTO sync_log (user_id, started_at, trigger_source, start_date, end_date, status)
      VALUES (?, ?, ?, ?, ?, 'running')`,
     [userId, entry.started_at, entry.trigger_source, entry.start_date, entry.end_date]
@@ -934,7 +934,7 @@ export async function finalizeSyncLog(
 
 export async function getSyncLog(limit = 20, userId: number = 1): Promise<SyncLogEntry[]> {
   const db = await getDb();
-  const rows = await db.all<any[]>(
+  const rows = await db.all<(SyncLogEntry & { endpoints?: string })[]>(
     `SELECT * FROM sync_log WHERE user_id = ? ORDER BY started_at DESC, id DESC LIMIT ?`,
     [userId, limit]
   );
@@ -977,7 +977,7 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
   // Check if sleep_history exists and has user_id column
   const sleepExists = await tableExists(db, "sleep_history");
   if (sleepExists) {
-    const sleepInfo = await db.all<any[]>(
+    const sleepInfo = await db.all<{ name?: string, column_name?: string }[]>(
       isPostgres
         ? `SELECT column_name FROM information_schema.columns WHERE table_name = 'sleep_history' AND column_name = 'user_id'`
         : `PRAGMA table_info(sleep_history)`
