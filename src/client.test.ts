@@ -5,6 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
+import { requestContextStorage } from "./auth/context.js";
 
 // Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
@@ -52,6 +53,13 @@ describe("OuraClient", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
     });
+
+    it("should set access token correctly", () => {
+      const client = new OuraClient({ accessToken: TEST_TOKEN });
+      expect((client as any).accessToken).toBe(TEST_TOKEN);
+      client.setAccessToken("new-token");
+      expect((client as any).accessToken).toBe("new-token");
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -59,6 +67,40 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should append parameters to the URL correctly", async () => {
+        mockFetch.mockResolvedValueOnce({
+            ok: true,
+            json: () => Promise.resolve({ data: [] }),
+        });
+
+        await (client as any).fetch("test", { key1: "val1", key2: "val2" });
+        expect(mockFetch).toHaveBeenCalledWith(
+            expect.stringContaining("key1=val1&key2=val2"),
+            expect.any(Object)
+        );
+    });
+
+    it("should use contextClient token if available", async () => {
+        mockFetch.mockResolvedValueOnce({
+            ok: true,
+            json: () => Promise.resolve({ data: [] }),
+        });
+
+        const ctxClient = new OuraClient({ accessToken: "context-token" });
+        await requestContextStorage.run({ userId: 1, ouraClient: ctxClient }, async () => {
+            await (client as any).fetch("test");
+        });
+
+        expect(mockFetch).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+                headers: {
+                    Authorization: "Bearer context-token"
+                }
+            })
+        );
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,

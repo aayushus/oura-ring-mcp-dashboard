@@ -46,7 +46,6 @@ import {
   getRawDocuments,
   getExperiments,
   getExperimentDays,
-  getExperimentDaysByExperiments,
   upsertExperiment,
   upsertExperimentDay,
   getAnomalies,
@@ -352,27 +351,16 @@ export async function startHttpServer(
     try {
       const userId = req.user?.id ?? 1;
       const exps = await getExperiments(userId);
-
-      const experimentIds = exps.map(exp => exp.id);
-      const allDays = await getExperimentDaysByExperiments(experimentIds, userId);
-
-      const daysByExp = new Map<string, any[]>();
-      for (const day of allDays) {
-        if (!daysByExp.has(day.experiment_id)) {
-          daysByExp.set(day.experiment_id, []);
-        }
-        daysByExp.get(day.experiment_id)!.push(day);
-      }
-
-      const enriched = exps.map((exp) => {
-        const loggedDays = daysByExp.get(exp.id) || [];
-        return {
-          ...exp,
-          metric_ids: JSON.parse(exp.metric_ids),
-          loggedDays,
-        };
-      });
-
+      const enriched = await Promise.all(
+        exps.map(async (exp) => {
+          const loggedDays = await getExperimentDays(exp.id, userId);
+          return {
+            ...exp,
+            metric_ids: JSON.parse(exp.metric_ids),
+            loggedDays,
+          };
+        })
+      );
       res.json(enriched);
     } catch (err) {
       console.error("Get self experiments list API error:", err);
