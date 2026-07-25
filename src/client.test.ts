@@ -511,6 +511,36 @@ describe("OuraClient", () => {
   // Tags endpoints
   // ─────────────────────────────────────────────────────────────
 
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      client.setAccessToken("new-token");
+      expect(client.accessToken).toBe("new-token");
+      client.setAccessToken("test-token");
+    });
+  });
+
+  describe("fetch with contextClient", () => {
+    it("should use contextClient accessToken if available", async () => {
+      const { requestContextStorage } = await import("./auth/context.js");
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(personalInfoResponse),
+      });
+
+      await requestContextStorage.run(
+        { userId: 1, ouraClient: { accessToken: "context-token" } },
+        async () => {
+          await client.getPersonalInfo();
+        }
+      );
+
+      const callArgs = mockFetch.mock.calls[mockFetch.mock.calls.length - 1];
+      expect(callArgs[1].headers.Authorization).toBe("Bearer context-token");
+    });
+  });
+
+
   describe("getTags", () => {
     it("should fetch tags data", async () => {
       mockFetch.mockResolvedValueOnce({
