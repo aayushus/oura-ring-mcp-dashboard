@@ -808,3 +808,37 @@ describe("OuraClient", () => {
     });
   });
 });
+
+describe("setAccessToken", () => {
+  it("should update the access token", () => {
+    const client = new OuraClient({ accessToken: TEST_TOKEN });
+    client.setAccessToken("new-token");
+    expect(client.accessToken).toBe("new-token");
+  });
+});
+
+import { requestContextStorage } from "./auth/context.js";
+
+describe("fetch with context", () => {
+  it("should use context client token if available", async () => {
+    const client = new OuraClient({ accessToken: TEST_TOKEN });
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [] }),
+    } as any);
+
+    const contextClient = new OuraClient({ accessToken: "context-token" });
+
+    await requestContextStorage.run({ userId: 1, ouraClient: contextClient }, async () => {
+      await client.getPersonalInfo();
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("personal_info"),
+      expect.objectContaining({
+        headers: { Authorization: "Bearer context-token" },
+      })
+    );
+  });
+});
