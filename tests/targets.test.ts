@@ -146,21 +146,24 @@ describe("runWeeklyTargetJob", () => {
         step_goal: expect.any(Number),
         max_hr: expect.any(Number),
         bmr_kcal: expect.any(Number),
-      })
+      }),
+      1
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "sleep_need",
       "Seed",
       expect.any(String),
       "Initial calculation seed.",
-      expect.any(String)
+      expect.any(String),
+      1
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "step_goal",
       "Seed",
       expect.any(String),
       "Initial calculation seed.",
-      expect.any(String)
+      expect.any(String),
+      1
     );
   });
 
@@ -208,14 +211,16 @@ describe("runWeeklyTargetJob", () => {
       "7.75h", // old value from prevTargets
       expect.any(String), // new value
       expect.any(String), // reason
-      expect.any(String)  // date
+      expect.any(String), // date string
+      1 // user id
     );
     expect(db.addTargetHistory).toHaveBeenCalledWith(
       "step_goal",
       "8000",
       expect.any(String),
       expect.any(String),
-      expect.any(String)
+      expect.any(String),
+      1
     );
   });
 
