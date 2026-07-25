@@ -640,18 +640,18 @@ export function registerAnalysisTools(server: McpServer, client: OuraClient) {
           }
 
           for (const [day, tagsSet] of regularTagsByDay.entries()) {
-             // O(1) exact match lookup
-             if (tagsSet.has(tagLower)) {
-                daysWithTag.add(day);
-             } else {
-                // Fallback to substring matching to preserve existing behavior
-                for (const tagName of tagsSet) {
-                   if (tagName.includes(tagLower)) {
-                      daysWithTag.add(day);
-                      break;
-                   }
+            // O(1) exact match lookup
+            if (tagsSet.has(tagLower)) {
+              daysWithTag.add(day);
+            } else {
+              // Fallback to substring matching to preserve existing behavior
+              for (const tagName of tagsSet) {
+                if (tagName.includes(tagLower)) {
+                  daysWithTag.add(day);
+                  break;
                 }
-             }
+              }
+            }
           }
 
           if (daysWithTag.size === 0) {
