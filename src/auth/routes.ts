@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
+import escapeHtml from "escape-html";
 import {
   createUser,
   getUserByEmail,
@@ -304,7 +305,7 @@ authRouter.get("/oura/callback", async (req: Request, res: Response) => {
     const { code, state, error } = req.query;
 
     if (error) {
-      res.status(400).send(`<html><body><h2>Authorization failed</h2><p>${error}</p></body></html>`);
+      res.status(400).send(`<html><body><h2>Authorization failed</h2><p>${escapeHtml(String(error))}</p></body></html>`);
       return;
     }
 
@@ -384,7 +385,7 @@ authRouter.get("/oura/callback", async (req: Request, res: Response) => {
     `);
   } catch (err: any) {
     console.error("[OAuth] Callback error:", err);
-    res.status(500).send(`<html><body><h2>Internal Server Error</h2><p>${err.message || err}</p></body></html>`);
+    res.status(500).send(`<html><body><h2>Internal Server Error</h2><p>${escapeHtml(String(err.message || err))}</p></body></html>`);
   }
 });
 

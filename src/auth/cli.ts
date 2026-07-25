@@ -10,6 +10,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { randomBytes } from "node:crypto";
 import { execFile } from "node:child_process";
 import { platform } from "node:os";
+import escapeHtml from "escape-html";
 import {
   buildAuthorizationUrl,
   exchangeCodeForTokens,
@@ -79,7 +80,7 @@ function startCallbackServer(
         res.end(`
           <html><body style="font-family: system-ui; padding: 40px; text-align: center;">
             <h1>❌ Authorization Failed</h1>
-            <p>Error: ${error}</p>
+            <p>Error: ${escapeHtml(String(error))}</p>
             <p>You can close this window.</p>
           </body></html>
         `);
@@ -138,7 +139,7 @@ function startCallbackServer(
         res.end(`
           <html><body style="font-family: system-ui; padding: 40px; text-align: center;">
             <h1>❌ Token Exchange Failed</h1>
-            <p>${err instanceof Error ? err.message : "Unknown error"}</p>
+            <p>${escapeHtml(err instanceof Error ? err.message : "Unknown error")}</p>
             <p>You can close this window and try again.</p>
           </body></html>
         `);

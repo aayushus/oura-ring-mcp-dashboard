@@ -19,6 +19,7 @@
  */
 import express, { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
+import escapeHtml from "escape-html";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { mcpAuthRouter } from "@modelcontextprotocol/sdk/server/auth/router.js";
@@ -876,7 +877,7 @@ export async function startHttpServer(
           res.status(400).send(
             `<html><body>
               <h2>Authorization failed</h2>
-              <p>${description || error}</p>
+              <p>${escapeHtml(String(description || error))}</p>
               <p>You can close this window.</p>
             </body></html>`
           );
@@ -896,7 +897,7 @@ export async function startHttpServer(
         res.status(500).send(
           `<html><body>
             <h2>Authorization error</h2>
-            <p>${err instanceof Error ? err.message : String(err)}</p>
+            <p>${escapeHtml(err instanceof Error ? err.message : String(err))}</p>
             <p>Please try again.</p>
           </body></html>`
         );
