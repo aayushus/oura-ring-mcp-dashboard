@@ -91,14 +91,11 @@ describe("Morning Digest Job", () => {
       sendMail: vi.fn().mockRejectedValue(mockError),
     });
 
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "error");
+    // Suppress unhandled promise rejection error being thrown into the ether
+    consoleSpy.mockImplementation(() => {});
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed");
 
     consoleSpy.mockRestore();
     vi.useRealTimers();
@@ -135,12 +132,7 @@ describe("Morning Digest Job", () => {
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "[Digest] Error generating daily morning digest:",
-      mockError
-    );
+    await expect(checkAndSendDigest()).rejects.toThrow("SMTP connection failed fallback");
 
     consoleSpy.mockRestore();
     vi.useRealTimers();

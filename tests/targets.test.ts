@@ -146,22 +146,28 @@ describe("runWeeklyTargetJob", () => {
         step_goal: expect.any(Number),
         max_hr: expect.any(Number),
         bmr_kcal: expect.any(Number),
-      })
+      }),
+      expect.any(Number)
     );
-    expect(db.addTargetHistory).toHaveBeenCalledWith(
+    expect(db.addTargetHistory).toHaveBeenNthCalledWith(
+      1,
       "sleep_need",
       "Seed",
       expect.any(String),
       "Initial calculation seed.",
-      expect.any(String)
+      expect.any(String),
+      expect.any(Number)
     );
-    expect(db.addTargetHistory).toHaveBeenCalledWith(
+    expect(db.addTargetHistory).toHaveBeenNthCalledWith(
+      2,
       "step_goal",
       "Seed",
       expect.any(String),
       "Initial calculation seed.",
-      expect.any(String)
+      expect.any(String),
+      expect.any(Number)
     );
+
   });
 
   it("should log history when previous targets exist and new targets differ", async () => {
@@ -203,20 +209,25 @@ describe("runWeeklyTargetJob", () => {
     expect(db.upsertUserTargets).toHaveBeenCalled();
     // Since we gave it data to calculate new targets (8.275h / 29790s sleep need and 11000 steps, but clamped/dampened)
     // they will differ from the prevTargets, so we expect addTargetHistory to be called with old and new values
-    expect(db.addTargetHistory).toHaveBeenCalledWith(
+    expect(db.addTargetHistory).toHaveBeenNthCalledWith(
+      1,
       "sleep_need",
-      "7.75h", // old value from prevTargets
-      expect.any(String), // new value
-      expect.any(String), // reason
-      expect.any(String)  // date
+      "7.75h",
+      expect.any(String),
+      expect.any(String),
+      expect.any(String),
+      expect.any(Number)
     );
-    expect(db.addTargetHistory).toHaveBeenCalledWith(
+    expect(db.addTargetHistory).toHaveBeenNthCalledWith(
+      2,
       "step_goal",
       "8000",
       expect.any(String),
       expect.any(String),
-      expect.any(String)
+      expect.any(String),
+      expect.any(Number)
     );
+
   });
 
   it("should not log history when calculated targets match previous targets", async () => {
