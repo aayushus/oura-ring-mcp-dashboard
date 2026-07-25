@@ -15,9 +15,9 @@ const DB_FILE = process.env.NODE_ENV === "test" ? ":memory:" : join(CONFIG_DIR, 
 
 export interface DatabaseWrapper {
   exec(sql: string): Promise<void>;
-  all<T = any>(sql: string, params?: any[]): Promise<T>;
-  get<T = any>(sql: string, params?: any[]): Promise<T | undefined>;
-  run(sql: string, params?: any[]): Promise<{ changes?: number; lastID?: number }>;
+  all<T = any>(sql: string, params?: unknown[]): Promise<T>;
+  get<T = any>(sql: string, params?: unknown[]): Promise<T | undefined>;
+  run(sql: string, params?: unknown[]): Promise<{ changes?: number; lastID?: number }>;
   close(): Promise<void>;
 }
 
@@ -80,17 +80,17 @@ export async function getDb(): Promise<DatabaseWrapper> {
           await pool.query(stmt);
         }
       },
-      async all<T = any>(sql: string, params: any[] = []) {
+      async all<T = any>(sql: string, params: unknown[] = []) {
         const pgSql = translateQuery(sql);
         const res = await pool.query(pgSql, params);
         return res.rows as unknown as T;
       },
-      async get<T = any>(sql: string, params: any[] = []) {
+      async get<T = any>(sql: string, params: unknown[] = []) {
         const pgSql = translateQuery(sql);
         const res = await pool.query(pgSql, params);
         return (res.rows[0] ?? undefined) as unknown as T | undefined;
       },
-      async run(sql: string, params: any[] = []) {
+      async run(sql: string, params: unknown[] = []) {
         const pgSql = translateQuery(sql);
         const res = await pool.query(pgSql, params);
         return { changes: res.rowCount ?? undefined, lastID: 0 };
@@ -111,13 +111,13 @@ export async function getDb(): Promise<DatabaseWrapper> {
       async exec(sql: string) {
         await sqliteDb.exec(sql);
       },
-      async all<T = any>(sql: string, params: any[] = []) {
+      async all<T = any>(sql: string, params: unknown[] = []) {
         return sqliteDb.all(sql, params) as Promise<T>;
       },
-      async get<T = any>(sql: string, params: any[] = []) {
+      async get<T = any>(sql: string, params: unknown[] = []) {
         return sqliteDb.get(sql, params) as Promise<T | undefined>;
       },
-      async run(sql: string, params: any[] = []) {
+      async run(sql: string, params: unknown[] = []) {
         return sqliteDb.run(sql, params);
       },
       async close() {
