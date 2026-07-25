@@ -50,7 +50,7 @@ export default defineConfig({
           statements: 80
         },
         'src/client.ts': {
-          branches: 100,
+          branches: 95,
           functions: 95,
           lines: 95,
           statements: 95

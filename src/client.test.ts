@@ -30,6 +30,11 @@ const TEST_TOKEN = "test-access-token-123";
 const BASE_URL = "https://api.ouraring.com/v2/usercollection";
 
 describe("OuraClient", () => {
+  it("should update access token", () => {
+    const client = new OuraClient({ accessToken: "initial" });
+    client.setAccessToken("new-token");
+    expect((client as any).accessToken).toBe("new-token");
+  });
   let client: OuraClient;
   let mockFetch: ReturnType<typeof vi.fn>;
 
