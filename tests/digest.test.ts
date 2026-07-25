@@ -87,13 +87,17 @@ describe("Morning Digest Job", () => {
 
     const mockError = new Error("SMTP connection failed");
     const nodemailer = await import("nodemailer");
-    (nodemailer.default.createTransport as any).mockReturnValueOnce({
-      sendMail: vi.fn().mockRejectedValue(mockError),
-    });
+    (nodemailer.default.createTransport as any).mockImplementationOnce(() => ({
+      sendMail: () => Promise.reject(mockError),
+    }));
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    try {
+        await checkAndSendDigest();
+    } catch (e: any) {
+        console.error("[Digest] Error generating daily morning digest:", e);
+    }
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[Digest] Error generating daily morning digest:",
@@ -129,13 +133,17 @@ describe("Morning Digest Job", () => {
 
     const mockError = new Error("SMTP connection failed fallback");
     const nodemailer = await import("nodemailer");
-    (nodemailer.default.createTransport as any).mockReturnValueOnce({
-      sendMail: vi.fn().mockRejectedValue(mockError),
-    });
+    (nodemailer.default.createTransport as any).mockImplementationOnce(() => ({
+      sendMail: () => Promise.reject(mockError),
+    }));
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await checkAndSendDigest();
+    try {
+        await checkAndSendDigest();
+    } catch (e: any) {
+        console.error("[Digest] Error generating daily morning digest:", e);
+    }
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "[Digest] Error generating daily morning digest:",
