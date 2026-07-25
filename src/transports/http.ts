@@ -278,8 +278,10 @@ export async function startHttpServer(
       let worstContributor = null;
       let worstScore = 100;
 
-      if (latestRawSleep && latestRawSleep.contributors) {
-        for (const [name, val] of Object.entries(latestRawSleep.contributors)) {
+      type RawDoc = { contributors?: Record<string, unknown> };
+
+      if (latestRawSleep && (latestRawSleep as RawDoc).contributors) {
+        for (const [name, val] of Object.entries((latestRawSleep as RawDoc).contributors!)) {
           if (typeof val === "number" && val < worstScore) {
             worstScore = val;
             worstContributor = { source: "Sleep", name: name.replace(/_/g, " "), score: val };
@@ -287,8 +289,8 @@ export async function startHttpServer(
         }
       }
 
-      if (latestRawReadiness && latestRawReadiness.contributors) {
-        for (const [name, val] of Object.entries(latestRawReadiness.contributors)) {
+      if (latestRawReadiness && (latestRawReadiness as RawDoc).contributors) {
+        for (const [name, val] of Object.entries((latestRawReadiness as RawDoc).contributors!)) {
           if (typeof val === "number" && val < worstScore) {
             worstScore = val;
             worstContributor = { source: "Readiness", name: name.replace(/_/g, " "), score: val };
@@ -714,7 +716,7 @@ export async function startHttpServer(
         return;
       }
       const db = await getDb();
-      const user = await db.get("SELECT disabled FROM users WHERE id = ?", [targetId]);
+      const user = await db.get<{ disabled: number }>("SELECT disabled FROM users WHERE id = ?", [targetId]);
       if (!user) {
         res.status(404).json({ error: "User not found" });
         return;

@@ -108,7 +108,7 @@ export async function checkAndSendDigest(): Promise<void> {
   let worstContributor = "Restfulness";
   let contributorTip = "Ensure your bedroom is dark, quiet, and cool to minimize nighttime wakeups.";
 
-  const latestRawSleep = await db.get("SELECT * FROM raw_documents WHERE day = ? AND endpoint = 'sleep'", [today]);
+  const latestRawSleep = await db.get<{ data: string }>("SELECT * FROM raw_documents WHERE day = ? AND endpoint = 'sleep'", [today]);
   if (latestRawSleep) {
     try {
       const doc = JSON.parse(latestRawSleep.data);
@@ -245,9 +245,9 @@ async function sendEmail(subject: string, html: string): Promise<void> {
   });
 }
 
-function logToFile(data: any) {
+function logToFile(data: unknown) {
   try {
-    let logs: any[] = [];
+    let logs: unknown[] = [];
     const dir = path.dirname(DIGEST_FILE_LOG);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
