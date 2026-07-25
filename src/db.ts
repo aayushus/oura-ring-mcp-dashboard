@@ -665,16 +665,16 @@ export async function upsertRawDocument(
   );
 }
 
-export async function getRawDocuments(
+export async function getRawDocuments<T = any>(
   endpoint: string,
   startDate?: string,
   endDate?: string,
   userId: number = 1
-): Promise<any[]> {
+): Promise<T[]> {
   const activeUserId = resolveUserId(userId);
   const db = await getDb();
   let query = `SELECT data FROM raw_documents WHERE user_id = ? AND endpoint = ?`;
-  const params: any[] = [activeUserId, endpoint];
+  const params: unknown[] = [activeUserId, endpoint];
 
   if (startDate) {
     query += ` AND day >= ?`;
@@ -687,7 +687,7 @@ export async function getRawDocuments(
 
   query += ` ORDER BY day ASC`;
   const rows = await db.all<{ data: string }[]>(query, params);
-  return rows.map((row: any) => JSON.parse(row.data));
+  return rows.map((row) => JSON.parse(row.data) as T);
 }
 
 // ─────────────────────────────────────────────────────────────
