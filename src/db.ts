@@ -977,7 +977,7 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
   // Check if sleep_history exists and has user_id column
   const sleepExists = await tableExists(db, "sleep_history");
   if (sleepExists) {
-    const sleepInfo = await db.all<any[]>(
+    const sleepInfo = await db.all<{ name?: string; column_name?: string }[]>(
       isPostgres
         ? `SELECT column_name FROM information_schema.columns WHERE table_name = 'sleep_history' AND column_name = 'user_id'`
         : `PRAGMA table_info(sleep_history)`
