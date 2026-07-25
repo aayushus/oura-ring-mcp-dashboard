@@ -225,6 +225,35 @@ describe("OuraClient", () => {
     });
   });
 
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      const client = new OuraClient({ accessToken: "old-token" });
+      client.setAccessToken("new-token");
+      expect((client as any).accessToken).toBe("new-token");
+    });
+  });
+
+  describe("context client token", () => {
+    it("should use context client token if available", async () => {
+      const { requestContextStorage } = await import("./auth/context.js");
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(dailySleepResponse),
+      });
+
+      await requestContextStorage.run({ userId: 1, ouraClient: { accessToken: "context-token" } }, async () => {
+        await client.getDailySleep("2024-01-15", "2024-01-15");
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            headers: { Authorization: "Bearer context-token" },
+          })
+        );
+      });
+    });
+  });
+
   // ─────────────────────────────────────────────────────────────
   // Readiness endpoints
   // ─────────────────────────────────────────────────────────────
