@@ -58,7 +58,7 @@ const SYNC_ENDPOINTS: Array<{
   label: string;
   group: string;
   optional?: boolean;
-  fetch: (client: OuraClient, start: string, end: string) => Promise<any>;
+  fetch: (client: OuraClient, start: string, end: string) => Promise<unknown>;
 }> = [
   { key: "daily_sleep", label: "Sleep scores", group: "Sleep", fetch: (c, s, e) => c.getDailySleep(s, e) },
   { key: "sleep", label: "Sleep sessions", group: "Sleep", fetch: (c, s, e) => c.getSleep(s, e) },
@@ -93,6 +93,13 @@ export function isSyncRunning(): boolean {
 /**
  * Fetch data for a date range from Oura API and store in the database.
  */
+
+// Data returned by fetch may contain a data array (for most endpoints), or direct fields (for personal_info)
+export type EndpointData = {
+  data?: any[];
+  [key: string]: any;
+} | null;
+
 export async function syncData(
   client: OuraClient,
   startDate: string,
@@ -153,12 +160,12 @@ export async function syncData(
   try {
     // Fetch all endpoints concurrently; each settles independently and
     // updates the live job state as it lands.
-    const results: Record<string, any> = {};
+    const results: Record<string, EndpointData> = {};
     await Promise.all(
       SYNC_ENDPOINTS.map(async (endpoint, index) => {
         const state = job.endpoints[index];
         try {
-          const response = await endpoint.fetch(client, startDate, endDate);
+          const response = (await endpoint.fetch(client, startDate, endDate)) as EndpointData;
           const records =
             response == null ? 0 : Array.isArray(response.data) ? response.data.length : 1;
           results[endpoint.key] = response;
