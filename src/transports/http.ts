@@ -714,7 +714,7 @@ export async function startHttpServer(
         return;
       }
       const db = await getDb();
-      const user = await db.get("SELECT disabled FROM users WHERE id = ?", [targetId]);
+      const user = await db.get<{ disabled: number }>("SELECT disabled FROM users WHERE id = ?", [targetId]);
       if (!user) {
         res.status(404).json({ error: "User not found" });
         return;
