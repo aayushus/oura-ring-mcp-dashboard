@@ -765,6 +765,29 @@ export async function getExperimentDays(experimentId: string, userId: number = 1
   );
 }
 
+export async function getExperimentDaysByExperiments(experimentIds: string[], userId: number = 1): Promise<ExperimentDay[]> {
+  if (!experimentIds || experimentIds.length === 0) return [];
+  const db = await getDb();
+
+  const CHUNK_SIZE = 200;
+  const allDays: ExperimentDay[] = [];
+
+  for (let i = 0; i < experimentIds.length; i += CHUNK_SIZE) {
+    const chunk = experimentIds.slice(i, i + CHUNK_SIZE);
+    const placeholders = chunk.map(() => '?').join(',');
+    const params = [userId, ...chunk];
+
+    const chunkResults = await db.all<ExperimentDay[]>(
+      `SELECT experiment_id, day, adherent FROM experiment_days WHERE user_id = ? AND experiment_id IN (${placeholders}) ORDER BY day ASC`,
+      params
+    );
+
+    allDays.push(...chunkResults);
+  }
+
+  return allDays;
+}
+
 // ─────────────────────────────────────────────────────────────
 // Anomalies Operations
 // ─────────────────────────────────────────────────────────────
