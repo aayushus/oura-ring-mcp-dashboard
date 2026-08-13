@@ -14,7 +14,7 @@ function DashboardLazyFallback() {
   return <div className="dashboard-lazy-fallback chart" />;
 }
 
-const DEFAULT_MARGIN = { left: 50, right: 20, top: 20, bottom: 30 };
+const DEFAULT_MARGIN = { left: 40, right: 16, top: 16, bottom: 28 };
 
 function parseMargin(raw: any) {
   if (!raw || typeof raw !== "object") {
@@ -75,9 +75,13 @@ export function DashboardLineChart(props: EnrichedLineChartProps) {
     setHoverState(null, null);
   };
 
-  // Merge datasets for comparison if active
+  // Merge datasets for comparison if active & ensure smooth curves
   let finalDataset = dataset;
-  let finalSeries = series;
+  let finalSeries = series ? series.map((s: any) => ({
+    curve: "monotoneX" as const,
+    showMark: false,
+    ...s,
+  })) : series;
 
   if (compareDataset && compareDataset.length > 0 && dataset) {
     finalDataset = dataset.map((d, i) => {
@@ -99,6 +103,7 @@ export function DashboardLineChart(props: EnrichedLineChartProps) {
         if (s.dataKey) {
           extra.push({
             ...s,
+            curve: "monotoneX" as const,
             dataKey: `${String(s.dataKey)}_compare`,
             label: `${s.label || "Metric"} (Previous)`,
             color: "var(--text-4)",
@@ -107,7 +112,7 @@ export function DashboardLineChart(props: EnrichedLineChartProps) {
           });
         }
       });
-      finalSeries = [...series, ...extra];
+      finalSeries = [...(finalSeries || []), ...extra];
     }
   }
 
@@ -156,7 +161,8 @@ export function DashboardLineChart(props: EnrichedLineChartProps) {
             bottom: margin.bottom,
             left: lineLeft,
             width: "1px",
-            background: "var(--divider-strong)",
+            background: "linear-gradient(to bottom, transparent, var(--divider-strong), transparent)",
+            boxShadow: "0 0 6px var(--accent-glow, rgba(181, 95, 230, 0.3))",
             pointerEvents: "none",
             zIndex: 10,
           }}

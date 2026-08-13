@@ -199,7 +199,7 @@ export async function countUsers(): Promise<number> {
 export interface OuraConnection {
   user_id: number;
   access_token: string;
-  refresh_token: string;
+  refresh_token: string | null;
   expires_at: string;
   scopes: string | null;
   connected_at: string;
@@ -214,7 +214,7 @@ export async function upsertOuraConnection(
   userId: number,
   connection: {
     accessToken: string;
-    refreshToken: string;
+    refreshToken: string | null;
     expiresAt: string;
     scopes: string | null;
   }

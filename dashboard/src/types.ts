@@ -52,6 +52,8 @@ export interface HistorySummary {
   rawActivity?: any[];
   correlations?: Record<string, Record<string, number>>;
   tagEffects?: any[];
+  ringInfo?: any;
+  personalInfo?: any;
   targets?: any;
   flags?: any;
   profile?: any;

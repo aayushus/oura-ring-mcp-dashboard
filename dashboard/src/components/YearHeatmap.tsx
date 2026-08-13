@@ -1,269 +1,238 @@
-import React, { useState } from "react";
-import { scoreBand, BAND_LABEL } from "./halo";
+import React, { useState, useMemo } from "react";
+import type { SleepRecord, ReadinessRecord } from "../types";
 
-interface HeatmapDataPoint {
-  day: string; // YYYY-MM-DD
-  score: number;
+export interface YearHeatmapProps {
+  data?: Array<{ day: string; score: number }>;
+  metricLabel?: string;
+  sleepData?: SleepRecord[];
+  readinessData?: ReadinessRecord[];
+  selectedDay?: string;
+  onSelectDay?: (day: string) => void;
 }
 
-interface YearHeatmapProps {
-  data: HeatmapDataPoint[];
-  metricLabel: string;
-}
+export function YearHeatmap({
+  data,
+  metricLabel,
+  sleepData = [],
+  readinessData = [],
+  selectedDay,
+  onSelectDay,
+}: YearHeatmapProps) {
+  const [metric, setMetric] = useState<"readiness" | "sleep">("readiness");
 
-export function YearHeatmap({ data, metricLabel }: YearHeatmapProps) {
-  const [hoveredCell, setHoveredCell] = useState<{ date: string; score: number | null } | null>(null);
-  const [selectedCell, setSelectedCell] = useState<{ date: string; score: number | null } | null>(null);
-
-  // Generate date list for the last 365 days ending today
-  const cells: { dateStr: string; score: number | null }[] = [];
-  const now = new Date();
-  
-  // Calculate offset to align days of the week (0 = Sunday, 1 = Monday...)
-  // We go back 364 days so that we have exactly 53 weeks (365 days)
-  for (let i = 364; i >= 0; i--) {
-    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-    const dateStr = d.toLocaleDateString("sv-SE");
-    const match = data.find((r) => r.day === dateStr);
-    cells.push({
-      dateStr,
-      score: match ? match.score : null,
-    });
-  }
-
-  // Group cells into 53 columns (weeks) of 7 days (rows)
-  const columns: typeof cells[] = [];
-  let currentWeek: typeof cells = [];
-
-  // Align start day of the week
-  const startDayOfWeek = new Date(cells[0].dateStr).getDay();
-  // Fill empty spacer cells for the first week if not starting on Sunday
-  for (let i = 0; i < startDayOfWeek; i++) {
-    currentWeek.push({ dateStr: "", score: null });
-  }
-
-  cells.forEach((cell) => {
-    currentWeek.push(cell);
-    if (currentWeek.length === 7) {
-      columns.push(currentWeek);
-      currentWeek = [];
+  // Build a lookup map of day -> score
+  const scoreMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (data && data.length > 0) {
+      for (const item of data) {
+        if (item.day && typeof item.score === "number") {
+          map.set(item.day, item.score);
+        }
+      }
+      return map;
     }
-  });
 
-  if (currentWeek.length > 0) {
-    // Pad the last week
-    while (currentWeek.length < 7) {
-      currentWeek.push({ dateStr: "", score: null });
+    const dataset = metric === "readiness" ? readinessData : sleepData;
+    for (const item of dataset) {
+      if (item.day && typeof item.score === "number") {
+        map.set(item.day, item.score);
+      }
     }
-    columns.push(currentWeek);
-  }
+    return map;
+  }, [data, metric, sleepData, readinessData]);
 
-  const getCellColor = (score: number | null) => {
-    if (score === null) return "var(--score-none)";
-    const band = scoreBand(score);
-    if (band === "optimal") return "var(--score-optimal)";
-    if (band === "good") return "var(--score-good)";
-    if (band === "fair") return "var(--score-fair)";
-    return "var(--score-low)";
+  // Generate 52 weeks (364 days) up to today
+  const weeks = useMemo(() => {
+    const result: Array<Array<{ date: string; score: number | null; dayOfWeek: number }>> = [];
+    const today = new Date();
+    
+    // Compute starting Sunday 52 weeks ago
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 364);
+    startDate.setDate(startDate.getDate() - startDate.getDay());
+
+    let current = new Date(startDate);
+    let currentWeek: Array<{ date: string; score: number | null; dayOfWeek: number }> = [];
+
+    while (current <= today) {
+      const dateStr = current.toISOString().split("T")[0];
+      const score = scoreMap.get(dateStr) ?? null;
+
+      currentWeek.push({
+        date: dateStr,
+        score,
+        dayOfWeek: current.getDay(),
+      });
+
+      if (currentWeek.length === 7) {
+        result.push(currentWeek);
+        currentWeek = [];
+      }
+
+      current.setDate(current.getDate() + 1);
+    }
+
+    if (currentWeek.length > 0) {
+      result.push(currentWeek);
+    }
+
+    return result;
+  }, [scoreMap]);
+
+  const getColor = (score: number | null) => {
+    if (score === null || score === undefined) return "rgba(255, 255, 255, 0.04)";
+    const activeMetric = metricLabel ? metricLabel.toLowerCase() : metric;
+    if (activeMetric.includes("sleep")) {
+      if (score >= 85) return "#9b51e0";
+      if (score >= 70) return "#8e44ad";
+      if (score >= 60) return "#f39c12";
+      return "#e74c3c";
+    } else {
+      if (score >= 85) return "#2ecc71";
+      if (score >= 70) return "#27ae60";
+      if (score >= 60) return "#f39c12";
+      return "#e74c3c";
+    }
   };
 
-  const svgWidth = columns.length * 13;
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "12px", background: "var(--bg-card)", padding: "20px", borderRadius: "20px", border: "1px solid var(--divider-strong)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h4 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-3)" }}>
-          {metricLabel} — Year View Adherence
-        </h4>
-        
-        {/* Colors Legend */}
-        <div style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "0.75rem", color: "var(--text-3)" }}>
-          <span>Low</span>
-          <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: "var(--score-low)" }} />
-          <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: "var(--score-fair)" }} />
-          <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: "var(--score-good)" }} />
-          <span style={{ width: "10px", height: "10px", borderRadius: "2px", background: "var(--score-optimal)" }} />
-          <span>Optimal</span>
+    <div className="year-heatmap-container">
+      <style>{`
+        .year-heatmap-container {
+          background: var(--bg-surface, rgba(20, 22, 29, 0.6));
+          border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+          border-radius: var(--r-lg, 14px);
+          padding: 20px;
+          margin-bottom: 24px;
+        }
+        .heatmap-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+        .heatmap-title {
+          font-size: 14px;
+          font-weight: 700;
+          color: var(--text-1, #ffffff);
+          letter-spacing: -0.2px;
+        }
+        .heatmap-toggle {
+          display: flex;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 8px;
+          padding: 2px;
+          gap: 2px;
+        }
+        .heatmap-btn {
+          border: none;
+          background: transparent;
+          color: var(--text-3, rgba(235, 240, 248, 0.5));
+          font-size: 11.5px;
+          font-weight: 600;
+          padding: 4px 10px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .heatmap-btn.active {
+          background: var(--bg-app, #141722);
+          color: var(--text-1, #ffffff);
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+        .heatmap-grid-scroll {
+          overflow-x: auto;
+          padding-bottom: 6px;
+        }
+        .heatmap-grid {
+          display: flex;
+          gap: 3px;
+          min-width: 700px;
+        }
+        .heatmap-col {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+        .heatmap-cell {
+          width: 10px;
+          height: 10px;
+          border-radius: 2px;
+          cursor: pointer;
+          transition: transform 0.1s ease, outline 0.1s ease;
+        }
+        .heatmap-cell:hover {
+          transform: scale(1.3);
+          z-index: 10;
+        }
+        .heatmap-cell.selected {
+          outline: 2px solid #ffffff;
+          transform: scale(1.2);
+        }
+        .heatmap-legend {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 6px;
+          font-size: 11px;
+          color: var(--text-3, rgba(235, 240, 248, 0.5));
+          margin-top: 12px;
+        }
+        .legend-box {
+          width: 10px;
+          height: 10px;
+          border-radius: 2px;
+        }
+      `}</style>
+
+      <div className="heatmap-header">
+        <div className="heatmap-title">
+          52-Week {metricLabel || (metric === "readiness" ? "Readiness & Recovery" : "Sleep Score")} Density
         </div>
-      </div>
-
-      <div style={{ position: "relative", width: "100%" }}>
-        <div style={{ display: "flex", gap: "6px", alignItems: "center", width: "100%" }}>
-          {/* Weekday Labels Column */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", fontSize: "0.65rem", color: "var(--text-4)", height: "88px", paddingRight: "6px", paddingTop: "2px" }}>
-            <span>Mon</span>
-            <span>Wed</span>
-            <span>Fri</span>
-          </div>
-
-          {/* SVG Heatmap Grid - Responsive Viewbox */}
-          <div style={{ flex: 1, width: "100%" }}>
-            <svg
-              viewBox={`0 0 ${svgWidth} 91`}
-              width="100%"
-              style={{ overflow: "visible", display: "block" }}
+        {!metricLabel && (
+          <div className="heatmap-toggle">
+            <button
+              className={`heatmap-btn ${metric === "readiness" ? "active" : ""}`}
+              onClick={() => setMetric("readiness")}
             >
-              {columns.map((week, colIdx) => (
-                <g key={colIdx} transform={`translate(${colIdx * 13}, 0)`}>
-                  {week.map((dayCell, rowIdx) => {
-                    if (!dayCell.dateStr) return null;
-                    const isHovered = hoveredCell && hoveredCell.date === dayCell.dateStr;
-                    return (
-                      <rect
-                        key={rowIdx}
-                        y={rowIdx * 13}
-                        width={10}
-                        height={10}
-                        rx={2}
-                        ry={2}
-                        fill={getCellColor(dayCell.score)}
-                        style={{ cursor: "pointer", transition: "opacity 100ms ease" }}
-                        opacity={isHovered ? 1 : 0.82}
-                        onMouseEnter={(e) => {
-                          setHoveredCell({ date: dayCell.dateStr, score: dayCell.score });
-                        }}
-                        onMouseLeave={() => setHoveredCell(null)}
-                        onClick={() => setSelectedCell({ date: dayCell.dateStr, score: dayCell.score })}
-                      />
-                    );
-                  })}
-                </g>
-              ))}
-            </svg>
-          </div>
-        </div>
-
-        {/* Hover Tooltip Overlay */}
-        {hoveredCell && (
-          <div
-            style={{
-              position: "absolute",
-              bottom: "100%",
-              left: "50%",
-              transform: "translateX(-50%) translateY(-8px)",
-              background: "var(--bg-elevated)",
-              border: "1px solid var(--divider-strong)",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              fontSize: "0.75rem",
-              color: "var(--text-default)",
-              boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
-              pointerEvents: "none",
-              whiteSpace: "nowrap",
-              zIndex: 100,
-            }}
-          >
-            <strong>{hoveredCell.date}</strong>: {hoveredCell.score !== null ? `${hoveredCell.score} / 100` : "No Data"}
+              Readiness
+            </button>
+            <button
+              className={`heatmap-btn ${metric === "sleep" ? "active" : ""}`}
+              onClick={() => setMetric("sleep")}
+            >
+              Sleep
+            </button>
           </div>
         )}
       </div>
 
-      {/* Premium Detail Modal Popup (Custom alert replacement) */}
-      {selectedCell && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(6px)",
-            zIndex: 10000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onClick={() => setSelectedCell(null)}
-        >
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "360px",
-              background: "var(--bg-card)",
-              borderRadius: "16px",
-              border: "1px solid var(--divider-strong)",
-              padding: "24px",
-              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.4)",
-              textAlign: "center",
-              display: "flex",
-              flexDirection: "column",
-              gap: "16px",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-3)" }}>
-                Vitals Detail
-              </span>
-              <button
-                onClick={() => setSelectedCell(null)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "var(--text-3)",
-                  cursor: "pointer",
-                  fontSize: "1.1rem",
-                }}
-              >
-                ✕
-              </button>
+      <div className="heatmap-grid-scroll">
+        <div className="heatmap-grid">
+          {weeks.map((week, wIdx) => (
+            <div className="heatmap-col" key={wIdx}>
+              {week.map((day) => (
+                <div
+                  key={day.date}
+                  className={`heatmap-cell ${day.date === selectedDay ? "selected" : ""}`}
+                  style={{ background: getColor(day.score) }}
+                  title={`${day.date}: ${day.score !== null ? `${day.score} pts` : "No data recorded"}`}
+                  onClick={() => onSelectDay && onSelectDay(day.date)}
+                />
+              ))}
             </div>
-
-            <div>
-              <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-default)", marginBottom: "4px" }}>
-                {new Date(selectedCell.date).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-              </div>
-              <div style={{ fontSize: "0.85rem", color: "var(--text-3)" }}>
-                Date Ref: {selectedCell.date}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", margin: "10px 0" }}>
-              <div
-                style={{
-                  height: "72px",
-                  width: "72px",
-                  borderRadius: "50%",
-                  background: getCellColor(selectedCell.score),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#FFFFFF",
-                  fontSize: "1.6rem",
-                  fontWeight: 800,
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-                }}
-              >
-                {selectedCell.score ?? "—"}
-              </div>
-              
-              <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-default)" }}>
-                {selectedCell.score !== null 
-                  ? `Status: ${BAND_LABEL[scoreBand(selectedCell.score)]}` 
-                  : "No data logs found"}
-              </div>
-            </div>
-
-            <button
-              onClick={() => setSelectedCell(null)}
-              style={{
-                width: "100%",
-                background: "var(--bg-hover)",
-                border: "1px solid var(--divider-strong)",
-                borderRadius: "10px",
-                color: "var(--text-default)",
-                padding: "10px",
-                fontSize: "0.9rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                transition: "background 80ms var(--ease)",
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = "var(--divider-strong)"}
-              onMouseLeave={(e) => e.currentTarget.style.background = "var(--bg-hover)"}
-            >
-              Close Details
-            </button>
-          </div>
+          ))}
         </div>
-      )}
+      </div>
+
+      <div className="heatmap-legend">
+        <span>Low (&lt;60)</span>
+        <div className="legend-box" style={{ background: "#e74c3c" }} />
+        <div className="legend-box" style={{ background: "#f39c12" }} />
+        <div className="legend-box" style={{ background: metric === "readiness" ? "#27ae60" : "#8e44ad" }} />
+        <div className="legend-box" style={{ background: metric === "readiness" ? "#2ecc71" : "#9b51e0" }} />
+        <span>Optimal (85+)</span>
+      </div>
     </div>
   );
 }

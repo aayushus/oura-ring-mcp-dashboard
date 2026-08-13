@@ -73,6 +73,9 @@ import { WeeklyReportView } from "./views/WeeklyReportView";
 import { CrosshairProvider } from "./context/CrosshairContext";
 import { CommandPalette } from "./components/CommandPalette";
 import { AuthScreen } from "./components/AuthScreen";
+import { RingStatusPill } from "./components/RingStatusPill";
+import { MetricDrawer } from "./components/MetricDrawer";
+import { useMemo } from "react";
 
 function ScoreCell({ score }: { score: number }) {
   const band = scoreBand(score);
@@ -96,6 +99,7 @@ function App() {
 
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [selectedDay, setSelectedDay] = useState<string>(getUrlDay);
+  const [metricDrawerType, setMetricDrawerType] = useState<"sleep" | "readiness" | "activity" | "stress" | null>(null);
   const [data, setData] = useState<HistorySummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -103,6 +107,21 @@ function App() {
   const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(() => localStorage.getItem("last_synced_time"));
   const [syncDrawerOpen, setSyncDrawerOpen] = useState(false);
   const [lastSummary, setLastSummary] = useState<SyncSummary | null>(null);
+
+  const bestRecoveryDay = useMemo(() => {
+    if (!data || !data.readiness || !data.readiness.length) return null;
+    let bestDay = data.readiness[0].day;
+    let maxCombined = -1;
+    for (const r of data.readiness) {
+      const s = data.sleep?.find((sl) => sl.day === r.day);
+      const combined = r.score + (s?.score || 0);
+      if (combined > maxCombined) {
+        maxCombined = combined;
+        bestDay = r.day;
+      }
+    }
+    return bestDay;
+  }, [data]);
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
@@ -858,7 +877,48 @@ function App() {
                 <div className="halo-topbar-title">{greeting()}</div>
               )}
             </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div className="quick-date-presets">
+                <button
+                  type="button"
+                  className={`quick-preset-btn ${selectedDay === (data?.sleep?.slice(-1)[0]?.day || "") ? "active" : ""}`}
+                  onClick={() => {
+                    const latest = data?.sleep?.slice(-1)[0]?.day;
+                    if (latest) setSelectedDay(latest);
+                  }}
+                >
+                  Latest
+                </button>
+                <button
+                  type="button"
+                  className={`quick-preset-btn ${selectedDay === (data?.sleep?.slice(-2, -1)[0]?.day || "") ? "active" : ""}`}
+                  onClick={() => {
+                    const yesterday = data?.sleep?.slice(-2, -1)[0]?.day;
+                    if (yesterday) setSelectedDay(yesterday);
+                  }}
+                >
+                  Yesterday
+                </button>
+                {bestRecoveryDay && (
+                  <button
+                    type="button"
+                    className={`quick-preset-btn ${selectedDay === bestRecoveryDay ? "active" : ""}`}
+                    onClick={() => setSelectedDay(bestRecoveryDay)}
+                    title={`Best Recovery: ${bestRecoveryDay}`}
+                  >
+                    🏆 Best Day
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="halo-topbar-right">
+              {data && (
+                <RingStatusPill
+                  ringInfo={data.ringInfo}
+                  personalInfo={data.personalInfo}
+                  lastSyncedTime={lastSyncedTime}
+                />
+              )}
               <button
                 type="button"
                 className={`halo-fresh ${isFresh ? "" : "stale"}`}
@@ -903,6 +963,18 @@ function App() {
             </div>
           </header>
 
+          <MetricDrawer
+            type={metricDrawerType}
+            onClose={() => setMetricDrawerType(null)}
+            sleepRecord={latestSleep || undefined}
+            readinessRecord={latestReadiness || undefined}
+            activityRecord={latestActivity || undefined}
+            stressRecord={latestStress || undefined}
+            rawSleepDoc={data?.rawSleep?.slice(-1)[0]}
+            rawReadinessDoc={data?.rawReadiness?.slice(-1)[0]}
+            rawActivityDoc={data?.rawActivity?.slice(-1)[0]}
+          />
+
           <SyncDrawer
             open={syncDrawerOpen}
             onClose={() => setSyncDrawerOpen(false)}
@@ -931,6 +1003,9 @@ function App() {
                 {activeTab === "home" && (
                   <HomeView
                     flags={data?.flags || { signupsEnabled: true, isFirstRun: false, ouraAppConfigured: false, ouraConnected: false }}
+                    data={data}
+                    selectedDay={selectedDay}
+                    onSelectDay={setSelectedDay}
                     latestReadiness={latestReadiness}
                     latestSleep={latestSleep}
                     latestActivity={latestActivity}
@@ -955,6 +1030,9 @@ function App() {
                     onMuteAlert={muteAlert}
                     rawSleep={data?.rawSleep || []}
                     rawReadiness={data?.rawReadiness || []}
+                    onOpenMetricDrawer={setMetricDrawerType}
+                    onSync={handleSync}
+                    syncing={syncing}
                   />
                 )}
 

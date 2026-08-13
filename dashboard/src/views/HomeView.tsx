@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, Alert, Button } from "../components/components";
 import { DeltaChip, Kpi, RingCard, bandColor, scoreBand } from "../components/halo";
-import type { ReadinessRecord, SleepRecord, ActivityRecord, StressRecord, TabKey } from "../types";
+import type { ReadinessRecord, SleepRecord, ActivityRecord, StressRecord, TabKey, HistorySummary } from "../types";
 import { DashboardLineChart } from "./charts";
 import { SunburstGlyph } from "../components/SunburstGlyph";
+import { RecoveryBanner } from "../components/RecoveryBanner";
+import { YearHeatmap } from "../components/YearHeatmap";
+import { InitialSyncCard } from "../components/InitialSyncCard";
 
 interface HomeViewProps {
   flags?: {
@@ -12,6 +15,9 @@ interface HomeViewProps {
     ouraAppConfigured: boolean;
     ouraConnected: boolean;
   };
+  data?: HistorySummary;
+  selectedDay?: string;
+  onSelectDay?: (day: string) => void;
   latestReadiness: ReadinessRecord | null;
   latestSleep: SleepRecord | null;
   latestActivity: ActivityRecord | null;
@@ -36,10 +42,16 @@ interface HomeViewProps {
   onMuteAlert?: (alertType: string) => void;
   rawSleep: any[];
   rawReadiness: any[];
+  onOpenMetricDrawer?: (type: "sleep" | "readiness" | "activity" | "stress") => void;
+  onSync?: () => void;
+  syncing?: boolean;
 }
 
 export function HomeView({
   flags,
+  data,
+  selectedDay,
+  onSelectDay,
   latestReadiness,
   latestSleep,
   latestActivity,
@@ -64,15 +76,26 @@ export function HomeView({
   onMuteAlert,
   rawSleep,
   rawReadiness,
+  onOpenMetricDrawer,
+  onSync,
+  syncing,
 }: HomeViewProps) {
   const hasNoData = !latestReadiness && !latestSleep && !latestActivity;
 
   if (hasNoData) {
+    if (flags?.ouraConnected && onSync) {
+      return (
+        <div style={{ maxWidth: "680px", margin: "40px auto" }}>
+          <InitialSyncCard onSync={onSync} syncing={!!syncing} />
+        </div>
+      );
+    }
+
     return (
       <div className="dashboard-stack" style={{ maxWidth: "680px", margin: "40px auto" }}>
         <div className="halo-card" style={{ padding: "40px", background: "rgba(20, 22, 29, 0.7)", backdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
           <h1 style={{ fontSize: "28px", fontWeight: 700, marginBottom: "8px", background: "linear-gradient(135deg, #ffffff 0%, #aeb3b7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            Welcome to Halo MCP
+            Welcome to Oura MCP Server
           </h1>
           <p style={{ color: "rgba(235, 240, 248, 0.6)", fontSize: "15px", marginBottom: "32px", lineHeight: "1.6" }}>
             To begin visualising your sleep, readiness, and activity, follow the steps below to connect your Oura Ring.
@@ -82,38 +105,23 @@ export function HomeView({
             <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
               <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#27ae60", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600 }}>✓</div>
               <div>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 1: Create Admin Account</h3>
-                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)" }}>Your administrator profile is active.</p>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 1: Account Created</h3>
+                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)" }}>Your user profile is active.</p>
               </div>
             </div>
 
             <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraAppConfigured ? "#27ae60" : "#b55fe6", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
-                {flags?.ouraAppConfigured ? "✓" : "2"}
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraConnected ? "#27ae60" : "#b55fe6", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
+                {flags?.ouraConnected ? "✓" : "2"}
               </div>
               <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 2: Oura App Credentials</h3>
+                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 2: Link Oura Ring Account</h3>
                 <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)", marginBottom: "12px", lineHeight: "1.4" }}>
-                  {flags?.ouraAppConfigured ? "Developer credentials successfully saved." : "Provide your Oura Client ID and Secret in settings so other users can authorize their rings."}
-                </p>
-                {!flags?.ouraAppConfigured && (
-                  <Button variant="primary" onClick={() => setActiveTab("settings")}>Configure settings</Button>
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraConnected ? "#27ae60" : (flags?.ouraAppConfigured ? "#b55fe6" : "rgba(255,255,255,0.1)"), color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
-                {flags?.ouraConnected ? "✓" : "3"}
-              </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 3: Link Oura Ring Account</h3>
-                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)", marginBottom: "12px", lineHeight: "1.4" }}>
-                  {flags?.ouraConnected ? "Oura Ring account connected!" : "Authenticate with Oura to authorize daily sync."}
+                  {flags?.ouraConnected ? "Oura Ring account connected!" : "Provide a Personal Access Token or link via OAuth in Settings."}
                 </p>
                 {!flags?.ouraConnected && (
-                  <Button variant="primary" disabled={!flags?.ouraAppConfigured} onClick={() => setActiveTab("settings")}>
-                    Connect Oura Ring
+                  <Button variant="primary" onClick={() => setActiveTab("settings")}>
+                    Connect Oura in Settings
                   </Button>
                 )}
               </div>
@@ -126,6 +134,9 @@ export function HomeView({
 
   return (
     <div className="dashboard-stack">
+      {/* Daily Narrative Recovery Banner */}
+      {data && selectedDay && <RecoveryBanner data={data} selectedDay={selectedDay} />}
+
       {illnessWarning && (
         <Alert variant="warn" title="Early Illness Warning Alert">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
@@ -143,6 +154,8 @@ export function HomeView({
           </div>
         </Alert>
       )}
+
+      {/* Metric Score Rings */}
       <section className="halo-rings" aria-label="Today's scores">
         <RingCard
           label="Readiness"
@@ -152,7 +165,10 @@ export function HomeView({
               ? latestReadiness.score - readinessBaseline
               : null
           }
-          onClick={() => setActiveTab("readiness")}
+          onClick={() => {
+            if (onOpenMetricDrawer) onOpenMetricDrawer("readiness");
+            else setActiveTab("readiness");
+          }}
         />
         <RingCard
           label="Sleep"
@@ -162,7 +178,10 @@ export function HomeView({
               ? latestSleep.score - sleepBaseline
               : null
           }
-          onClick={() => setActiveTab("sleep")}
+          onClick={() => {
+            if (onOpenMetricDrawer) onOpenMetricDrawer("sleep");
+            else setActiveTab("sleep");
+          }}
         />
         <RingCard
           label="Activity"
@@ -172,11 +191,24 @@ export function HomeView({
               ? latestActivity.score - activityBaseline
               : null
           }
-          onClick={() => setActiveTab("activity")}
+          onClick={() => {
+            if (onOpenMetricDrawer) onOpenMetricDrawer("activity");
+            else setActiveTab("activity");
+          }}
         />
       </section>
 
-      <div style={{ padding: "16px 24px", background: "var(--bg-card)", border: "1px solid var(--divider)", borderRadius: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", marginTop: "24px", marginBottom: "4px", transition: "all 150ms var(--ease)" }} onClick={() => setActiveTab("daystrip")} onMouseOver={(e) => e.currentTarget.style.borderColor = "var(--accent)"} onMouseOut={(e) => e.currentTarget.style.borderColor = "var(--divider)"}>
+      {/* 52-Week Contribution Density Heatmap */}
+      {data && onSelectDay && (
+        <YearHeatmap
+          sleepData={data.sleep || []}
+          readinessData={data.readiness || []}
+          selectedDay={selectedDay || ""}
+          onSelectDay={onSelectDay}
+        />
+      )}
+
+      <div style={{ padding: "16px 24px", background: "var(--bg-card)", border: "1px solid var(--divider)", borderRadius: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", marginTop: "12px", marginBottom: "4px", transition: "all 150ms var(--ease)" }} onClick={() => setActiveTab("daystrip")} onMouseOver={(e) => e.currentTarget.style.borderColor = "var(--accent)"} onMouseOut={(e) => e.currentTarget.style.borderColor = "var(--divider)"}>
         <div>
           <h3 style={{ margin: 0, fontSize: "1.1rem", color: "var(--accent)", fontWeight: 600 }}>Explore Aligned 24-Hour Timeline</h3>
           <p style={{ margin: "4px 0 0 0", fontSize: "0.85rem", opacity: 0.7 }}>
@@ -187,237 +219,162 @@ export function HomeView({
       </div>
 
       <section className="halo-vitals" aria-label="Vitals">
-        <Kpi
-          label="Resting HR"
-          metricId="rhr"
-          value={latestReadiness?.rhr || "—"}
-          unit="bpm"
-          note={
-            latestReadiness && rhrBaseline != null ? (
-              <DeltaChip
-                value={latestReadiness.rhr - rhrBaseline}
-                higherIsBetter={false}
-              />
-            ) : (
-              "vs baseline pending"
-            )
-          }
-        />
-        <Kpi
-          label="HRV"
-          metricId="hrv"
-          value={latestReadiness?.hrv || "—"}
-          unit="ms"
-          note={
-            latestReadiness && hrvBaseline != null ? (
-              <DeltaChip value={latestReadiness.hrv - hrvBaseline} />
-            ) : (
-              "vs baseline pending"
-            )
-          }
-        />
-        <Kpi
-          label="Temp"
-          metricId="temperature_deviation"
-          value={
-            latestReadiness ? (
-              <span className={tempFlag ? "tone-fair" : undefined}>
-                {latestReadiness.temperature_deviation > 0 ? "+" : ""}
-                {latestReadiness.temperature_deviation.toFixed(1)}
-              </span>
-            ) : (
-              "—"
-            )
-          }
-          unit="°C"
-          note={tempFlag ? "outside normal range" : "normal range"}
-        />
-        <Kpi
-          label="Stress balance"
-          value={latestStress ? `${strainHours}h` : "—"}
-          note={
-            latestStress
-              ? `${recoveryHours}h recovery time`
-              : "no stress sample"
-          }
-        />
+        <div onClick={() => onOpenMetricDrawer && onOpenMetricDrawer("readiness")} style={{ cursor: "pointer" }}>
+          <Kpi
+            label="Resting HR"
+            metricId="rhr"
+            value={latestReadiness?.rhr || "—"}
+            unit="bpm"
+            note={
+              latestReadiness && rhrBaseline != null ? (
+                <DeltaChip
+                  value={latestReadiness.rhr - rhrBaseline}
+                  higherIsBetter={false}
+                />
+              ) : (
+                "vs baseline pending"
+              )
+            }
+          />
+        </div>
+        <div onClick={() => onOpenMetricDrawer && onOpenMetricDrawer("readiness")} style={{ cursor: "pointer" }}>
+          <Kpi
+            label="HRV"
+            metricId="hrv"
+            value={latestReadiness?.hrv || "—"}
+            unit="ms"
+            note={
+              latestReadiness && hrvBaseline != null ? (
+                <DeltaChip value={latestReadiness.hrv - hrvBaseline} />
+              ) : (
+                "vs baseline pending"
+              )
+            }
+          />
+        </div>
+        <div onClick={() => onOpenMetricDrawer && onOpenMetricDrawer("readiness")} style={{ cursor: "pointer" }}>
+          <Kpi
+            label="Temp"
+            metricId="temp"
+            value={
+              latestReadiness?.temperature_deviation != null
+                ? `${latestReadiness.temperature_deviation > 0 ? "+" : ""}${latestReadiness.temperature_deviation.toFixed(2)}`
+                : "—"
+            }
+            unit="°C"
+            note={
+              tempFlag ? (
+                <span className="halo-warn-pill">Elevated</span>
+              ) : (
+                "Normal deviation"
+              )
+            }
+          />
+        </div>
+        <div onClick={() => onOpenMetricDrawer && onOpenMetricDrawer("sleep")} style={{ cursor: "pointer" }}>
+          <Kpi
+            label="Sleep Total"
+            metricId="sleep_need"
+            value={
+              latestSleep
+                ? `${Math.floor(latestSleep.duration / 3600)}h ${Math.floor((latestSleep.duration % 3600) / 60)}m`
+                : "—"
+            }
+            note={`Efficiency: ${latestSleep?.efficiency || 0}%`}
+          />
+        </div>
+        <div onClick={() => onOpenMetricDrawer && onOpenMetricDrawer("sleep")} style={{ cursor: "pointer" }}>
+          <Kpi
+            label="Deep Sleep"
+            metricId="sleep_need"
+            value={
+              latestSleep
+                ? `${Math.floor(latestSleep.deep / 3600)}h ${Math.floor((latestSleep.deep % 3600) / 60)}m`
+                : "—"
+            }
+            note={latestSleep ? `${((latestSleep.deep / (latestSleep.duration || 1)) * 100).toFixed(0)}% of total` : "—"}
+          />
+        </div>
+        <div onClick={() => onOpenMetricDrawer && onOpenMetricDrawer("activity")} style={{ cursor: "pointer" }}>
+          <Kpi
+            label="Active Burn"
+            metricId="acwr"
+            value={latestActivity?.active_calories || "—"}
+            unit="kcal"
+            note={`Total: ${latestActivity?.total_calories || 0} kcal`}
+          />
+        </div>
       </section>
 
-      {/* Contributors Breakdown Section */}
-      {(() => {
-        const [viewMode, setViewMode] = useState<"list" | "sunburst">("sunburst");
-
-        const latestRawSleep = latestSleep ? rawSleep.find((s) => s.day === latestSleep.day) : null;
-        const latestRawReadiness = latestReadiness ? rawReadiness.find((r) => r.day === latestReadiness.day) : null;
-
-        const sleepContribs = latestRawSleep?.contributors
-          ? Object.entries(latestRawSleep.contributors).map(([name, val]: any) => ({
-              name: name.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
-              score: val,
-            }))
-          : [];
-
-        const readinessContribs = latestRawReadiness?.contributors
-          ? Object.entries(latestRawReadiness.contributors).map(([name, val]: any) => ({
-              name: name.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()),
-              score: val,
-            }))
-          : [];
-
-        return (
-          <div style={{ marginTop: "24px" }}>
-            <Card>
-              <div style={{ padding: "16px 20px 8px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>Contributors Breakdown</h3>
-                  <p style={{ margin: "2px 0 0 0", fontSize: "0.85rem", opacity: 0.6 }}>
-                    Detailed rating factors contributing to your overall recovery and sleep.
-                  </p>
-                </div>
-                <div style={{ display: "flex", gap: "6px" }}>
-                  <Button
-                    variant={viewMode === "list" ? "primary" : "secondary"}
-                    onClick={() => setViewMode("list")}
-                    style={{ padding: "4px 10px", fontSize: "0.75rem", height: "28px" }}
-                  >
-                    List View
-                  </Button>
-                  <Button
-                    variant={viewMode === "sunburst" ? "primary" : "secondary"}
-                    onClick={() => setViewMode("sunburst")}
-                    style={{ padding: "4px 10px", fontSize: "0.75rem", height: "28px" }}
-                  >
-                    Sunburst View
-                  </Button>
-                </div>
-              </div>
-              <CardContent>
-                <div style={{ padding: "16px 20px" }}>
-              {viewMode === "list" ? (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
-                  <div>
-                    <strong style={{ display: "block", fontSize: "0.85rem", marginBottom: "12px", color: "var(--hue-sleep)" }}>Sleep Factors</strong>
-                    {sleepContribs.length === 0 ? <p style={{ opacity: 0.6, fontSize: "0.8rem" }}>Pending data...</p> : sleepContribs.map((c) => (
-                      <div key={c.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                        <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>{c.name}</span>
-                        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: bandColor(scoreBand(c.score)) }}>{c.score}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <strong style={{ display: "block", fontSize: "0.85rem", marginBottom: "12px", color: "var(--hue-readiness)" }}>Readiness Factors</strong>
-                    {readinessContribs.length === 0 ? <p style={{ opacity: 0.6, fontSize: "0.8rem" }}>Pending data...</p> : readinessContribs.map((c) => (
-                      <div key={c.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                        <span style={{ fontSize: "0.8rem", opacity: 0.8 }}>{c.name}</span>
-                        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: bandColor(scoreBand(c.score)) }}>{c.score}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "24px", padding: "12px 0" }}>
-                  {latestSleep && sleepContribs.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--hue-sleep)" }}>Sleep Contributors</span>
-                      <SunburstGlyph score={latestSleep.score} contributors={sleepContribs} />
-                    </div>
-                  ) : (
-                    <p style={{ opacity: 0.6, fontSize: "0.85rem" }}>Sleep contributors pending...</p>
-                  )}
-                  {latestReadiness && readinessContribs.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-                      <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--hue-readiness)" }}>Readiness Contributors</span>
-                      <SunburstGlyph score={latestReadiness.score} contributors={readinessContribs} />
-                    </div>
-                  ) : (
-                    <p style={{ opacity: 0.6, fontSize: "0.85rem" }}>Readiness contributors pending...</p>
-                  )}
-                </div>
-              )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-      })()}
-
-      <div className="halo-home-grid">
+      <section className="halo-grid-2" aria-label="30-day overview and recovery posture">
         <Card>
           <CardHeader
-            title="Readiness trend"
-            description="Daily score across your tracked history"
+            title="Readiness & Recovery"
+            description="30-day trend with baseline average"
           />
           <CardContent>
-            <div className="chart-frame feature">
-              <DashboardLineChart
-                className="dashboard-chart"
-                dataset={readinessChartData}
-                xAxis={[{ scaleType: "point", dataKey: "day" }]}
-                yAxis={[{ min: 0, max: 100 }]}
-                grid={{ horizontal: true }}
-                hideLegend
-                series={[
-                  {
-                    dataKey: "score",
-                    label: "Readiness",
-                    color: hues.readiness,
-                    area: true,
-                    showMark: false,
-                  },
-                ]}
-                height={320}
-              />
-            </div>
+            {readinessChartData.length > 0 ? (
+              <div style={{ height: "240px" }}>
+                <DashboardLineChart
+                  className="dashboard-chart"
+                  dataset={readinessChartData}
+                  xAxis={[{ scaleType: "point", dataKey: "day" }]}
+                  grid={{ horizontal: true }}
+                  hideLegend
+                  series={[
+                    {
+                      dataKey: "score",
+                      label: "Readiness",
+                      color: hues.readiness,
+                      area: true,
+                      showMark: false,
+                    },
+                  ]}
+                />
+              </div>
+            ) : (
+              <div className="halo-empty-state">No trend data available</div>
+            )}
           </CardContent>
         </Card>
 
-        <div className="halo-home-rail">
-          <div className="halo-insight">
-            <span className="halo-insight-overline">Today</span>
-            <span className="halo-insight-headline">{headline}</span>
-            <span className="halo-insight-sub">
-              {latestReadiness
-                ? `Readiness is ${latestReadiness.score} · posture: ${recoveryPosture}`
-                : "Waiting for data"}
-            </span>
-          </div>
-          {worstContributor && (
-            <div style={{ marginTop: "16px", padding: "16px", border: "1px solid var(--divider-strong)", borderRadius: "14px", background: "rgba(255, 107, 94, 0.08)" }}>
-              <strong style={{ display: "block", fontSize: "0.75rem", opacity: 0.6, textTransform: "uppercase", marginBottom: "4px" }}>Worst Biometric Contributor</strong>
-              <div style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--low)" }}>{worstContributor.name} ({worstContributor.score})</div>
-              <p style={{ fontSize: "0.85rem", opacity: 0.8, marginTop: "6px", marginBottom: 0 }}>
-                This metric in your {worstContributor.source} data had the lowest rating today. Prioritizing improvement here will yield the largest recovery benefit.
+        <Card>
+          <CardHeader
+            title="Physiological Posture"
+            description="Composite stress & recovery balance"
+          />
+          <CardContent>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>Current State</div>
+                  <div style={{ fontSize: "20px", fontWeight: 700, color: "var(--text-1)", marginTop: "2px" }}>{recoveryPosture}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>Restored / Stressed</div>
+                  <div style={{ fontSize: "16px", fontWeight: 600, color: "var(--text-2)", marginTop: "2px" }}>
+                    {recoveryHours}h / {strainHours}h
+                  </div>
+                </div>
+              </div>
+
+              {worstContributor && (
+                <div style={{ background: "rgba(235, 87, 87, 0.08)", border: "1px solid rgba(235, 87, 87, 0.2)", borderRadius: "12px", padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: "11.5px", color: "#eb5757", fontWeight: 600, textTransform: "uppercase" }}>Key Drag: {worstContributor.source}</div>
+                    <div style={{ fontSize: "13.5px", fontWeight: 600, color: "var(--text-1)", textTransform: "capitalize", marginTop: "2px" }}>{worstContributor.name}</div>
+                  </div>
+                  <div style={{ fontSize: "16px", fontWeight: 700, color: "#eb5757" }}>{worstContributor.score}</div>
+                </div>
+              )}
+
+              <p style={{ margin: 0, fontSize: "13px", lineHeight: "1.5", color: "var(--text-2)" }}>
+                {headline}
               </p>
             </div>
-          )}
-          <div className="insights-list">
-            {insights.map((insight) => {
-              const text = (insight.cta || "").toLowerCase();
-              const target = text.includes("sleep")
-                ? "sleep"
-                : text.includes("readiness")
-                ? "readiness"
-                : text.includes("activity")
-                ? "activity"
-                : text.includes("stress")
-                ? "stress"
-                : null;
-              return (
-                <AIFinding
-                  key={insight.title}
-                  variant={insight.variant}
-                  title={insight.title}
-                  body={insight.body}
-                  cta={{
-                    label: insight.cta,
-                    onClick: target ? () => setActiveTab(target) : undefined,
-                  }}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 }

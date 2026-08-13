@@ -79,15 +79,15 @@ const SYNC_ENDPOINTS: Array<{
   { key: "personal_info", label: "Profile", group: "Tags & device", optional: true, fetch: (c) => c.getPersonalInfo() },
 ];
 
-/** In-memory view of the current (or most recent) run, for GET /sync/status. */
-let activeJob: SyncJob | null = null;
+/** In-memory view of current/most recent run per user, for GET /sync/status */
+const activeJobs = new Map<number, SyncJob>();
 
-export function getActiveSyncJob(): SyncJob | null {
-  return activeJob;
+export function getActiveSyncJob(userId: number = 1): SyncJob | null {
+  return activeJobs.get(userId) ?? null;
 }
 
-export function isSyncRunning(): boolean {
-  return activeJob?.status === "running";
+export function isSyncRunning(userId: number = 1): boolean {
+  return activeJobs.get(userId)?.status === "running";
 }
 
 /**
@@ -100,7 +100,7 @@ export async function syncData(
   trigger: SyncTrigger = "manual",
   userId: number = 1
 ): Promise<SyncResult> {
-  if (isSyncRunning()) {
+  if (isSyncRunning(userId)) {
     return {
       success: false,
       status: "error",
@@ -108,7 +108,7 @@ export async function syncData(
       newDays: 0,
       totalRecords: 0,
       endpoints: [],
-      error: "A sync is already running",
+      error: "A sync is already running for this user",
     };
   }
 
@@ -123,8 +123,8 @@ export async function syncData(
       start_date: startDate,
       end_date: endDate,
     }, userId);
-  } catch (error) {
-    console.error("[Sync] Failed to open sync log:", error);
+  } catch (err) {
+    console.error("[Sync] Failed to create sync_log row:", err);
   }
 
   const job: SyncJob = {
@@ -142,11 +142,11 @@ export async function syncData(
       key: e.key,
       label: e.label,
       group: e.group,
-      status: "running",
+      status: "pending",
       records: 0,
     })),
   };
-  activeJob = job;
+  activeJobs.set(userId, job);
 
   console.log(`[Sync] Syncing Oura data from ${startDate} to ${endDate} (${trigger})...`);
 
@@ -157,6 +157,7 @@ export async function syncData(
     await Promise.all(
       SYNC_ENDPOINTS.map(async (endpoint, index) => {
         const state = job.endpoints[index];
+        state.status = "running";
         try {
           const response = await endpoint.fetch(client, startDate, endDate);
           const records =
@@ -272,7 +273,7 @@ export async function syncData(
     job.finishedAt = new Date().toISOString();
     job.syncedDays = days.size;
     job.newDays = [...days].filter((d) => !knownDays.has(d)).length;
-    job.totalRecords = job.endpoints.reduce((sum, e) => sum + e.records, 0);
+    job.totalRecords = job.endpoints.reduce((sum, e) => sum + (e.records ?? 0), 0);
     if (failed.length > 0) {
       job.error = failed.map((e) => `${e.label}: ${e.error}`).join("; ");
     }
@@ -346,8 +347,8 @@ export async function syncUserConnection(
     let refreshToken = conn.refresh_token;
     let expiresStr = conn.expires_at;
 
-    // Refresh token if expired or close to expiry (e.g. within 5 minutes)
-    if (now.getTime() + 5 * 60 * 1000 >= expiresAt.getTime()) {
+    // Refresh OAuth token if expired and refresh_token is present
+    if (conn.refresh_token && now.getTime() + 5 * 60 * 1000 >= expiresAt.getTime()) {
       console.log(`[Sync] Refreshing Oura OAuth token for user ${conn.user_id}...`);
       const creds = await getOuraCredentials();
       if (!creds.clientId || !creds.clientSecret) {

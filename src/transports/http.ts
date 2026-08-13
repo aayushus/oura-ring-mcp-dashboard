@@ -131,6 +131,13 @@ export async function startHttpServer(
 
   const customBearerAuth = async (req: Request, res: Response, next: express.NextFunction) => {
     if (req.path === "/health" || req.path === "/healthz") return next();
+
+    // Redirect web browsers visiting root "/" to "/dashboard/"
+    if (req.path === "/" && req.method === "GET" && req.headers.accept?.includes("text/html")) {
+      res.redirect(302, "/dashboard/");
+      return;
+    }
+
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       res.status(401).json({ error: "Missing Authorization header" });
@@ -181,7 +188,7 @@ export async function startHttpServer(
 
   // Mount Authentication endpoints
   app.use("/api/auth", authRouter);
-  app.get("/api/me", authRouter); // Also route GET /api/me to the authRouter
+  app.use("/api", authRouter); // Also mounts /api/me directly
 
   // Protect all dashboard API endpoints
   app.use("/api/dashboard", requireAuth, csrfGuard);
@@ -212,6 +219,18 @@ export async function startHttpServer(
 
   // ── Oura Health Dashboard API Routes ──────────────────────
 
+  const resolveUserOuraClient = async (userId: number): Promise<OuraClient | null> => {
+    try {
+      const conn = await getOuraConnection(userId);
+      if (conn && conn.access_token) {
+        return new OuraClient({ accessToken: conn.access_token });
+      }
+    } catch (err) {
+      console.error(`[Context] Error resolving Oura connection for user ${userId}:`, err);
+    }
+    return null;
+  };
+
   // Get health summary history (last 30 days) with advanced analytics
   app.get("/api/dashboard/summary", async (req: Request, res: Response) => {
     try {
@@ -219,11 +238,12 @@ export async function startHttpServer(
       const userId = req.user?.id ?? 1;
       let history = await getHistory(365, endDay, userId); // fetch 365 days to support year-view heatmaps, ACWR, and sleep debt properly
 
-      // Auto-sync if DB is empty and client is available
+      // Auto-sync if DB is empty AND the user has linked their Oura account
       const isEmpty = history.sleep.length === 0 && history.readiness.length === 0;
-      if (isEmpty && ouraClient) {
-        console.error("[HTTP] Database empty, triggering auto-sync...");
-        const syncResult = await syncData(ouraClient, getDaysAgo(30), getToday(), "auto", userId);
+      const userClient = await resolveUserOuraClient(userId);
+      if (isEmpty && userClient) {
+        console.error(`[HTTP] User ${userId} database empty, triggering auto-sync with user credentials...`);
+        const syncResult = await syncData(userClient, getDaysAgo(30), getToday(), "auto", userId);
         if (syncResult.success) {
           history = await getHistory(365, undefined, userId);
         }
@@ -316,8 +336,9 @@ export async function startHttpServer(
         cardioAge: rawCardioAge.slice(-30),
         vo2Max: rawVo2Max.slice(-30),
         resilience: rawResilience.slice(-30),
-        worstContributor,
         rawActivity: (await getRawDocuments("daily_activity", undefined, undefined, userId)).slice(-10),
+        ringInfo: (await getRawDocuments("ring_configuration", undefined, undefined, userId)).slice(-1)[0] || null,
+        personalInfo: (await getRawDocuments("personal_info", undefined, undefined, userId)).slice(-1)[0] || null,
         targets,
         profile: await getUserProfile(userId),
         alertPreferences: await getAlertPreferences(userId),
@@ -441,8 +462,11 @@ export async function startHttpServer(
   app.post("/api/dashboard/sync", async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id ?? 1;
-      if (!ouraClient) {
-        res.status(400).json({ error: "Oura client not initialized" });
+      const userClient = await resolveUserOuraClient(userId);
+      if (!userClient) {
+        res.status(400).json({
+          error: "No Oura Ring connected to this account. Please go to Settings to connect your Oura account.",
+        });
         return;
       }
       if (isSyncRunning()) {
@@ -450,7 +474,7 @@ export async function startHttpServer(
         return;
       }
 
-      const syncResult = await syncData(ouraClient, getDaysAgo(365), getToday(), "manual", userId);
+      const syncResult = await syncData(userClient, getDaysAgo(365), getToday(), "manual", userId);
       if (!syncResult.success) {
         res.status(500).json({ error: syncResult.error || "Sync failed", summary: syncResult });
         return;
@@ -819,14 +843,8 @@ export async function startHttpServer(
     app.use(async (req, res, next) => {
       if (req.path === "/" || req.path === "/mcp") {
         const userId = req.user?.id ?? 1;
-        let userClient = ouraClient;
-        try {
-          const conn = await getOuraConnection(userId);
-          if (conn) {
-            userClient = new OuraClient({ accessToken: conn.access_token });
-          }
-        } catch (e) {}
-        return requestContextStorage.run({ userId, ouraClient: userClient }, () => {
+        const userClient = await resolveUserOuraClient(userId);
+        return requestContextStorage.run({ userId, ouraClient: userClient || undefined }, () => {
           next();
         });
       }
@@ -965,17 +983,9 @@ export async function startHttpServer(
 
     const injectContext = async (req: Request, res: Response, next: express.NextFunction) => {
       const userId = req.user?.id ?? 1;
-      let userClient = ouraClient;
-      try {
-        const conn = await getOuraConnection(userId);
-        if (conn) {
-          userClient = new OuraClient({ accessToken: conn.access_token });
-        }
-      } catch (e) {
-        console.error("[Context] Failed to load user Oura client:", e);
-      }
+      const userClient = await resolveUserOuraClient(userId);
 
-      requestContextStorage.run({ userId, ouraClient: userClient }, () => {
+      requestContextStorage.run({ userId, ouraClient: userClient || undefined }, () => {
         next();
       });
     };

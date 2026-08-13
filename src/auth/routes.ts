@@ -389,6 +389,46 @@ authRouter.get("/oura/callback", async (req: Request, res: Response) => {
 });
 
 /**
+ * POST /api/auth/oura/token
+ * Directly link a Personal Access Token for the authenticated user
+ */
+authRouter.post("/oura/token", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    if (!token || typeof token !== "string") {
+      res.status(400).json({ error: "Oura personal access token is required." });
+      return;
+    }
+
+    const trimmed = token.trim();
+    // Validate token against Oura API personal_info endpoint
+    const testRes = await fetch("https://api.ouraring.com/v2/usercollection/personal_info", {
+      headers: { Authorization: `Bearer ${trimmed}` }
+    });
+
+    if (!testRes.ok) {
+      const errText = await testRes.text().catch(() => "");
+      res.status(400).json({ error: "Invalid Oura Access Token. Please verify your token." });
+      return;
+    }
+
+    // Token is valid! Upsert connection with 10-year validity for PAT
+    const expiresAt = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString();
+    await upsertOuraConnection(req.user!.id, {
+      accessToken: trimmed,
+      refreshToken: null,
+      expiresAt,
+      scopes: "personal daily",
+    });
+
+    res.json({ success: true, message: "Oura Personal Access Token linked successfully." });
+  } catch (err: any) {
+    console.error("[OAuth] Token link error:", err);
+    res.status(500).json({ error: err.message || "Internal Server Error" });
+  }
+});
+
+/**
  * DELETE /api/auth/oura/connection
  * Removes Oura link mapping for the authenticated user
  */

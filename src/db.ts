@@ -21,9 +21,10 @@ export interface DatabaseWrapper {
   close(): Promise<void>;
 }
 
-export function resolveUserId(userId: number): number {
-  if (userId !== 1) return userId;
-  return getContextUserId() ?? 1;
+export function resolveUserId(userId: number = 1): number {
+  const contextId = getContextUserId();
+  if (contextId) return contextId;
+  return userId;
 }
 
 let dbInstance: DatabaseWrapper | null = null;
@@ -157,7 +158,7 @@ export async function getDb(): Promise<DatabaseWrapper> {
     CREATE TABLE IF NOT EXISTS oura_connections (
       user_id INTEGER PRIMARY KEY,
       access_token TEXT NOT NULL,
-      refresh_token TEXT NOT NULL,
+      refresh_token TEXT,
       expires_at TEXT NOT NULL,
       scopes TEXT,
       connected_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -251,7 +252,7 @@ export async function getDb(): Promise<DatabaseWrapper> {
 
     CREATE TABLE IF NOT EXISTS experiments (
       user_id INTEGER NOT NULL,
-      id TEXT PRIMARY KEY,
+      id TEXT NOT NULL,
       title TEXT,
       behavior_text TEXT,
       metric_ids TEXT,
@@ -259,7 +260,8 @@ export async function getDb(): Promise<DatabaseWrapper> {
       start_date TEXT,
       duration_days INTEGER,
       status TEXT,
-      confounder_warning TEXT
+      confounder_warning TEXT,
+      PRIMARY KEY (user_id, id)
     );
 
     CREATE TABLE IF NOT EXISTS experiment_days (
@@ -551,8 +553,9 @@ export async function upsertUserProfile(profile: UserProfile, userId: number = 1
 }
 
 export async function getUserProfile(userId: number = 1): Promise<UserProfile | null> {
+  const activeUserId = resolveUserId(userId);
   const db = await getDb();
-  const profile = await db.get<UserProfile>(`SELECT age, weight_kg, height_cm, biological_sex, target_wake_time, goal, training_days FROM user_profile WHERE user_id = ?`, [userId]);
+  const profile = await db.get<UserProfile>(`SELECT age, weight_kg, height_cm, biological_sex, target_wake_time, goal, training_days FROM user_profile WHERE user_id = ?`, [activeUserId]);
   return profile || null;
 }
 
@@ -591,8 +594,9 @@ export async function upsertUserTargets(targets: UserTargets, userId: number = 1
 }
 
 export async function getUserTargets(userId: number = 1): Promise<UserTargets | null> {
+  const activeUserId = resolveUserId(userId);
   const db = await getDb();
-  const targets = await db.get<UserTargets>(`SELECT sleep_need_seconds, recommended_bedtime, step_goal, max_hr, bmr_kcal FROM user_targets WHERE user_id = ?`, [userId]);
+  const targets = await db.get<UserTargets>(`SELECT sleep_need_seconds, recommended_bedtime, step_goal, max_hr, bmr_kcal FROM user_targets WHERE user_id = ?`, [activeUserId]);
   return targets || null;
 }
 
@@ -742,8 +746,9 @@ export async function upsertExperiment(exp: Experiment, userId: number = 1): Pro
 }
 
 export async function getExperiments(userId: number = 1): Promise<Experiment[]> {
+  const activeUserId = resolveUserId(userId);
   const db = await getDb();
-  return db.all<Experiment[]>(`SELECT id, title, behavior_text, metric_ids, direction_hypothesis, start_date, duration_days, status, confounder_warning FROM experiments WHERE user_id = ? ORDER BY start_date DESC`, [userId]);
+  return db.all<Experiment[]>(`SELECT id, title, behavior_text, metric_ids, direction_hypothesis, start_date, duration_days, status, confounder_warning FROM experiments WHERE user_id = ? ORDER BY start_date DESC`, [activeUserId]);
 }
 
 export async function upsertExperimentDay(dayRecord: ExperimentDay, userId: number = 1): Promise<void> {
@@ -758,10 +763,11 @@ export async function upsertExperimentDay(dayRecord: ExperimentDay, userId: numb
 }
 
 export async function getExperimentDays(experimentId: string, userId: number = 1): Promise<ExperimentDay[]> {
+  const activeUserId = resolveUserId(userId);
   const db = await getDb();
   return db.all<ExperimentDay[]>(
     `SELECT experiment_id, day, adherent FROM experiment_days WHERE user_id = ? AND experiment_id = ? ORDER BY day ASC`,
-    [userId, experimentId]
+    [activeUserId, experimentId]
   );
 }
 
@@ -789,10 +795,11 @@ export async function upsertAnomaly(anomaly: AnomalyRecord, userId: number = 1):
 }
 
 export async function getAnomalies(limit = 100, userId: number = 1): Promise<AnomalyRecord[]> {
+  const activeUserId = resolveUserId(userId);
   const db = await getDb();
   return db.all<AnomalyRecord[]>(
     `SELECT day, metric_id, value, z_score FROM anomalies WHERE user_id = ? ORDER BY day DESC LIMIT ?`,
-    [userId, limit]
+    [activeUserId, limit]
   );
 }
 
@@ -1024,7 +1031,7 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     CREATE TABLE IF NOT EXISTS oura_connections (
       user_id INTEGER PRIMARY KEY,
       access_token TEXT NOT NULL,
-      refresh_token TEXT NOT NULL,
+      refresh_token TEXT,
       expires_at TEXT NOT NULL,
       scopes TEXT,
       connected_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -1191,7 +1198,7 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     "experiments",
     `CREATE TABLE experiments (
       user_id INTEGER NOT NULL,
-      id TEXT PRIMARY KEY,
+      id TEXT NOT NULL,
       title TEXT,
       behavior_text TEXT,
       metric_ids TEXT,
@@ -1199,7 +1206,8 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
       start_date TEXT,
       duration_days INTEGER,
       status TEXT,
-      confounder_warning TEXT
+      confounder_warning TEXT,
+      PRIMARY KEY (user_id, id)
     )`,
     "id, title, behavior_text, metric_ids, direction_hypothesis, start_date, duration_days, status, confounder_warning",
     "id, title, behavior_text, metric_ids, direction_hypothesis, start_date, duration_days, status, confounder_warning"

@@ -3119,3 +3119,42 @@
   0% { transform: scale(1); opacity: 0.8; }
   100% { transform: scale(2.5); opacity: 0; }
 }
+
+/* Quick Date Presets */
+.quick-date-presets {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-surface, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  border-radius: var(--r-md, 8px);
+  padding: 2px;
+  height: 30px;
+  box-sizing: border-box;
+}
+
+.quick-preset-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-3, rgba(235, 240, 248, 0.6));
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 0 8px;
+  height: 24px;
+  border-radius: var(--r-xs, 6px);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.quick-preset-btn:hover {
+  color: var(--text-1, #ffffff);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.quick-preset-btn.active {
+  background: var(--bg-app, rgba(255, 255, 255, 0.12));
+  color: var(--text-1, #ffffff);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
