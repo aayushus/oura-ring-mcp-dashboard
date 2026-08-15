@@ -86,7 +86,8 @@ export class OuraClient {
 
   private async fetch<T>(
     endpoint: string,
-    params?: Record<string, string>
+    params?: Record<string, string>,
+    autoPaginate: boolean = true
   ): Promise<T> {
     const url = new URL(`${BASE_URL}/${endpoint}`);
 
@@ -110,7 +111,39 @@ export class OuraClient {
       throw new OuraApiError(response.status, response.statusText, body);
     }
 
-    return response.json() as Promise<T>;
+    const result = (await response.json()) as any;
+
+    // If endpoint returned paginated data with next_token, automatically retrieve subsequent pages
+    if (autoPaginate && result && Array.isArray(result.data) && result.next_token) {
+      let nextToken: string | null = result.next_token;
+      let pageCount = 0;
+      const maxPages = 60; // Up to ~30,000 records across multi-year accounts
+
+      while (nextToken && pageCount < maxPages) {
+        pageCount++;
+        const nextUrl = new URL(`${BASE_URL}/${endpoint}`);
+        if (params) {
+          Object.entries(params).forEach(([key, value]) => {
+            if (key !== "next_token") nextUrl.searchParams.append(key, value);
+          });
+        }
+        nextUrl.searchParams.append("next_token", nextToken);
+
+        const nextRes = await fetch(nextUrl.toString(), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!nextRes.ok) break;
+
+        const nextJson = (await nextRes.json()) as any;
+        if (Array.isArray(nextJson.data)) {
+          result.data.push(...nextJson.data);
+        }
+        nextToken = nextJson.next_token || null;
+      }
+    }
+
+    return result as Promise<T>;
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -197,10 +230,49 @@ export class OuraClient {
   // ─────────────────────────────────────────────────────────────
 
   async getHeartRate(startDate: string, endDate: string) {
-    return this.fetch<OuraResponse<HeartRate>>("heartrate", {
-      start_date: startDate,
-      end_date: endDate,
-    });
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Oura Heart Rate endpoint accepts max 30-day windows per request
+    if (diffDays <= 30) {
+      return this.fetch<OuraResponse<HeartRate>>("heartrate", {
+        start_date: startDate,
+        end_date: endDate,
+      });
+    }
+
+    // Chunk in 30-day windows for multi-month backfills
+    const allSamples: HeartRate[] = [];
+    const maxChunks = 4; // Pull up to past 120 days of detailed 5-min intervals
+    let chunkEnd = new Date(endDate);
+
+    for (let i = 0; i < maxChunks; i++) {
+      if (chunkEnd < start) break;
+      const chunkStart = new Date(chunkEnd);
+      chunkStart.setDate(chunkStart.getDate() - 29);
+      const effectiveStart = chunkStart < start ? start : chunkStart;
+
+      const sStr = effectiveStart.toISOString().split("T")[0];
+      const eStr = chunkEnd.toISOString().split("T")[0];
+
+      try {
+        const res = await this.fetch<OuraResponse<HeartRate>>(
+          "heartrate",
+          { start_date: sStr, end_date: eStr },
+          false
+        );
+        if (res?.data) {
+          allSamples.push(...res.data);
+        }
+      } catch (err) {
+        console.warn(`[Client] Heart rate chunk ${sStr} to ${eStr} warning:`, err);
+      }
+
+      chunkEnd.setDate(chunkEnd.getDate() - 30);
+    }
+
+    return { data: allSamples };
   }
 
   // ─────────────────────────────────────────────────────────────

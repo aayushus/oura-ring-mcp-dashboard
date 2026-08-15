@@ -54,7 +54,7 @@ import {
   setAlertMute,
   getSyncLog,
 } from "../db.js";
-import { syncData, startSyncScheduler, getActiveSyncJob, isSyncRunning } from "../sync.js";
+import { syncData, startSyncScheduler, getActiveSyncJob, isSyncRunning, DAY_ONE_START } from "../sync.js";
 import { getToday, getDaysAgo } from "../utils/index.js";
 import { runWeeklyTargetJob } from "../utils/targets.js";
 import {
@@ -474,7 +474,7 @@ export async function startHttpServer(
         return;
       }
 
-      const syncResult = await syncData(userClient, getDaysAgo(365), getToday(), "manual", userId);
+      const syncResult = await syncData(userClient, DAY_ONE_START, getToday(), "manual", userId);
       if (!syncResult.success) {
         res.status(500).json({ error: syncResult.error || "Sync failed", summary: syncResult });
         return;

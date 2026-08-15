@@ -399,21 +399,23 @@ export async function syncUserConnection(
   }
 }
 
+export const DAY_ONE_START = "2016-01-01"; // Earliest available Oura Ring API v2 records
+
 /**
  * Initialize background cron scheduler to sync data automatically for all users
  */
 export function startSyncScheduler(legacyClient?: OuraClient): cron.ScheduledTask {
   console.log("[Sync] Initializing background sync scheduler (4-hour intervals)...");
 
-  // Perform initial backfill of past 365 days for all connected users
+  // Perform initial backfill from Day 1 of account activation for all connected users
   if (process.env.NODE_ENV !== "test") {
     // Start backfill asynchronously
     (async () => {
       try {
         const connections = await getAllOuraConnections();
-        console.log(`[Sync] Found ${connections.length} Oura connection(s) for startup backfill.`);
+        console.log(`[Sync] Found ${connections.length} Oura connection(s) for Day 1 startup backfill.`);
         for (const conn of connections) {
-          const backfillStart = getDaysAgo(365);
+          const backfillStart = DAY_ONE_START;
           const today = getToday();
           await syncUserConnection(conn, backfillStart, today, "startup");
         }

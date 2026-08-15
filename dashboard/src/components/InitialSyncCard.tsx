@@ -77,11 +77,11 @@ export function InitialSyncCard({ onSync, syncing }: InitialSyncCardProps) {
       </div>
       <h2 className="initial-sync-title">Your Oura Ring is Connected!</h2>
       <p className="initial-sync-desc">
-        Start your first historical backfill to download your past 365 days of sleep, readiness, HRV, and activity
-        biometrics from Oura Cloud.
+        Start your first historical backfill to download your complete history of sleep, readiness, HRV, stress, and activity
+        biometrics from Day 1 of wearing your Oura Ring.
       </p>
       <button className="initial-sync-btn" onClick={onSync} disabled={syncing}>
-        {syncing ? "Syncing 365 Days of Biometrics..." : "⚡ Start 365-Day Historical Sync"}
+        {syncing ? "Syncing All Historical Biometrics..." : "⚡ Sync All Biometrics (From Day 1)"}
       </button>
     </div>
   );
