@@ -136,13 +136,13 @@ export async function getDb(): Promise<DatabaseWrapper> {
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'member',
       disabled INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS auth_sessions (
       token_hash TEXT PRIMARY KEY,
       user_id INTEGER NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       expires_at TEXT NOT NULL,
       last_seen TEXT,
       user_agent TEXT
@@ -151,7 +151,7 @@ export async function getDb(): Promise<DatabaseWrapper> {
     CREATE TABLE IF NOT EXISTS app_settings (
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL,
-      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_by INTEGER
     );
 
@@ -161,7 +161,7 @@ export async function getDb(): Promise<DatabaseWrapper> {
       refresh_token TEXT,
       expires_at TEXT NOT NULL,
       scopes TEXT,
-      connected_at TEXT NOT NULL DEFAULT (datetime('now')),
+      connected_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       last_sync_at TEXT,
       sync_error TEXT
     );
@@ -318,7 +318,7 @@ export async function getDb(): Promise<DatabaseWrapper> {
       key_hash TEXT PRIMARY KEY,
       user_id INTEGER NOT NULL,
       name TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       last_used_at TEXT
     );
   `);
@@ -1009,13 +1009,13 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'member',
       disabled INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS auth_sessions (
       token_hash TEXT PRIMARY KEY,
       user_id INTEGER NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       expires_at TEXT NOT NULL,
       last_seen TEXT,
       user_agent TEXT
@@ -1024,7 +1024,7 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     CREATE TABLE IF NOT EXISTS app_settings (
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL,
-      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_by INTEGER
     );
 
@@ -1034,7 +1034,7 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
       refresh_token TEXT,
       expires_at TEXT NOT NULL,
       scopes TEXT,
-      connected_at TEXT NOT NULL DEFAULT (datetime('now')),
+      connected_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       last_sync_at TEXT,
       sync_error TEXT
     );

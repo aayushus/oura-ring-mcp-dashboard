@@ -228,7 +228,7 @@ export async function upsertOuraConnection(
        refresh_token = excluded.refresh_token,
        expires_at = excluded.expires_at,
        scopes = excluded.scopes,
-       connected_at = datetime('now')`,
+       connected_at = CURRENT_TIMESTAMP`,
     [userId, connection.accessToken, connection.refreshToken, connection.expiresAt, connection.scopes]
   );
 }
@@ -269,7 +269,7 @@ export async function updateOuraSyncStatus(userId: number, error: string | null)
   const db = await getDb();
   await db.run(
     `UPDATE oura_connections SET
-       last_sync_at = datetime('now'),
+       last_sync_at = CURRENT_TIMESTAMP,
        sync_error = ?
      WHERE user_id = ?`,
     [error, userId]
@@ -335,7 +335,7 @@ export async function getUserIdByMcpApiKey(keyHash: string): Promise<number | nu
 export async function updateMcpApiKeyLastUsed(keyHash: string): Promise<void> {
   const db = await getDb();
   await db.run(
-    `UPDATE mcp_api_keys SET last_used_at = datetime('now') WHERE key_hash = ?`,
+    `UPDATE mcp_api_keys SET last_used_at = CURRENT_TIMESTAMP WHERE key_hash = ?`,
     [keyHash]
   );
 }
