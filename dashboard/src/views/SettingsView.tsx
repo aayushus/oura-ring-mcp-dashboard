@@ -90,6 +90,9 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
   const [submittingPat, setSubmittingPat] = useState(false);
   const [connectionTab, setConnectionTab] = useState<"pat" | "oauth">("pat");
 
+  // Tab state
+  const [settingsTab, setSettingsTab] = useState<"profile" | "connection" | "mcp" | "admin" | "export">("profile");
+
   // Admin User Directory states
   const [usersList, setUsersList] = useState<ManagedUser[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -417,10 +420,147 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
         className="halo-module-head"
         style={{ "--hue": "var(--accent)" } as React.CSSProperties}
       >
-        <span className="halo-module-overline">Your targets</span>
+        <span className="halo-module-overline">Preferences & Integrations</span>
         <h1 className="halo-module-title">Settings</h1>
         <span className="rule" />
-        <p>Profile details seed your sleep, bedtime, step, and heart-rate targets — they recalculate as your data comes in.</p>
+        <p>Manage your biometrics profile, Oura Ring integration, AI MCP keys, and account preferences.</p>
+      </div>
+
+      {/* Settings Navigation Tabs */}
+      <div
+        style={{
+          display: "flex",
+          gap: "8px",
+          borderBottom: "1px solid var(--divider)",
+          paddingBottom: "12px",
+          marginBottom: "20px",
+          overflowX: "auto",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setSettingsTab("profile")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: settingsTab === "profile" ? "var(--bg-hover-2)" : "transparent",
+            color: settingsTab === "profile" ? "var(--text-default)" : "var(--text-2)",
+            border: "1px solid",
+            borderColor: settingsTab === "profile" ? "var(--divider-strong)" : "transparent",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "13px",
+            fontWeight: settingsTab === "profile" ? 600 : 500,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span>👤</span> Profile & Targets
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSettingsTab("connection")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: settingsTab === "connection" ? "var(--bg-hover-2)" : "transparent",
+            color: settingsTab === "connection" ? "var(--text-default)" : "var(--text-2)",
+            border: "1px solid",
+            borderColor: settingsTab === "connection" ? "var(--divider-strong)" : "transparent",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "13px",
+            fontWeight: settingsTab === "connection" ? 600 : 500,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span>💍</span> Oura Connection
+          {flags.ouraConnected && (
+            <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--score-optimal, #27ae60)" }} />
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSettingsTab("mcp")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: settingsTab === "mcp" ? "var(--bg-hover-2)" : "transparent",
+            color: settingsTab === "mcp" ? "var(--text-default)" : "var(--text-2)",
+            border: "1px solid",
+            borderColor: settingsTab === "mcp" ? "var(--divider-strong)" : "transparent",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "13px",
+            fontWeight: settingsTab === "mcp" ? 600 : 500,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span>🤖</span> MCP & AI Keys
+          {apiKeys.length > 0 && (
+            <span style={{ fontSize: "11px", background: "var(--bg-hover)", padding: "1px 6px", borderRadius: "10px", color: "var(--text-3)" }}>
+              {apiKeys.length}
+            </span>
+          )}
+        </button>
+
+        {user?.role === "admin" && (
+          <button
+            type="button"
+            onClick={() => setSettingsTab("admin")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              background: settingsTab === "admin" ? "var(--bg-hover-2)" : "transparent",
+              color: settingsTab === "admin" ? "var(--text-default)" : "var(--text-2)",
+              border: "1px solid",
+              borderColor: settingsTab === "admin" ? "var(--divider-strong)" : "transparent",
+              borderRadius: "8px",
+              padding: "8px 16px",
+              fontSize: "13px",
+              fontWeight: settingsTab === "admin" ? 600 : 500,
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span>⚙️</span> Administration
+          </button>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setSettingsTab("export")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: settingsTab === "export" ? "var(--bg-hover-2)" : "transparent",
+            color: settingsTab === "export" ? "var(--text-default)" : "var(--text-2)",
+            border: "1px solid",
+            borderColor: settingsTab === "export" ? "var(--divider-strong)" : "transparent",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "13px",
+            fontWeight: settingsTab === "export" ? 600 : 500,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            whiteSpace: "nowrap",
+          }}
+        >
+          <span>💾</span> Export Data
+        </button>
       </div>
 
       {error && (
@@ -435,9 +575,9 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
         </Alert>
       )}
 
-      <div className="halo-grid-2">
-        <div className="halo-stack-20">
-          {/* Profile form */}
+      {/* TAB 1: Profile & Targets */}
+      {settingsTab === "profile" && (
+        <div className="halo-grid-2">
           <div className="halo-card">
             <h2 className="halo-card-title">Profile</h2>
             <p className="halo-card-desc">
@@ -529,11 +669,70 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
             </form>
           </div>
 
-          {/* Oura Connection Card */}
+          <div className="halo-stack-20">
+            <div className="halo-card">
+              <h2 className="halo-card-title">Calculated targets</h2>
+              {!targets ? (
+                <p className="halo-muted">Fill out your profile to generate targets.</p>
+              ) : (
+                <div className="halo-mini-stats" style={{ marginTop: 12 }}>
+                  <div className="halo-mini-stat">
+                    <span className="label">Sleep need</span>
+                    <span className="value">{formatSecondsToHoursAndMinutes(targets.sleep_need_seconds)}</span>
+                  </div>
+                  <div className="halo-mini-stat">
+                    <span className="label">Ideal bedtime</span>
+                    <span className="value">{targets.recommended_bedtime}</span>
+                  </div>
+                  <div className="halo-mini-stat">
+                    <span className="label">Step goal</span>
+                    <span className="value">{targets.step_goal.toLocaleString()}</span>
+                  </div>
+                  <div className="halo-mini-stat">
+                    <span className="label">Max heart rate</span>
+                    <span className="value">{targets.max_hr} <span className="note">bpm</span></span>
+                  </div>
+                  <div className="halo-mini-stat wide">
+                    <span className="label">Basal metabolic rate</span>
+                    <span className="value">{Math.round(targets.bmr_kcal)} <span className="note">kcal/day</span></span>
+                    <span className="note">Energy burned at complete rest (Mifflin-St Jeor).</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="halo-card">
+              <h2 className="halo-card-title">Targets changelog</h2>
+              {history.length === 0 ? (
+                <p className="halo-muted">No target changes recorded yet.</p>
+              ) : (
+                <div className="halo-changelog halo-scroll">
+                  {history.map((record) => (
+                    <div key={record.id} className="halo-changelog-item">
+                      <div className="halo-changelog-meta">
+                        <span>{record.change_date}</span>
+                        <span className="target">{record.target_id.replace("_", " ")}</span>
+                      </div>
+                      <div className="halo-changelog-change">
+                        {record.old_value} → {record.new_value}
+                      </div>
+                      <div className="halo-changelog-reason">{record.reason}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: Oura Connection */}
+      {settingsTab === "connection" && (
+        <div style={{ maxWidth: "680px" }}>
           <div className="halo-card">
             <h2 className="halo-card-title">Oura Ring Connection</h2>
             <p className="halo-card-desc">
-              Connect your own Oura Ring account to authorize sync updates.
+              Connect your personal Oura account to authorize sync updates.
             </p>
 
             <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -643,7 +842,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                         <p style={{ fontSize: "12.5px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
                           {flags.ouraAppConfigured
                             ? "Click below to link via OAuth. If Oura shows \"400 invalid_request\", verify that your Redirect URI in the Oura Developer Console matches the URL below exactly."
-                            : "OAuth requires the server administrator to register an application on Oura's Developer Portal first and enter the credentials in the section below."}
+                            : "OAuth requires the server administrator to register an application on Oura's Developer Portal first and enter the credentials in the Administration tab."}
                         </p>
                         <div style={{ background: "var(--bg-card)", padding: "8px 12px", borderRadius: "8px", fontSize: "11.5px", fontFamily: "var(--f-mono)", color: "var(--text-default)", border: "1px solid var(--divider)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                           <span style={{ wordBreak: "break-all" }}>{redirectUri}</span>
@@ -678,12 +877,16 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
               )}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* MCP API Keys Management Card */}
+      {/* TAB 3: MCP & AI Keys */}
+      {settingsTab === "mcp" && (
+        <div style={{ maxWidth: "680px" }}>
           <div className="halo-card">
             <h2 className="halo-card-title">Claude Desktop Connect (MCP Keys)</h2>
             <p className="halo-card-desc">
-              Generate secure bearer tokens to link Claude, Cursor, or other AI clients to your Oura data.
+              Generate secure bearer tokens to link Claude, Cursor, or other AI clients to your Oura biometrics.
             </p>
 
             <form onSubmit={handleGenerateKey} style={{ display: "flex", gap: "8px", marginTop: "16px", marginBottom: "16px" }}>
@@ -821,185 +1024,135 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
             </div>
           </div>
         </div>
+      )}
 
-        {/* Targets, changelog, export */}
-        <div className="halo-stack-20">
+      {/* TAB 4: Administration (Admin Only) */}
+      {settingsTab === "admin" && user?.role === "admin" && (
+        <div className="halo-grid-2">
+          {/* Oura Developer App Settings */}
           <div className="halo-card">
-            <h2 className="halo-card-title">Calculated targets</h2>
-            {!targets ? (
-              <p className="halo-muted">Fill out your profile to generate targets.</p>
-            ) : (
-              <div className="halo-mini-stats" style={{ marginTop: 12 }}>
-                <div className="halo-mini-stat">
-                  <span className="label">Sleep need</span>
-                  <span className="value">{formatSecondsToHoursAndMinutes(targets.sleep_need_seconds)}</span>
-                </div>
-                <div className="halo-mini-stat">
-                  <span className="label">Ideal bedtime</span>
-                  <span className="value">{targets.recommended_bedtime}</span>
-                </div>
-                <div className="halo-mini-stat">
-                  <span className="label">Step goal</span>
-                  <span className="value">{targets.step_goal.toLocaleString()}</span>
-                </div>
-                <div className="halo-mini-stat">
-                  <span className="label">Max heart rate</span>
-                  <span className="value">{targets.max_hr} <span className="note">bpm</span></span>
-                </div>
-                <div className="halo-mini-stat wide">
-                  <span className="label">Basal metabolic rate</span>
-                  <span className="value">{Math.round(targets.bmr_kcal)} <span className="note">kcal/day</span></span>
-                  <span className="note">Energy burned at complete rest (Mifflin-St Jeor).</span>
-                </div>
-              </div>
-            )}
-          </div>
+            <h2 className="halo-card-title">Oura App Credentials</h2>
+            <p className="halo-card-desc">
+              Configure Developer credentials to permit OAuth connections.
+            </p>
 
-          {/* Oura Developer App Settings (Admin Only) */}
-          {user?.role === "admin" && (
-            <div className="halo-card">
-              <h2 className="halo-card-title">Oura App Credentials</h2>
-              <p className="halo-card-desc">
-                Configure Developer credentials to permit OAuth connections.
+            {/* Step-by-Step Setup Guide & Caution Callout */}
+            <div style={{ background: "var(--bg-hover)", border: "1px solid var(--divider-strong)", borderRadius: "12px", padding: "16px", marginTop: "16px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, fontSize: "13px", color: "var(--score-fair, #f39c12)" }}>
+                ⚠️ Caution: You Must Register an App on Oura First
+              </div>
+              <p style={{ fontSize: "12.5px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
+                Before OAuth can connect, you must create a free application in the Oura Cloud Developer portal.
               </p>
-
-              {/* Step-by-Step Setup Guide & Caution Callout */}
-              <div style={{ background: "var(--bg-hover)", border: "1px solid var(--divider-strong)", borderRadius: "12px", padding: "16px", marginTop: "16px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, fontSize: "13px", color: "var(--score-fair, #f39c12)" }}>
-                  ⚠️ Caution: You Must Register an App on Oura First
-                </div>
-                <p style={{ fontSize: "12.5px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
-                  Before OAuth can connect, you must create a free application in the Oura Cloud Developer portal.
-                </p>
-                <ol style={{ fontSize: "12px", color: "var(--text-2)", margin: 0, paddingLeft: "18px", lineHeight: "1.6" }}>
-                  <li>Open <a href="https://cloud.ouraring.com/oauth/applications" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 600 }}>cloud.ouraring.com/oauth/applications</a> in your browser.</li>
-                  <li>Click <strong>+ New Application</strong>.</li>
-                  <li>Enter your app name and set <strong>Redirect URI</strong> to:
-                    <div style={{ background: "var(--bg-card)", padding: "4px 8px", borderRadius: "6px", fontFamily: "var(--f-mono)", fontSize: "11px", color: "var(--text-default)", border: "1px solid var(--divider)", marginTop: "4px", marginBottom: "4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span>{redirectUri}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(redirectUri);
-                          setSuccessMsg("Copied Redirect URI to clipboard!");
-                        }}
-                        style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "10.5px", fontWeight: 600 }}
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </li>
-                  <li>Check/enable all scopes (Personal, Daily, Heart Rate, Workout, Stress, etc.).</li>
-                  <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong> into the form below and click Save.</li>
-                </ol>
-              </div>
-
-              <form className="halo-form" onSubmit={handleSaveSettings}>
-                <div className="halo-field">
-                  <label htmlFor="settings-client-id">Client ID</label>
-                  <input
-                    id="settings-client-id"
-                    type="text"
-                    value={clientId}
-                    onChange={(e) => setClientId(e.target.value)}
-                    placeholder="Enter Oura Client ID"
-                    required
-                  />
-                </div>
-
-                <div className="halo-field">
-                  <label htmlFor="settings-client-secret">
-                    Client Secret {secretConfigured && <span style={{ color: "var(--score-optimal, #27ae60)", fontSize: "11px", fontWeight: "normal" }}>(Configured ✓)</span>}
-                  </label>
-                  <input
-                    id="settings-client-secret"
-                    type="password"
-                    value={clientSecret}
-                    onChange={(e) => setClientSecret(e.target.value)}
-                    placeholder={secretConfigured ? "••••••••••••••••" : "Enter Oura Client Secret"}
-                    required={!secretConfigured}
-                  />
-                </div>
-
-                <button type="submit" className="halo-btn halo-btn-primary halo-btn-block" disabled={savingSettings}>
-                  {savingSettings ? "Saving Settings..." : "Save API Settings"}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {/* User Directory Management Card (Admin Only) */}
-          {user?.role === "admin" && (
-            <div className="halo-card">
-              <h2 className="halo-card-title">User Directory</h2>
-              <p className="halo-card-desc">
-                Manage registered user accounts and toggle access status.
-              </p>
-
-              <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                {loadingUsers ? (
-                  <div style={{ textAlign: "center", fontSize: "13px", color: "var(--text-3)" }}>Loading users directory...</div>
-                ) : (
-                  usersList.map((mUser) => (
-                    <div key={mUser.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px" }}>
-                      <div>
-                        <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-default)", display: "flex", alignItems: "center", gap: "6px" }}>
-                          {mUser.name}
-                          <span style={{ fontSize: "10px", fontWeight: "normal", background: mUser.role === "admin" ? "var(--accent, #b55fe6)" : "var(--bg-hover-2)", color: "#ffffff", padding: "1px 6px", borderRadius: "8px" }}>
-                            {mUser.role}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>
-                          {mUser.email} · Joined {formatDate(mUser.created_at)}
-                        </div>
-                      </div>
-                      <Button
-                        variant="secondary"
-                        disabled={mUser.id === user.id}
-                        onClick={() => handleToggleUserStatus(mUser.id)}
-                        style={{
-                          height: "26px",
-                          fontSize: "11px",
-                          color: mUser.disabled === 1 ? "var(--score-optimal, #27ae60)" : "var(--score-low, #eb5757)"
-                        }}
-                      >
-                        {mUser.disabled === 1 ? "Enable" : "Disable"}
-                      </Button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-          <div className="halo-card">
-            <h2 className="halo-card-title">Targets changelog</h2>
-            {history.length === 0 ? (
-              <p className="halo-muted">No target changes recorded yet.</p>
-            ) : (
-              <div className="halo-changelog halo-scroll">
-                {history.map((record) => (
-                  <div key={record.id} className="halo-changelog-item">
-                    <div className="halo-changelog-meta">
-                      <span>{record.change_date}</span>
-                      <span className="target">{record.target_id.replace("_", " ")}</span>
-                    </div>
-                    <div className="halo-changelog-change">
-                      {record.old_value} → {record.new_value}
-                    </div>
-                    <div className="halo-changelog-reason">{record.reason}</div>
+              <ol style={{ fontSize: "12px", color: "var(--text-2)", margin: 0, paddingLeft: "18px", lineHeight: "1.6" }}>
+                <li>Open <a href="https://cloud.ouraring.com/oauth/applications" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 600 }}>cloud.ouraring.com/oauth/applications</a> in your browser.</li>
+                <li>Click <strong>+ New Application</strong>.</li>
+                <li>Enter your app name and set <strong>Redirect URI</strong> to:
+                  <div style={{ background: "var(--bg-card)", padding: "4px 8px", borderRadius: "6px", fontFamily: "var(--f-mono)", fontSize: "11px", color: "var(--text-default)", border: "1px solid var(--divider)", marginTop: "4px", marginBottom: "4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span>{redirectUri}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(redirectUri);
+                        setSuccessMsg("Copied Redirect URI to clipboard!");
+                      }}
+                      style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "10.5px", fontWeight: 600 }}
+                    >
+                      Copy
+                    </button>
                   </div>
-                ))}
+                </li>
+                <li>Check/enable all scopes (Personal, Daily, Heart Rate, Workout, Stress, etc.).</li>
+                <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong> into the form below and click Save.</li>
+              </ol>
+            </div>
+
+            <form className="halo-form" onSubmit={handleSaveSettings}>
+              <div className="halo-field">
+                <label htmlFor="settings-client-id">Client ID</label>
+                <input
+                  id="settings-client-id"
+                  type="text"
+                  value={clientId}
+                  onChange={(e) => setClientId(e.target.value)}
+                  placeholder="Enter Oura Client ID"
+                  required
+                />
               </div>
-            )}
+
+              <div className="halo-field">
+                <label htmlFor="settings-client-secret">
+                  Client Secret {secretConfigured && <span style={{ color: "var(--score-optimal, #27ae60)", fontSize: "11px", fontWeight: "normal" }}>(Configured ✓)</span>}
+                </label>
+                <input
+                  id="settings-client-secret"
+                  type="password"
+                  value={clientSecret}
+                  onChange={(e) => setClientSecret(e.target.value)}
+                  placeholder={secretConfigured ? "••••••••••••••••" : "Enter Oura Client Secret"}
+                  required={!secretConfigured}
+                />
+              </div>
+
+              <button type="submit" className="halo-btn halo-btn-primary halo-btn-block" disabled={savingSettings}>
+                {savingSettings ? "Saving Settings..." : "Save API Settings"}
+              </button>
+            </form>
           </div>
 
+          {/* User Directory Management Card */}
+          <div className="halo-card">
+            <h2 className="halo-card-title">User Directory</h2>
+            <p className="halo-card-desc">
+              Manage registered user accounts and toggle access status.
+            </p>
+
+            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              {loadingUsers ? (
+                <div style={{ textAlign: "center", fontSize: "13px", color: "var(--text-3)" }}>Loading users directory...</div>
+              ) : (
+                usersList.map((mUser) => (
+                  <div key={mUser.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px" }}>
+                    <div>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-default)", display: "flex", alignItems: "center", gap: "6px" }}>
+                        {mUser.name}
+                        <span style={{ fontSize: "10px", fontWeight: "normal", background: mUser.role === "admin" ? "var(--accent, #b55fe6)" : "var(--bg-hover-2)", color: "#ffffff", padding: "1px 6px", borderRadius: "8px" }}>
+                          {mUser.role}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>
+                        {mUser.email} · Joined {formatDate(mUser.created_at)}
+                      </div>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      disabled={mUser.id === user.id}
+                      onClick={() => handleToggleUserStatus(mUser.id)}
+                      style={{
+                        height: "26px",
+                        fontSize: "11px",
+                        color: mUser.disabled === 1 ? "var(--score-optimal, #27ae60)" : "var(--score-low, #eb5757)"
+                      }}
+                    >
+                      {mUser.disabled === 1 ? "Enable" : "Disable"}
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: Data & Export */}
+      {settingsTab === "export" && (
+        <div style={{ maxWidth: "600px" }}>
           <div className="halo-card">
             <h2 className="halo-card-title">Export your data</h2>
             <p className="halo-card-desc">
-              Download your full history, anomalies, and targets changelog.
+              Download your full biometrics history, sleep records, anomalies, and targets changelog.
             </p>
-            <div style={{ display: "flex", gap: 12 }}>
+            <div style={{ display: "flex", gap: 12, marginTop: "16px" }}>
               <a href="/api/dashboard/export?format=json" download style={{ textDecoration: "none", flex: 1 }}>
                 <Button variant="primary" style={{ width: "100%" }}>Export JSON</Button>
               </a>
@@ -1009,7 +1162,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
