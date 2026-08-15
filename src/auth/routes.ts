@@ -28,6 +28,18 @@ import { encrypt, decrypt } from "./crypto.js";
 
 const authRouter = express.Router();
 
+function escapeHtml(unsafe: string): string {
+  if (typeof unsafe !== "string") {
+    return "";
+  }
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function isLocalHost(req: Request): boolean {
   const host = req.get("host") || "";
   return (
@@ -304,7 +316,8 @@ authRouter.get("/oura/callback", async (req: Request, res: Response) => {
     const { code, state, error } = req.query;
 
     if (error) {
-      res.status(400).send(`<html><body><h2>Authorization failed</h2><p>${error}</p></body></html>`);
+      const safeError = escapeHtml(String(error));
+      res.status(400).send(`<html><body><h2>Authorization failed</h2><p>${safeError}</p></body></html>`);
       return;
     }
 
@@ -384,7 +397,8 @@ authRouter.get("/oura/callback", async (req: Request, res: Response) => {
     `);
   } catch (err: any) {
     console.error("[OAuth] Callback error:", err);
-    res.status(500).send(`<html><body><h2>Internal Server Error</h2><p>${err.message || err}</p></body></html>`);
+    const safeError = escapeHtml(err.message || String(err));
+    res.status(500).send(`<html><body><h2>Internal Server Error</h2><p>${safeError}</p></body></html>`);
   }
 });
 

@@ -29,129 +29,132 @@ interface DigestDetails {
 }
 
 export async function checkAndSendDigest(): Promise<void> {
-  const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local format
+  try {
+    const today = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD local format
 
-  // 1. Check if already dispatched today
-  const existingLog = await getDigestLog(today);
-  if (existingLog) {
-    return;
-  }
-
-  // 2. Fetch User Profile for target wake time
-  const profile = await getUserProfile();
-  const targetWake = profile?.target_wake_time || "07:00"; // default 7 AM
-  const [wakeH, wakeM] = targetWake.split(":").map(Number);
-
-  // Compute wake + 30 min and wake + 3 hours
-  const now = new Date();
-  const currentH = now.getHours();
-  const currentM = now.getMinutes();
-
-  const wakeTimeMinutes = wakeH * 60 + wakeM;
-  const currentTimeMinutes = currentH * 60 + currentM;
-
-  // Check if we are past target_wake_time + 30m
-  if (currentTimeMinutes < wakeTimeMinutes + 30) {
-    return;
-  }
-
-  // 3. Check for last night's data (Wait-for-data loop)
-  const db = await getDb();
-  const sleepRecord = await db.get("SELECT * FROM sleep_history WHERE day = ?", [today]);
-  const isPastThreeHours = currentTimeMinutes >= wakeTimeMinutes + 180;
-
-  if (!sleepRecord) {
-    if (!isPastThreeHours) {
-      // Data not present yet, but within the 3-hour window -> wait (check next tick)
-      console.log(`[Digest] Sleep data not found for ${today}. Waiting for phone sync...`);
+    // 1. Check if already dispatched today
+    const existingLog = await getDigestLog(today);
+    if (existingLog) {
       return;
     }
 
-    // Fallback after 3 hours
-    console.log(`[Digest] Sleep data still missing after 3 hours. Dispatching fallback alert.`);
-    await sendFallbackDigest(today);
-    return;
-  }
+    // 2. Fetch User Profile for target wake time
+    const profile = await getUserProfile();
+    const targetWake = profile?.target_wake_time || "07:00"; // default 7 AM
+    const [wakeH, wakeM] = targetWake.split(":").map(Number);
 
-  // 4. Generate Full Metrics Digest
-  const history = await getHistory(7);
-  const sleepRows = history.sleep;
-  const readinessRows = history.readiness;
-  const activityRows = history.activity;
+    // Compute wake + 30 min and wake + 3 hours
+    const now = new Date();
+    const currentH = now.getHours();
+    const currentM = now.getMinutes();
 
-  // Latest scores (today)
-  const latestSleep = sleepRows.find((r) => r.day === today)?.score || null;
-  const latestReadiness = readinessRows.find((r) => r.day === today)?.score || null;
-  const latestActivity = activityRows.find((r) => r.day === today)?.score || null;
+    const wakeTimeMinutes = wakeH * 60 + wakeM;
+    const currentTimeMinutes = currentH * 60 + currentM;
 
-  // Previous scores (yesterday)
-  const yesterday = new Date(now.getTime() - 86400000).toLocaleDateString("sv-SE");
-  const prevSleep = sleepRows.find((r) => r.day === yesterday)?.score || null;
-  const prevReadiness = readinessRows.find((r) => r.day === yesterday)?.score || null;
-  const prevActivity = activityRows.find((r) => r.day === yesterday)?.score || null;
+    // Check if we are past target_wake_time + 30m
+    if (currentTimeMinutes < wakeTimeMinutes + 30) {
+      return;
+    }
 
-  const calcDelta = (curr: number | null, prev: number | null) => {
-    if (curr === null || prev === null) return "—";
-    const diff = curr - prev;
-    return diff >= 0 ? `▲ ${diff}` : `▼ ${Math.abs(diff)}`;
-  };
+    // 3. Check for last night's data (Wait-for-data loop)
+    const db = await getDb();
+    const sleepRecord = await db.get("SELECT * FROM sleep_history WHERE day = ?", [today]);
+    const isPastThreeHours = currentTimeMinutes >= wakeTimeMinutes + 180;
 
-  // Headline Insight Heuristic
-  let headline = "Your biometrics are within normal ranges today.";
-  if (latestReadiness !== null && latestReadiness < 70) {
-    headline = "Readiness is low. Prioritize recovery and lighter activities today.";
-  } else if (latestSleep !== null && latestSleep < 70) {
-    headline = "Sleep was truncated or restless. Focus on an earlier bedtime tonight.";
-  }
+    if (!sleepRecord) {
+      if (!isPastThreeHours) {
+        // Data not present yet, but within the 3-hour window -> wait (check next tick)
+        console.log(`[Digest] Sleep data not found for ${today}. Waiting for phone sync...`);
+        return;
+      }
 
-  // Determine Worst Contributor from raw records
-  let worstContributor = "Restfulness";
-  let contributorTip = "Ensure your bedroom is dark, quiet, and cool to minimize nighttime wakeups.";
+      // Fallback after 3 hours
+      console.log(`[Digest] Sleep data still missing after 3 hours. Dispatching fallback alert.`);
+      await sendFallbackDigest(today);
+      return;
+    }
 
-  const latestRawSleep = await db.get("SELECT * FROM raw_documents WHERE day = ? AND endpoint = 'sleep'", [today]);
-  if (latestRawSleep) {
-    try {
-      const doc = JSON.parse(latestRawSleep.data);
-      if (doc.contributors) {
-        let minScore = 100;
-        for (const [name, val] of Object.entries(doc.contributors)) {
-          if (typeof val === "number" && val < minScore) {
-            minScore = val;
-            worstContributor = name.replace(/_/g, " ");
+    // 4. Generate Full Metrics Digest
+    const history = await getHistory(7);
+    const sleepRows = history.sleep;
+    const readinessRows = history.readiness;
+    const activityRows = history.activity;
+
+    // Latest scores (today)
+    const latestSleep = sleepRows.find((r) => r.day === today)?.score || null;
+    const latestReadiness = readinessRows.find((r) => r.day === today)?.score || null;
+    const latestActivity = activityRows.find((r) => r.day === today)?.score || null;
+
+    // Previous scores (yesterday)
+    const yesterday = new Date(now.getTime() - 86400000).toLocaleDateString("sv-SE");
+    const prevSleep = sleepRows.find((r) => r.day === yesterday)?.score || null;
+    const prevReadiness = readinessRows.find((r) => r.day === yesterday)?.score || null;
+    const prevActivity = activityRows.find((r) => r.day === yesterday)?.score || null;
+
+    const calcDelta = (curr: number | null, prev: number | null) => {
+      if (curr === null || prev === null) return "—";
+      const diff = curr - prev;
+      return diff >= 0 ? `▲ ${diff}` : `▼ ${Math.abs(diff)}`;
+    };
+
+    // Headline Insight Heuristic
+    let headline = "Your biometrics are within normal ranges today.";
+    if (latestReadiness !== null && latestReadiness < 70) {
+      headline = "Readiness is low. Prioritize recovery and lighter activities today.";
+    } else if (latestSleep !== null && latestSleep < 70) {
+      headline = "Sleep was truncated or restless. Focus on an earlier bedtime tonight.";
+    }
+
+    // Determine Worst Contributor from raw records
+    let worstContributor = "Restfulness";
+    let contributorTip = "Ensure your bedroom is dark, quiet, and cool to minimize nighttime wakeups.";
+
+    const latestRawSleep = await db.get("SELECT * FROM raw_documents WHERE day = ? AND endpoint = 'sleep'", [today]);
+    if (latestRawSleep) {
+      try {
+        const doc = JSON.parse(latestRawSleep.data);
+        if (doc.contributors) {
+          let minScore = 100;
+          for (const [name, val] of Object.entries(doc.contributors)) {
+            if (typeof val === "number" && val < minScore) {
+              minScore = val;
+              worstContributor = name.replace(/_/g, " ");
+            }
           }
         }
+      } catch (e) {
+        // fallback
       }
-    } catch (e) {
-      // fallback
     }
+
+    const digest: DigestDetails = {
+      date: today,
+      sleepScore: latestSleep,
+      sleepDelta: calcDelta(latestSleep, prevSleep),
+      readinessScore: latestReadiness,
+      readinessDelta: calcDelta(latestReadiness, prevReadiness),
+      activityScore: latestActivity,
+      activityDelta: calcDelta(latestActivity, prevActivity),
+      headline,
+      worstContributor,
+      contributorTip,
+      timestamp: new Date().toISOString(),
+    };
+
+    // 5. Send Digest via Channels
+    await dispatchDigest(digest);
+
+    // 6. Log success to DB
+    await upsertDigestLog({
+      date: today,
+      channel: "Email/LocalFile",
+      sent_at: new Date().toISOString(),
+      had_data: 1,
+    });
+    console.log(`[Digest] Successfully dispatched biometrics digest for ${today}`);
+  } catch (err) {
+    console.error("[Digest] Error generating daily morning digest:", err);
   }
-
-  const digest: DigestDetails = {
-    date: today,
-    sleepScore: latestSleep,
-    sleepDelta: calcDelta(latestSleep, prevSleep),
-    readinessScore: latestReadiness,
-    readinessDelta: calcDelta(latestReadiness, prevReadiness),
-    activityScore: latestActivity,
-    activityDelta: calcDelta(latestActivity, prevActivity),
-    headline,
-    worstContributor,
-    contributorTip,
-    timestamp: new Date().toISOString(),
-  };
-
-  // 5. Send Digest via Channels
-  await dispatchDigest(digest);
-
-  // 6. Log success to DB
-  await upsertDigestLog({
-    date: today,
-    channel: "Email/LocalFile",
-    sent_at: new Date().toISOString(),
-    had_data: 1,
-  });
-  console.log(`[Digest] Successfully dispatched biometrics digest for ${today}`);
-
 }
 
 async function sendFallbackDigest(date: string): Promise<void> {
@@ -226,7 +229,7 @@ async function sendEmail(subject: string, html: string): Promise<void> {
   const pass = process.env.SMTP_PASS;
 
   if (!host || !user || !pass) {
-    console.log(`[Digest] SMTP credentials not set. Logging email subject to console: "${subject}"`);
+    // If SMTP credentials aren't configured, skip dispatch silently
     return;
   }
 
