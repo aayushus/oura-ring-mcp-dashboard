@@ -2,328 +2,199 @@
 
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 [![Docker Build & Publish to GHCR](https://github.com/aayushus/oura-ring-mcp-dashboard/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/aayushus/oura-ring-mcp-dashboard/actions/workflows/docker-publish.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org)
 
-An all-in-one personal health dashboard and Model Context Protocol (MCP) server that connects your Oura Ring data to local web charts and AI assistants like Claude. Get premium interactive visual tracking, self-experiments, weekly narrative reports, and human-readable insights about your sleep, readiness, and activity — stored locally in PostgreSQL forever.
+An all-in-one personal health dashboard and Model Context Protocol (MCP) server that connects your Oura Ring data to local web charts and AI assistants like Claude and Cursor. Get interactive visual tracking, self-experiments, weekly narrative reports, and automated lifetime historical syncing — stored locally in PostgreSQL forever.
 
-> **Fork of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp)** — extended with a full responsive React dashboard UI, local PostgreSQL persistence, automated year-long historical syncing, and pre-built GHCR Docker images.
+> **Fork of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp)** — extended with a multi-tenant React dashboard UI, local PostgreSQL persistence, automated lifetime historical syncing, and pre-built GHCR Docker images.
 
 ---
 
-## Key Features
+## ✨ Key Features
 
 ### 📊 Health Dashboard UI
-- **Interactive Web UI** — Responsive charts, dark/light theme, and sorted contributor donut metrics for Sleep, Readiness, and Activity.
+- **Interactive Web Interface** — Responsive charts, dark/light theme, and contributor score breakdowns for Sleep, Readiness, and Activity.
 - **Unified Day-Strip** — Stack sleep stages, overnight heart rate (HR/HRV), daytime movement, workouts, and tags on a shared 24h timeline.
-- **Year-View Heatmaps** — GitHub-contribution-style calendar grids showing sleep and recovery seasonality.
+- **Year-View Heatmaps** — GitHub-contribution-style calendar grids showing sleep and recovery seasonality across the entire year.
 - **Fuzzy Command Palette (`⌘K`)** — Navigate tabs, jump to dates (e.g. `yesterday`, `last monday`), export data, and execute actions instantly.
-- **Keyboard Time Travel** — Quick date navigation with left/right arrows (`←` / `→`) and deep-link date parameters (`?day=YYYY-MM-DD`).
+- **Tabbed Settings Hub** — Dedicated management for User Profile, Oura Connection, MCP & AI Keys, Administration, and Data Export.
 
 ### 🤖 AI-Powered Health Assistance
-- **Chat with your data** — Direct LLM conversational panel embedded in the dashboard, powered by your local Oura MCP tool suite.
-- **Self-Experiments (N-of-1 Lab)** — Pre-register hypotheses (e.g., "No caffeine after 2 PM") and track performance with Cohen's $d$ effect sizes.
+- **Claude & Cursor Integration** — 27 specialized MCP tools spanning Sleep, Readiness, Activity, Vitals, Tags, and Smart Correlation Analysis.
+- **Self-Experiments (N-of-1 Lab)** — Pre-register hypotheses (e.g., *"Magnesium before bed"*) and track statistical performance with Cohen's $d$ effect sizes.
 - **Weekly Narrative Reports** — Auto-generated health review summaries with print-optimized A4 stylesheets (`?report=weekly`).
-- **Auto-Annotated Trends** — Automatically flags anomalies ($z$-score $|z| \geq 2$) and period min/max peaks on trend charts.
+- **Anomaly Detection** — Automatically flags anomalies ($z$-score $|z| \geq 2$) and period min/max peaks on trend charts.
 
 ### 💾 Local Database & Sync
-- **PostgreSQL Persistence** — Persists raw API responses and history files forever (bypassing Oura's 30-day API limit).
-- **Auto-Migrator** — Automatically detects and ports existing local SQLite databases into PostgreSQL on start.
-- **Historical Backfill** — Auto-backfills a full 365 days of historical Oura biometrics.
-- **Server-to-Local Profile Sync** — Automatically synchronizes Oura personal information with local goal targets.
-- **Morning Digest Alert** — Standard email/file delivery showing recovery scores, delta targets, and action tips on wake-up.
+- **PostgreSQL Persistence** — Persists raw API responses and history records locally forever.
+- **Lifetime Historical Backfill (From Day 1)** — Auto-paginated cursor streams pull your complete data history since ring activation.
+- **Background Cron Scheduler** — Automatically syncs new ring data every 4 hours.
+- **Multi-Tenant User Scoping** — Secure password authentication, role-based access, and per-user MCP API key tokens.
 
 ---
 
-## Quick Start (Docker)
+## 🚀 Quick Start (Docker)
 
-Choose one of the following two deployment methods:
+You can launch the entire stack with Docker in under 60 seconds without manually writing tokens to config files:
 
-### Method 1: Run Pre-built Image (Fastest, No Source Code Needed)
-
-You do not need to clone the repository. Simply create a directory, write a `.env` file, and run the container directly from the GitHub Container Registry:
-
-1. Create a directory and step into it:
-   ```bash
-   mkdir oura-dashboard && cd oura-dashboard
-   ```
-2. Create a `.env` file:
-   ```env
-   OURA_CLIENT_ID=your_client_id_here
-   OURA_CLIENT_SECRET=your_client_secret_here
-   PORT=3000
-   ```
-3. Create a `compose.yaml` file:
-   ```yaml
-   services:
-     db:
-       image: postgres:16-alpine
-       container_name: oura-db
-       restart: unless-stopped
-       environment:
-         - POSTGRES_USER=postgres
-         - POSTGRES_PASSWORD=postgres
-         - POSTGRES_DB=oura_health
-       volumes:
-         - ./db:/var/lib/postgresql/data
-       ports:
-         - "5432:5432"
-       healthcheck:
-         test: ["CMD-SHELL", "pg_isready -U postgres -d oura_health"]
-         interval: 10s
-         timeout: 5s
-         retries: 5
-
-     oura-mcp:
-       image: ghcr.io/aayushus/oura-ring-mcp-dashboard:latest
-       container_name: oura-mcp
-       restart: unless-stopped
-       ports:
-         - "3000:3000"
-       depends_on:
-         db:
-           condition: service_healthy
-       environment:
-         - NODE_ENV=production
-         - OURA_CLIENT_ID=${OURA_CLIENT_ID}
-         - OURA_CLIENT_SECRET=${OURA_CLIENT_SECRET}
-         - PORT=3000
-         - DATABASE_URL=postgresql://postgres:postgres@db:5432/oura_health
-       volumes:
-         - ./oura_credentials:/root/.oura-mcp
-   ```
-4. Start the stack:
-   ```bash
-   docker compose up -d
-   ```
-
----
-
-### Method 2: Build & Run from Source Code (Local Development)
-
-Use this method if you want to modify the source code or build the image locally:
-
-1. Clone the repository and navigate into it:
-   ```bash
-   git clone https://github.com/aayushus/oura-ring-mcp-dashboard.git
-   cd oura-ring-mcp-dashboard
-   ```
-2. Copy the example configuration:
-   ```bash
-   cp .env.example .env
-   ```
-   Fill in your OAuth credentials (see [Authentication](#authentication) below).
-3. Start the dashboard stack:
-   ```bash
-   ./start.sh
-   ```
-
-You can control the local stack using these helper scripts:
-```bash
-./stop.sh      # Stop the containers
-./restart.sh   # Rebuild and restart the stack
-```
-
----
-
-### Accessing the Dashboard & API
-Once running, the stack is available at:
-- **Dashboard UI**: `http://localhost:3000/dashboard`
-- **MCP Endpoint**: `http://localhost:3000/mcp`
-- **Health Check**: `http://localhost:3000/health`
-
----
-
-## Authentication
-
-> ⚠️ **Personal Access Tokens (PATs) were deprecated by Oura in December 2025 and are no longer available.** OAuth2 is now the only supported authentication method.
-
-### Setting up OAuth2
-
-**Step 1 — Create an Oura OAuth application**
-
-1. Go to **[developer.ouraring.com/applications](https://developer.ouraring.com/applications)**
-2. Click **"Create New Application"**
-3. Fill in the following:
-   - **Name**: anything you like (e.g. `My MCP Server`)
-   - **Redirect URI**: `http://localhost:3000/oauth/callback`
-4. Hit save — you'll receive a **Client ID** and **Client Secret**
-
-**Step 2 — Add credentials to your `.env`**
-
-```env
-OURA_CLIENT_ID=your_client_id_here
-OURA_CLIENT_SECRET=your_client_secret_here
-```
-
-**Step 3 — Run the auth flow (first time only)**
-
-Start the server, then run the one-time OAuth authorization:
+### 1. Clone or Download Docker Compose
 
 ```bash
-./start.sh
-docker compose run --rm oura-mcp node dist/index.js auth
+git clone https://github.com/aayushus/oura-ring-mcp-dashboard.git
+cd oura-ring-mcp-dashboard
 ```
 
-This opens a browser window where you authorize access to your Oura data. Credentials are saved to a persistent Docker volume and automatically refreshed — you only need to do this once.
+### 2. Start the Stack
+
+```bash
+docker compose up -d
+```
+
+### 3. Open the Dashboard
+
+Navigate to **[http://localhost:3000](http://localhost:3000)** in your browser:
+1. **Create your account** (first user is automatically assigned Admin role).
+2. Go to **Settings → 💍 Oura Connection**.
+3. Link your Oura Ring using either:
+   - **Personal Access Token (1-Click)**: Generate a token from [cloud.ouraring.com/personal-access-tokens](https://cloud.ouraring.com/personal-access-tokens) and paste it.
+   - **OAuth 2.0 App**: Connect via official Oura Cloud OAuth popup.
+4. Click **"⚡ Sync All Biometrics (From Day 1)"** to download your complete history.
 
 ---
 
-## Connecting to Claude
+## 🤖 Connecting to Claude Desktop & Cursor
 
-### Claude Desktop
+Once your Oura Ring is connected in the dashboard, create an MCP API key to connect your AI assistant:
 
-Add to your `claude_desktop_config.json`:
+### Step 1: Generate an MCP Key
+1. Go to **Settings → 🤖 MCP & AI Keys** in the web dashboard.
+2. Click **Generate New Key** and copy your token (e.g. `halo_...`).
+
+### Step 2: Configure Claude Desktop
+Add the following configuration to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "oura": {
-      "url": "http://localhost:3000/mcp"
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_GENERATED_HALO_KEY"
+      }
     }
   }
 }
 ```
 
-On macOS, the config file is at:
-`~/Library/Application Support/Claude/claude_desktop_config.json`
+*File Locations:*
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 
-Restart Claude Desktop after saving.
-
-### Claude.ai (remote deployment)
-
-If you've deployed remotely (e.g. Railway), use the public URL:
-
-```json
-{
-  "mcpServers": {
-    "oura": {
-      "url": "https://your-app.railway.app/mcp"
-    }
-  }
-}
-```
+Restart Claude Desktop, and all 27 Oura tools will be available directly in your chat!
 
 ---
 
-## What Can I Ask?
+## 🛠️ MCP Tool Suite (27 Tools)
 
-**Daily check-ins:**
-- "How did I sleep last night?"
-- "Am I recovered enough to work out today?"
-- "What's my body telling me right now?"
+The server exposes 27 modular tools organized into domain areas:
 
-**Patterns & trends:**
-- "Do I sleep better on weekends?"
-- "What time should I go to bed for optimal sleep?"
-- "Is my HRV improving or declining?"
-
-**Correlations & insights:**
-- "Does alcohol affect my sleep quality?"
-- "What predicts my best sleep nights?"
-- "How does exercise timing affect my recovery?"
-
-**Comparisons:**
-- "Compare my sleep this week vs last week"
-- "How do I sleep after meditation vs without?"
-- "What changed when I started taking magnesium?"
-
-**Anomalies:**
-- "Are there any unusual readings in my data?"
-- "Why was my readiness so low yesterday?"
-- "Find days where my metrics were off"
-
----
-
-## Available Tools
-
-### Data Retrieval
-
+### 🌙 Sleep Domain
 | Tool | Description |
 |------|-------------|
-| `get_sleep` | Sleep data with stages, efficiency, HR, HRV |
-| `get_daily_sleep` | Daily sleep scores with contributors |
-| `get_readiness` | Readiness scores and recovery metrics |
-| `get_activity` | Steps, calories, intensity breakdown |
-| `get_workouts` | Workout sessions with type and intensity |
-| `get_sessions` | Meditation and relaxation sessions |
-| `get_heart_rate` | HR readings throughout the day |
-| `get_stress` | Stress levels and recovery time |
-| `get_spo2` | Blood oxygen and breathing disturbance |
-| `get_tags` | User-created tags and notes |
+| `get_sleep` | Detailed sleep sessions with hypnogram stages, efficiency, HR, and HRV |
+| `get_daily_sleep` | Daily sleep scores and contributor breakdowns |
+| `get_sleep_time` | Recommended bedtime and optimal sleep window recommendations |
+| `analyze_sleep_quality` | Multi-day sleep quality analysis with trend metrics and sleep debt |
+| `analyze_hrv_trend` | Rolling HRV trends, baseline deviations, and recovery trajectory |
+| `best_sleep_conditions` | Statistical correlation identifying your optimal sleep conditions |
 
-### Smart Analysis
-
+### ⚡ Readiness & Recovery
 | Tool | Description |
 |------|-------------|
-| `detect_anomalies` | Find unusual readings using outlier detection |
-| `analyze_sleep_quality` | Sleep analysis with trends, patterns, debt |
-| `correlate_metrics` | Find correlations between health metrics |
-| `compare_periods` | Compare this week vs last week |
-| `compare_conditions` | Compare metrics with/without a tag |
-| `best_sleep_conditions` | What predicts your good vs poor sleep |
-| `analyze_hrv_trend` | HRV trend with rolling averages |
+| `get_readiness` | Daily readiness score and overnight recovery metrics |
+| `get_resilience` | Long-term stress resilience score and recovery capacity |
 
-## Resources
+### 🏃 Activity & Workouts
+| Tool | Description |
+|------|-------------|
+| `get_activity` | Daily activity scores, step counts, active calories, and inactive alerts |
+| `get_workouts` | Logged workout sessions with calorie burn, heart rate, and intensity |
+| `get_sessions` | Guided and unguided meditation, relaxation, and rest sessions |
+| `analyze_adherence` | Consistency tracking against daily step and activity goals |
 
-| Resource | Description |
-|----------|-------------|
-| `oura://today` | Today's health summary |
-| `oura://weekly-summary` | Last 7 days with averages |
-| `oura://baseline` | Your 30-day averages and normal ranges |
-| `oura://monthly-insights` | 30-day analysis with trends and anomalies |
-| `oura://tag-summary` | Your tags and usage frequency |
+### ❤️ Health & Vitals
+| Tool | Description |
+|------|-------------|
+| `get_heart_rate` | Continuous 5-minute daytime and overnight heart rate readings |
+| `get_stress` | Daily daytime stress, high stress duration, and recovery periods |
+| `get_spo2` | Blood oxygen saturation averages and breathing disturbance index |
+| `get_vo2_max` | Cardio fitness level estimate ($VO_2$ max) |
+| `get_cardiovascular_age` | Vascular age assessment compared to biological age |
+| `analyze_temperature` | Skin temperature trend analysis and illness onset detection |
 
-## Prompts
+### 🔬 Smart Analysis & Experiments
+| Tool | Description |
+|------|-------------|
+| `detect_anomalies` | Statistical outlier detection across biometrics ($|z| \geq 2$) |
+| `correlate_metrics` | Pearson correlation between any two physiological metrics |
+| `compare_periods` | Side-by-side comparative analysis between two date ranges |
+| `compare_conditions` | Difference analysis comparing days with vs without a specific tag |
 
-| Prompt | Description |
-|--------|-------------|
-| `weekly-review` | Comprehensive weekly health review |
-| `sleep-optimization` | Identify what leads to your best sleep |
-| `recovery-check` | Should you train hard or rest today? |
-| `compare-weeks` | This week vs last week comparison |
-| `tag-analysis` | How a specific tag affects your health |
+### 🏷️ Tags & Annotations
+| Tool | Description |
+|------|-------------|
+| `get_tags` | User-created tags and contextual event annotations |
+| `get_enhanced_tags` | Rich tags with custom start/end timestamps and comments |
+
+### 💍 Device & Profile
+| Tool | Description |
+|------|-------------|
+| `get_ring_info` | Ring hardware generation, firmware version, and battery status |
+| `get_rest_mode` | Active and historical Rest Mode recovery periods |
+| `get_personal_info` | Oura account profile demographics (age, weight, height) |
 
 ---
 
-## Remote Deployment (Railway)
+## ⚙️ Environment Variables (Optional)
 
-Deploy for remote access. Users authenticate directly with their own Oura account via OAuth.
+Configure runtime options in `.env` if needed (see [.env.example](.env.example)):
 
-**1. Create an Oura OAuth app** at [developer.ouraring.com/applications](https://developer.ouraring.com/applications) with redirect URI: `https://your-app.railway.app/oauth/callback`
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3000` | HTTP port for dashboard and MCP endpoint |
+| `DATABASE_URL` | `postgresql://...` | PostgreSQL connection string (falls back to SQLite) |
+| `JWT_SECRET` | *(Random)* | Secret key used to sign session cookies |
+| `OURA_CLIENT_ID` | *(None)* | Global OAuth Client ID (or set in UI Settings) |
+| `OURA_CLIENT_SECRET` | *(None)* | Global OAuth Client Secret (or set in UI Settings) |
+| `SMTP_HOST` | *(None)* | SMTP server for morning email digest |
+| `SMTP_PORT` | `587` | SMTP port |
+| `SMTP_USER` | *(None)* | SMTP username |
+| `SMTP_PASS` | *(None)* | SMTP password |
 
-**2. Deploy:**
+---
+
+## 💻 Development & Testing
 
 ```bash
-npm install -g @railway/cli
-railway login && railway init && railway up
+# Install dependencies
+pnpm install
+
+# Run unit & integration test suite (383 tests)
+npm test
+
+# Build frontend and backend
+npm run build
+
+# Start in development mode
+npm run dev
 ```
-
-**3. Set environment variables in Railway dashboard:**
-
-| Variable | Description |
-|----------|-------------|
-| `OURA_CLIENT_ID` | From your Oura OAuth app |
-| `OURA_CLIENT_SECRET` | From your Oura OAuth app |
-| `NODE_ENV` | `production` |
-| `MCP_SECRET` | *(Optional)* Static bearer token — `openssl rand -base64 32` |
-
-Railway automatically sets `PORT` and `RAILWAY_PUBLIC_DOMAIN`.
-
-**4. Connect from Claude.ai:**
-
-1. Go to Settings → MCP Connectors → Add
-2. Enter your server URL: `https://your-app.railway.app`
-3. Authorize via Oura when prompted
 
 ---
 
-## Contributing
+## 📜 License
 
-See [CLAUDE.md](CLAUDE.md) for architecture details and development guidelines.
+MIT License — see [LICENSE](LICENSE) for details.
 
-## Credits
-
-Based on the excellent work of [mitchhankins01/oura-ring-mcp](https://github.com/mitchhankins01/oura-ring-mcp).
-
-## License
-
-MIT
+Based on the original MCP server by [mitchhankins01](https://github.com/mitchhankins01/oura-ring-mcp).
