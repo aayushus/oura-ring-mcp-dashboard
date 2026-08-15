@@ -92,3 +92,18 @@ Desktop.ini
 tmp/
 temp/
 .cache/
+
+# =============================================================================
+# Documentation & Markdown (Ignore notes/reports, preserve standard README/LICENSE)
+# =============================================================================
+*.md
+**/*.md
+!README.md
+!**/README.md
+!LICENSE.md
+!**/LICENSE.md
+!CONTRIBUTING.md
+!**/CONTRIBUTING.md
+!CHANGELOG.md
+!**/CHANGELOG.md
+
