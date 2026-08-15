@@ -36,19 +36,19 @@ export function RingStatusPill({ ringInfo, personalInfo, lastSyncedTime }: RingS
           gap: 7px;
           height: 30px;
           padding: 0 10px;
-          background: var(--bg-surface, rgba(255, 255, 255, 0.04));
-          border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+          background: var(--bg-hover);
+          border: 1px solid var(--divider);
           border-radius: var(--r-md, 8px);
           font-size: 12px;
           font-weight: 500;
-          color: var(--text-2, rgba(235, 240, 248, 0.8));
+          color: var(--text-2);
           cursor: default;
           user-select: none;
           box-sizing: border-box;
           transition: border-color 0.15s ease;
         }
         .ring-status-pill:hover {
-          border-color: var(--border-default, rgba(255, 255, 255, 0.16));
+          border-color: var(--divider-strong);
         }
         .ring-status-dot {
           width: 7px;
@@ -59,11 +59,11 @@ export function RingStatusPill({ ringInfo, personalInfo, lastSyncedTime }: RingS
         }
         .ring-status-name {
           font-weight: 600;
-          color: var(--text-1, #ffffff);
+          color: var(--text-default);
           letter-spacing: -0.2px;
         }
         .ring-status-battery {
-          color: var(--text-3, rgba(235, 240, 248, 0.5));
+          color: var(--text-3);
           font-size: 11px;
         }
       `}</style>

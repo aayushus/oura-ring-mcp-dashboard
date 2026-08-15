@@ -284,11 +284,11 @@ authRouter.get("/oura/connect", requireAuth, async (req: Request, res: Response)
       client_id: creds.clientId,
       redirect_uri: redirectUri,
       response_type: "code",
-      scope: "personal daily",
+      scope: "email personal daily heartrate workout tag session spo2 ring_configuration stress heart_health",
       state,
     });
 
-    res.json({ url: authUrl });
+    res.json({ url: authUrl, redirectUri });
   } catch (err) {
     console.error("[OAuth] Connect initiation error:", err);
     res.status(500).json({ error: "Internal Server Error" });

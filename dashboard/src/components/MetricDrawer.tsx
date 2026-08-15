@@ -56,7 +56,7 @@ export function MetricDrawer({
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px);
             z-index: 1000;
           }
@@ -67,14 +67,14 @@ export function MetricDrawer({
             bottom: 0;
             width: 100%;
             max-width: 460px;
-            background: var(--bg-app, #0e1017);
-            border-left: 1px solid var(--border-default, rgba(255, 255, 255, 0.1));
+            background: var(--bg-card);
+            border-left: 1px solid var(--divider);
             z-index: 1001;
             display: flex;
             flex-direction: column;
-            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+            box-shadow: var(--shadow-float, -10px 0 40px rgba(0, 0, 0, 0.3));
             overflow-y: auto;
-            color: var(--text-1, #f2f4f8);
+            color: var(--text-default);
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             animation: slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           }
@@ -84,7 +84,7 @@ export function MetricDrawer({
           }
           .metric-drawer-header {
             padding: 24px 24px 20px;
-            border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+            border-bottom: 1px solid var(--divider);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -93,12 +93,13 @@ export function MetricDrawer({
             font-size: 17px;
             font-weight: 700;
             letter-spacing: -0.3px;
+            color: var(--text-default);
           }
           .metric-drawer-close {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--bg-hover);
+            border: 1px solid var(--divider);
             border-radius: 8px;
-            color: var(--text-2, #aeb3b7);
+            color: var(--text-3);
             width: 32px;
             height: 32px;
             display: flex;
@@ -109,8 +110,8 @@ export function MetricDrawer({
             transition: all 0.15s ease;
           }
           .metric-drawer-close:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: #ffffff;
+            background: var(--bg-hover-2);
+            color: var(--text-default);
           }
           .metric-drawer-body {
             padding: 24px;
@@ -122,8 +123,8 @@ export function MetricDrawer({
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--bg-hover);
+            border: 1px solid var(--divider);
             border-radius: 16px;
             padding: 18px 20px;
           }
@@ -149,18 +150,18 @@ export function MetricDrawer({
             align-items: center;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--divider);
             font-size: 13.5px;
           }
           .metric-row:last-child {
             border-bottom: none;
           }
           .metric-row-label {
-            color: var(--text-2, rgba(235, 240, 248, 0.65));
+            color: var(--text-2);
           }
           .metric-row-val {
             font-weight: 600;
-            color: var(--text-1, #ffffff);
+            color: var(--text-default);
           }
           .contributor-item {
             display: flex;
@@ -168,9 +169,10 @@ export function MetricDrawer({
             justify-content: space-between;
             font-size: 13px;
             padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.025);
+            background: var(--bg-hover);
             border-radius: 8px;
             margin-bottom: 6px;
+            color: var(--text-default);
           }
         `}</style>
 
@@ -187,7 +189,7 @@ export function MetricDrawer({
             <>
               <div className="metric-score-hero">
                 <div>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     Sleep Score
                   </div>
                   <div className="metric-score-val" style={{ color: "#9b51e0" }}>
@@ -195,7 +197,7 @@ export function MetricDrawer({
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     Total Sleep
                   </div>
                   <div style={{ fontSize: "20px", fontWeight: 700 }}>
@@ -206,7 +208,7 @@ export function MetricDrawer({
 
               {/* Sleep Stage Breakdown Bar */}
               <div>
-                <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(235,240,248,0.7)", textTransform: "uppercase" }}>
+                <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-2)", textTransform: "uppercase" }}>
                   Sleep Stages
                 </div>
                 <div className="metric-stage-bar">
@@ -226,7 +228,7 @@ export function MetricDrawer({
                     title={`Light Sleep: ${formatDuration(sleepRecord.light)}`}
                   />
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "rgba(235,240,248,0.6)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "var(--text-3)" }}>
                   <span>🔵 Deep: {formatDuration(sleepRecord.deep)}</span>
                   <span>🟣 REM: {formatDuration(sleepRecord.rem)}</span>
                   <span>💠 Light: {formatDuration(sleepRecord.light)}</span>
@@ -271,7 +273,7 @@ export function MetricDrawer({
             <>
               <div className="metric-score-hero">
                 <div>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     Readiness Score
                   </div>
                   <div className="metric-score-val" style={{ color: "#2ecc71" }}>
@@ -279,7 +281,7 @@ export function MetricDrawer({
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     HRV Average
                   </div>
                   <div style={{ fontSize: "20px", fontWeight: 700 }}>
@@ -310,7 +312,7 @@ export function MetricDrawer({
 
               {rawReadinessDoc?.contributors && (
                 <div>
-                  <div style={{ fontSize: "12px", fontWeight: 600, color: "rgba(235,240,248,0.7)", textTransform: "uppercase", marginBottom: "8px" }}>
+                  <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-2)", textTransform: "uppercase", marginBottom: "8px" }}>
                     Readiness Contributors
                   </div>
                   {Object.entries(rawReadinessDoc.contributors).map(([k, val]: [string, any]) => (
@@ -331,7 +333,7 @@ export function MetricDrawer({
             <>
               <div className="metric-score-hero">
                 <div>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     Activity Score
                   </div>
                   <div className="metric-score-val" style={{ color: "#3498db" }}>
@@ -339,7 +341,7 @@ export function MetricDrawer({
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     Total Steps
                   </div>
                   <div style={{ fontSize: "20px", fontWeight: 700 }}>
@@ -384,7 +386,7 @@ export function MetricDrawer({
             <>
               <div className="metric-score-hero">
                 <div>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     High Stress Time
                   </div>
                   <div className="metric-score-val" style={{ color: "#e67e22" }}>
@@ -392,7 +394,7 @@ export function MetricDrawer({
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "12px", color: "rgba(235,240,248,0.5)", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: "12px", color: "var(--text-3)", textTransform: "uppercase" }}>
                     Recovery Time
                   </div>
                   <div style={{ fontSize: "20px", fontWeight: 700, color: "#2ecc71" }}>

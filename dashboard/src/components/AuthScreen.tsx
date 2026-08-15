@@ -132,25 +132,26 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
     <div className="auth-container">
       <style>{`
         .auth-container {
+          min-height: 100vh;
+          width: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 100vh;
-          background: radial-gradient(circle at 50% 10%, #161926 0%, #0b0c10 100%);
+          background: var(--bg-app);
           font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", -apple-system, sans-serif;
-          color: #f2f4f8;
+          color: var(--text-default);
           padding: 24px;
           box-sizing: border-box;
         }
         .auth-card {
           width: 100%;
           max-width: ${isFirstRun || step === 2 ? "480px" : "440px"};
-          background: rgba(20, 22, 29, 0.75);
+          background: var(--bg-card);
           backdrop-filter: blur(24px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid var(--divider);
           border-radius: 24px;
           padding: 36px;
-          box-shadow: 0 24px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.1);
+          box-shadow: var(--shadow-float, 0 24px 48px rgba(0,0,0,0.2));
         }
         .auth-logo {
           display: flex;
@@ -173,14 +174,14 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           text-transform: uppercase;
           padding: 3px 10px;
           border-radius: 100px;
-          background: rgba(255, 255, 255, 0.06);
-          color: rgba(235, 240, 248, 0.4);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          background: var(--bg-hover);
+          color: var(--text-3);
+          border: 1px solid var(--divider);
         }
         .step-pill.active {
-          background: rgba(181, 95, 230, 0.15);
-          color: #c988f0;
-          border-color: rgba(181, 95, 230, 0.3);
+          background: var(--accent-bg, rgba(181, 95, 230, 0.15));
+          color: var(--accent, #b55fe6);
+          border-color: var(--accent, #b55fe6);
         }
         .auth-title {
           font-size: 24px;
@@ -188,20 +189,18 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           letter-spacing: -0.5px;
           text-align: center;
           margin: 0 0 8px 0;
-          background: linear-gradient(135deg, #ffffff 0%, #aeb3b7 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: var(--text-default);
         }
         .auth-subtitle {
           font-size: 13.5px;
           line-height: 1.5;
-          color: rgba(235, 240, 248, 0.55);
+          color: var(--text-2);
           text-align: center;
           margin: 0 0 22px 0;
         }
         .wizard-callout {
-          background: rgba(11, 12, 16, 0.45);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          background: var(--bg-hover);
+          border: 1px solid var(--divider);
           border-radius: 14px;
           padding: 14px 16px;
           margin-bottom: 20px;
@@ -214,7 +213,7 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           align-items: center;
           gap: 10px;
           font-size: 12.5px;
-          color: rgba(235, 240, 248, 0.75);
+          color: var(--text-2);
         }
         .wizard-feature-icon {
           display: flex;
@@ -223,8 +222,8 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           width: 20px;
           height: 20px;
           border-radius: 6px;
-          background: rgba(181, 95, 230, 0.15);
-          color: #b55fe6;
+          background: var(--accent-bg, rgba(181, 95, 230, 0.15));
+          color: var(--accent, #b55fe6);
           font-size: 11px;
           flex-shrink: 0;
         }
@@ -243,25 +242,25 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          color: rgba(235, 240, 248, 0.7);
+          color: var(--text-2);
           display: flex;
           justify-content: space-between;
           align-items: center;
         }
         .auth-input {
-          background: rgba(11, 12, 16, 0.65);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: var(--bg-hover);
+          border: 1px solid var(--divider);
           border-radius: 12px;
           padding: 12px 14px;
-          color: #ffffff;
+          color: var(--text-default);
           font-size: 14px;
           transition: all 0.2s ease;
           outline: none;
         }
         .auth-input:focus {
-          border-color: #b55fe6;
-          box-shadow: 0 0 12px rgba(181, 95, 230, 0.2);
-          background: rgba(11, 12, 16, 0.85);
+          border-color: var(--accent, #b55fe6);
+          box-shadow: 0 0 12px var(--accent-bg, rgba(181, 95, 230, 0.2));
+          background: var(--bg-hover-2);
         }
         .auth-error {
           background: rgba(235, 87, 87, 0.1);
@@ -283,7 +282,7 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           text-align: center;
         }
         .auth-btn {
-          background: linear-gradient(135deg, #b55fe6 0%, #e65fa8 100%);
+          background: var(--accent, #3B6FE0);
           border: none;
           color: #ffffff;
           font-size: 14.5px;
@@ -293,7 +292,7 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           cursor: pointer;
           transition: all 0.2s ease;
           margin-top: 6px;
-          box-shadow: 0 8px 20px rgba(181, 95, 230, 0.25);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -301,7 +300,7 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
         }
         .auth-btn:hover:not(:disabled) {
           transform: translateY(-1px);
-          box-shadow: 0 12px 26px rgba(181, 95, 230, 0.35);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
         }
         .auth-btn:active:not(:disabled) {
           transform: translateY(0);
@@ -311,9 +310,9 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
           cursor: not-allowed;
         }
         .auth-btn-secondary {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #f2f4f8;
+          background: var(--bg-hover);
+          border: 1px solid var(--divider);
+          color: var(--text-default);
           font-size: 13.5px;
           font-weight: 500;
           border-radius: 12px;

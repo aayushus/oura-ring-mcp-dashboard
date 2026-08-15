@@ -93,30 +93,30 @@ export function HomeView({
 
     return (
       <div className="dashboard-stack" style={{ maxWidth: "680px", margin: "40px auto" }}>
-        <div className="halo-card" style={{ padding: "40px", background: "rgba(20, 22, 29, 0.7)", backdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid rgba(255, 255, 255, 0.08)" }}>
-          <h1 style={{ fontSize: "28px", fontWeight: 700, marginBottom: "8px", background: "linear-gradient(135deg, #ffffff 0%, #aeb3b7 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+        <div className="halo-card" style={{ padding: "36px 32px", background: "var(--bg-card)", backdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid var(--divider)" }}>
+          <h1 style={{ fontSize: "26px", fontWeight: 700, marginBottom: "8px", color: "var(--text-default)", letterSpacing: "-0.4px" }}>
             Welcome to Oura MCP Server
           </h1>
-          <p style={{ color: "rgba(235, 240, 248, 0.6)", fontSize: "15px", marginBottom: "32px", lineHeight: "1.6" }}>
+          <p style={{ color: "var(--text-2)", fontSize: "14.5px", marginBottom: "28px", lineHeight: "1.6" }}>
             To begin visualising your sleep, readiness, and activity, follow the steps below to connect your Oura Ring.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#27ae60", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600 }}>✓</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ display: "flex", gap: "16px", padding: "18px 20px", borderRadius: "16px", background: "var(--bg-hover)", border: "1px solid var(--divider)" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--score-optimal, #27ae60)", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>✓</div>
               <div>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 1: Account Created</h3>
-                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)" }}>Your user profile is active.</p>
+                <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--text-default)", marginBottom: "4px" }}>Step 1: Account Created</h3>
+                <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>Your user profile is active.</p>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "16px", padding: "20px", borderRadius: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraConnected ? "#27ae60" : "#b55fe6", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
+            <div style={{ display: "flex", gap: "16px", padding: "18px 20px", borderRadius: "16px", background: "var(--bg-hover)", border: "1px solid var(--divider)" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: flags?.ouraConnected ? "var(--score-optimal, #27ae60)" : "var(--accent, #3B6FE0)", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, flexShrink: 0 }}>
                 {flags?.ouraConnected ? "✓" : "2"}
               </div>
               <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: "16px", fontWeight: 600, color: "#ffffff", marginBottom: "4px" }}>Step 2: Link Oura Ring Account</h3>
-                <p style={{ fontSize: "13.5px", color: "rgba(235, 240, 248, 0.5)", marginBottom: "12px", lineHeight: "1.4" }}>
+                <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--text-default)", marginBottom: "4px" }}>Step 2: Link Oura Ring Account</h3>
+                <p style={{ fontSize: "13px", color: "var(--text-3)", marginBottom: "12px", lineHeight: "1.4" }}>
                   {flags?.ouraConnected ? "Oura Ring account connected!" : "Provide a Personal Access Token or link via OAuth in Settings."}
                 </p>
                 {!flags?.ouraConnected && (

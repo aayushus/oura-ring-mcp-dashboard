@@ -99,8 +99,8 @@ export function YearHeatmap({
     <div className="year-heatmap-container">
       <style>{`
         .year-heatmap-container {
-          background: var(--bg-surface, rgba(20, 22, 29, 0.6));
-          border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+          background: var(--bg-card);
+          border: 1px solid var(--divider);
           border-radius: var(--r-lg, 14px);
           padding: 20px;
           margin-bottom: 24px;
@@ -114,12 +114,12 @@ export function YearHeatmap({
         .heatmap-title {
           font-size: 14px;
           font-weight: 700;
-          color: var(--text-1, #ffffff);
+          color: var(--text-default);
           letter-spacing: -0.2px;
         }
         .heatmap-toggle {
           display: flex;
-          background: rgba(255, 255, 255, 0.05);
+          background: var(--bg-hover);
           border-radius: 8px;
           padding: 2px;
           gap: 2px;
@@ -127,7 +127,7 @@ export function YearHeatmap({
         .heatmap-btn {
           border: none;
           background: transparent;
-          color: var(--text-3, rgba(235, 240, 248, 0.5));
+          color: var(--text-3);
           font-size: 11.5px;
           font-weight: 600;
           padding: 4px 10px;
@@ -136,9 +136,9 @@ export function YearHeatmap({
           transition: all 0.15s ease;
         }
         .heatmap-btn.active {
-          background: var(--bg-app, #141722);
-          color: var(--text-1, #ffffff);
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+          background: var(--bg-elevated);
+          color: var(--text-default);
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
         }
         .heatmap-grid-scroll {
           overflow-x: auto;

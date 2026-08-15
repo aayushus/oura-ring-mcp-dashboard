@@ -80,12 +80,12 @@ export function RecoveryBanner({ data, selectedDay }: RecoveryBannerProps) {
           align-items: flex-start;
           gap: 16px;
           padding: 16px 20px;
-          background: var(--bg-surface, rgba(20, 22, 29, 0.6));
+          background: var(--bg-card);
           backdrop-filter: blur(12px);
-          border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+          border: 1px solid var(--divider);
           border-radius: var(--r-lg, 14px);
           margin-bottom: 20px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+          box-shadow: var(--shadow-float, 0 4px 20px rgba(0, 0, 0, 0.08));
         }
         .recovery-badge {
           display: inline-flex;
@@ -113,13 +113,13 @@ export function RecoveryBanner({ data, selectedDay }: RecoveryBannerProps) {
         .recovery-narrative {
           font-size: 13.5px;
           line-height: 1.5;
-          color: var(--text-1, #f2f4f8);
+          color: var(--text-default);
           font-weight: 500;
         }
         .recovery-recommendation {
           font-size: 12.5px;
           line-height: 1.45;
-          color: var(--text-2, rgba(235, 240, 248, 0.65));
+          color: var(--text-2);
         }
         @media (max-width: 640px) {
           .recovery-banner {

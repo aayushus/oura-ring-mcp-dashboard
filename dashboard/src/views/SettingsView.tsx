@@ -85,6 +85,11 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
   const [generatingKey, setGeneratingKey] = useState(false);
 
+  // Personal Access Token form states
+  const [patToken, setPatToken] = useState("");
+  const [submittingPat, setSubmittingPat] = useState(false);
+  const [connectionTab, setConnectionTab] = useState<"pat" | "oauth">("pat");
+
   // Admin User Directory states
   const [usersList, setUsersList] = useState<ManagedUser[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -247,6 +252,35 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
     }
   }
 
+  async function handleSavePatToken(e: React.FormEvent) {
+    e.preventDefault();
+    if (!patToken.trim()) return;
+    try {
+      setSubmittingPat(true);
+      setError(null);
+      setSuccessMsg(null);
+      const response = await fetch("/api/auth/oura/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch",
+        },
+        body: JSON.stringify({ token: patToken.trim() }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to validate and save token");
+      }
+      setPatToken("");
+      await onRefreshFlags();
+      setSuccessMsg(`Oura Ring connected successfully! ${data.personalInfo?.email ? `Linked to ${data.personalInfo.email}` : ""}`);
+    } catch (err: any) {
+      setError(err.message || String(err));
+    } finally {
+      setSubmittingPat(false);
+    }
+  }
+
   async function handleConnectOura() {
     try {
       setError(null);
@@ -405,12 +439,12 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
         <Alert variant="success" title="New API Key Generated">
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
             <p>Make sure to copy your new MCP access token now. You will not be able to see it again!</p>
-            <div style={{ display: "flex", gap: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "8px", padding: "8px 12px", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <div style={{ display: "flex", gap: "8px", background: "var(--bg-hover)", borderRadius: "8px", padding: "8px 12px", border: "1px solid var(--divider)" }}>
               <input
                 type="text"
                 readOnly
                 value={generatedKey}
-                style={{ background: "none", border: "none", color: "#27ae60", fontSize: "13px", fontWeight: "bold", flex: 1, padding: 0, outline: "none" }}
+                style={{ background: "none", border: "none", color: "var(--score-optimal, #27ae60)", fontSize: "13px", fontWeight: "bold", flex: 1, padding: 0, outline: "none" }}
               />
               <button
                 type="button"
@@ -418,7 +452,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                   navigator.clipboard.writeText(generatedKey);
                   setSuccessMsg("Copied key to clipboard!");
                 }}
-                style={{ background: "none", border: "none", color: "#b55fe6", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: 0 }}
+                style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: 0 }}
               >
                 Copy
               </button>
@@ -524,39 +558,135 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
 
           {/* Oura Connection Card */}
           <div className="halo-card">
-            <h2 className="halo-card-title">Oura Connection</h2>
+            <h2 className="halo-card-title">Oura Ring Connection</h2>
             <p className="halo-card-desc">
               Connect your own Oura Ring account to authorize sync updates.
             </p>
 
             <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
               {flags.ouraConnected ? (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(39, 174, 96, 0.1)", border: "1px solid rgba(39, 174, 96, 0.2)", borderRadius: "12px", padding: "12px 16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#27ae60", boxShadow: "0 0 8px #27ae60" }} />
-                    <span style={{ fontSize: "14px", fontWeight: 600, color: "#27ae60" }}>Link Active</span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--bg-hover)", border: "1px solid var(--score-optimal, #27ae60)", borderRadius: "12px", padding: "14px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "var(--score-optimal, #27ae60)", boxShadow: "0 0 8px var(--score-optimal, #27ae60)" }} />
+                    <div>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-default)" }}>Oura Ring Connected</div>
+                      <div style={{ fontSize: "12px", color: "var(--text-3)" }}>Biometrics are actively linked to your account</div>
+                    </div>
                   </div>
-                  <Button variant="secondary" onClick={handleDisconnectOura} style={{ height: "30px", fontSize: "12px", background: "rgba(235, 87, 87, 0.1)", color: "#eb5757", border: "1px solid rgba(235, 87, 87, 0.2)" }}>
+                  <Button variant="secondary" onClick={handleDisconnectOura} style={{ height: "32px", fontSize: "12px", color: "var(--score-low, #eb5757)" }}>
                     Disconnect
                   </Button>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <div style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px", padding: "12px 16px", lineHeight: "1.4" }}>
-                    {flags.ouraAppConfigured ? (
-                      "Your administrator has set up the Oura API application. You can link your account now."
-                    ) : (
-                      <span style={{ color: "#eb5757" }}>Oura API Developer credentials must be configured in settings below before you can link your Oura Ring account.</span>
-                    )}
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {/* Connection Method Selector */}
+                  <div style={{ display: "flex", background: "var(--bg-hover)", padding: "3px", borderRadius: "8px", gap: "4px" }}>
+                    <button
+                      type="button"
+                      onClick={() => setConnectionTab("pat")}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "12.5px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        background: connectionTab === "pat" ? "var(--bg-card)" : "transparent",
+                        color: connectionTab === "pat" ? "var(--text-default)" : "var(--text-3)",
+                        boxShadow: connectionTab === "pat" ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      Personal Access Token (Recommended)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConnectionTab("oauth")}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "12.5px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        background: connectionTab === "oauth" ? "var(--bg-card)" : "transparent",
+                        color: connectionTab === "oauth" ? "var(--text-default)" : "var(--text-3)",
+                        boxShadow: connectionTab === "oauth" ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      OAuth 2.0 App
+                    </button>
                   </div>
-                  <Button
-                    variant="primary"
-                    onClick={handleConnectOura}
-                    disabled={!flags.ouraAppConfigured}
-                    style={{ width: "100%", justifyContent: "center" }}
-                  >
-                    Link Oura Ring Account
-                  </Button>
+
+                  {connectionTab === "pat" ? (
+                    <form onSubmit={handleSavePatToken} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <p style={{ fontSize: "13px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
+                        Generate a 10-year Personal Access Token from{" "}
+                        <a
+                          href="https://cloud.ouraring.com/personal-access-tokens"
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ color: "var(--accent)", textDecoration: "underline", fontWeight: 600 }}
+                        >
+                          cloud.ouraring.com/personal-access-tokens
+                        </a>{" "}
+                        and paste it below. Instant setup, no developer app required.
+                      </p>
+                      <input
+                        type="password"
+                        placeholder="Paste Personal Access Token"
+                        value={patToken}
+                        onChange={(e) => setPatToken(e.target.value)}
+                        required
+                        style={{
+                          background: "var(--bg-hover)",
+                          border: "1px solid var(--divider)",
+                          borderRadius: "10px",
+                          padding: "10px 14px",
+                          color: "var(--text-default)",
+                          fontSize: "13.5px",
+                          outline: "none",
+                          width: "100%",
+                          boxSizing: "border-box",
+                        }}
+                      />
+                      <Button
+                        variant="primary"
+                        disabled={submittingPat || !patToken.trim()}
+                        style={{ width: "100%", justifyContent: "center" }}
+                      >
+                        {submittingPat ? "Validating Token with Oura..." : "Save & Connect Ring"}
+                      </Button>
+                    </form>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div style={{ fontSize: "13px", color: "var(--text-2)", background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px", padding: "12px 16px", lineHeight: "1.5" }}>
+                        {flags.ouraAppConfigured ? (
+                          <>
+                            <div>Your administrator has configured the Oura API application.</div>
+                            <div style={{ fontSize: "11.5px", color: "var(--text-3)", marginTop: "6px" }}>
+                              Note: If Oura shows <code>400 invalid_request</code>, ensure your Redirect URI in the Oura Developer portal matches: <code>{redirectUri}</code>
+                            </div>
+                          </>
+                        ) : (
+                          <span style={{ color: "var(--score-low, #eb5757)" }}>
+                            Oura API Developer credentials must be configured in settings below before you can link via OAuth.
+                          </span>
+                        )}
+                      </div>
+                      <Button
+                        variant="primary"
+                        onClick={handleConnectOura}
+                        disabled={!flags.ouraAppConfigured}
+                        style={{ width: "100%", justifyContent: "center" }}
+                      >
+                        Link via OAuth Popup
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -576,11 +706,11 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                 onChange={(e) => setNewKeyName(e.target.value)}
                 placeholder="e.g. Claude Desktop"
                 style={{
-                  background: "rgba(11, 12, 16, 0.6)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  background: "var(--bg-hover)",
+                  border: "1px solid var(--divider)",
                   borderRadius: "12px",
                   padding: "10px 14px",
-                  color: "#ffffff",
+                  color: "var(--text-default)",
                   fontSize: "14px",
                   flex: 1,
                   outline: "none"
@@ -594,20 +724,20 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {apiKeys.length === 0 ? (
-                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", textAlign: "center", padding: "12px", background: "rgba(255,255,255,0.01)", borderRadius: "10px" }}>
+                <div style={{ fontSize: "13px", color: "var(--text-3)", textAlign: "center", padding: "12px", background: "var(--bg-hover)", borderRadius: "10px", border: "1px solid var(--divider)" }}>
                   No API Keys active. Generate one above to connect.
                 </div>
               ) : (
                 apiKeys.map((key) => (
-                  <div key={key.key_hash} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px" }}>
+                  <div key={key.key_hash} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px" }}>
                     <div>
-                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#ffffff" }}>{key.name}</div>
-                      <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-default)" }}>{key.name}</div>
+                      <div style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>
                         Created {formatDate(key.created_at)}
                         {key.last_used_at && ` · Last used ${formatDate(key.last_used_at)}`}
                       </div>
                     </div>
-                    <Button variant="secondary" onClick={() => handleRevokeKey(key.key_hash)} style={{ height: "26px", fontSize: "11px", color: "#eb5757", background: "rgba(235, 87, 87, 0.05)", border: "1px solid rgba(235, 87, 87, 0.1)" }}>
+                    <Button variant="secondary" onClick={() => handleRevokeKey(key.key_hash)} style={{ height: "26px", fontSize: "11px", color: "var(--score-low, #eb5757)" }}>
                       Revoke
                     </Button>
                   </div>
@@ -673,7 +803,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
 
                 <div className="halo-field">
                   <label htmlFor="settings-client-secret">
-                    Client Secret {secretConfigured && <span style={{ color: "#27ae60", fontSize: "11px", fontWeight: "normal" }}>(Configured ✓)</span>}
+                    Client Secret {secretConfigured && <span style={{ color: "var(--score-optimal, #27ae60)", fontSize: "11px", fontWeight: "normal" }}>(Configured ✓)</span>}
                   </label>
                   <input
                     id="settings-client-secret"
@@ -687,22 +817,22 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
 
                 <div className="halo-field">
                   <label>Redirect URI</label>
-                  <div style={{ display: "flex", gap: "8px", background: "rgba(0,0,0,0.2)", borderRadius: "8px", padding: "8px 12px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div style={{ display: "flex", gap: "8px", background: "var(--bg-hover)", borderRadius: "8px", padding: "8px 12px", border: "1px solid var(--divider)" }}>
                     <input
                       type="text"
                       readOnly
                       value={redirectUri}
-                      style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: "12px", flex: 1, padding: 0, outline: "none" }}
+                      style={{ background: "none", border: "none", color: "var(--text-2)", fontSize: "12px", flex: 1, padding: 0, outline: "none" }}
                     />
                     <button
                       type="button"
                       onClick={() => navigator.clipboard.writeText(redirectUri)}
-                      style={{ background: "none", border: "none", color: "#b55fe6", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: 0 }}
+                      style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: 0 }}
                     >
                       Copy
                     </button>
                   </div>
-                  <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "4px", display: "block" }}>
+                  <span style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px", display: "block" }}>
                     Configure this Redirect URI in your Oura Developer portal account settings.
                   </span>
                 </div>
@@ -724,18 +854,18 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
 
               <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
                 {loadingUsers ? (
-                  <div style={{ textAlign: "center", fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>Loading users directory...</div>
+                  <div style={{ textAlign: "center", fontSize: "13px", color: "var(--text-3)" }}>Loading users directory...</div>
                 ) : (
                   usersList.map((mUser) => (
-                    <div key={mUser.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "12px" }}>
+                    <div key={mUser.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px" }}>
                       <div>
-                        <div style={{ fontSize: "14px", fontWeight: 600, color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-default)", display: "flex", alignItems: "center", gap: "6px" }}>
                           {mUser.name}
-                          <span style={{ fontSize: "10px", fontWeight: "normal", background: mUser.role === "admin" ? "#b55fe6" : "rgba(255,255,255,0.1)", color: "#ffffff", padding: "1px 6px", borderRadius: "8px" }}>
+                          <span style={{ fontSize: "10px", fontWeight: "normal", background: mUser.role === "admin" ? "var(--accent, #b55fe6)" : "var(--bg-hover-2)", color: "#ffffff", padding: "1px 6px", borderRadius: "8px" }}>
                             {mUser.role}
                           </span>
                         </div>
-                        <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>
+                        <div style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>
                           {mUser.email} · Joined {formatDate(mUser.created_at)}
                         </div>
                       </div>
@@ -746,9 +876,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                         style={{
                           height: "26px",
                           fontSize: "11px",
-                          color: mUser.disabled === 1 ? "#27ae60" : "#eb5757",
-                          background: mUser.disabled === 1 ? "rgba(39, 174, 96, 0.05)" : "rgba(235, 87, 87, 0.05)",
-                          border: mUser.disabled === 1 ? "1px solid rgba(39, 174, 96, 0.1)" : "1px solid rgba(235, 87, 87, 0.1)"
+                          color: mUser.disabled === 1 ? "var(--score-optimal, #27ae60)" : "var(--score-low, #eb5757)"
                         }}
                       >
                         {mUser.disabled === 1 ? "Enable" : "Disable"}
