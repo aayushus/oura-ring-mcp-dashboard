@@ -624,7 +624,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                   {connectionTab === "pat" ? (
                     <form onSubmit={handleSavePatToken} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                       <p style={{ fontSize: "13px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
-                        Generate a 10-year Personal Access Token from{" "}
+                        Create a Personal Access Token from{" "}
                         <a
                           href="https://cloud.ouraring.com/personal-access-tokens"
                           target="_blank"
@@ -697,7 +697,7 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                       </Button>
 
                       <div style={{ textAlign: "center", fontSize: "12px", color: "var(--text-3)", lineHeight: "1.4" }}>
-                        💡 <strong>Don't want to create a developer app?</strong> Use the <strong>Personal Access Token</strong> tab above — it's instant, free, and lasts 10 years!
+                        💡 <strong>Don't want to create a developer app?</strong> Use the <strong>Personal Access Token</strong> tab above — instant setup with no developer portal registration!
                       </div>
                     </div>
                   )}
