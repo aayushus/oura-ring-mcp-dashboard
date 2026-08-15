@@ -7,7 +7,7 @@
  */
 
 import cron from "node-cron";
-import { OuraClient } from "./client.js";
+import { OuraClient, type SleepSession } from "./client.js";
 import {
   upsertSleep,
   upsertReadiness,
@@ -214,8 +214,8 @@ export async function syncData(
 
     // 1. Process Sleep
     const sleepScores = results["daily_sleep"]?.data ?? [];
-    const sleepSessions = results["sleep"]?.data ?? [];
-    const sessionsByDay = new Map<string, any>(sleepSessions.map((s: any) => [s.day, s]));
+    const sleepSessions: SleepSession[] = (results["sleep"]?.data as SleepSession[]) ?? [];
+    const sessionsByDay = new Map<string, SleepSession>(sleepSessions.map((s) => [s.day, s]));
     for (const score of sleepScores) {
       days.add(score.day);
       const session = sessionsByDay.get(score.day);
