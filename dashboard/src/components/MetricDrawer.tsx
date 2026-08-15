@@ -265,6 +265,96 @@ export function MetricDrawer({
                   </div>
                 )}
               </div>
+
+              {rawSleepDoc?.contributors && (
+                <div style={{ marginTop: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-2)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Sleep Contributors
+                    </span>
+                    <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                      Worst on top
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {Object.entries(rawSleepDoc.contributors)
+                      .map(([k, val]: [string, any]) => ({ key: k, name: k.replace(/_/g, " "), value: Number(val) }))
+                      .filter((item) => !isNaN(item.value) && item.value >= 0)
+                      .sort((a, b) => a.value - b.value)
+                      .map((item) => {
+                        const bandColor =
+                          item.value >= 85
+                            ? "var(--score-optimal, #30D158)"
+                            : item.value >= 70
+                            ? "var(--score-good, #66D4A8)"
+                            : item.value >= 60
+                            ? "var(--score-fair, #FFD60A)"
+                            : "var(--score-low, #FF6B5E)";
+                        const bandLabel =
+                          item.value >= 85 ? "Optimal" : item.value >= 70 ? "Good" : item.value >= 60 ? "Fair" : "Attention";
+                        return (
+                          <div
+                            key={item.key}
+                            style={{
+                              background: "var(--bg-hover, rgba(255,255,255,0.03))",
+                              padding: "8px 10px",
+                              borderRadius: "8px",
+                              border: "1px solid var(--divider)",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                marginBottom: "5px",
+                              }}
+                            >
+                              <span style={{ fontSize: "12.5px", textTransform: "capitalize", fontWeight: 500 }}>
+                                {item.name}
+                              </span>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                <span
+                                  style={{
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    color: bandColor,
+                                    background: `${bandColor}20`,
+                                    padding: "1px 5px",
+                                    borderRadius: "4px",
+                                  }}
+                                >
+                                  {bandLabel}
+                                </span>
+                                <span style={{ fontSize: "13px", fontWeight: 700, color: bandColor }}>
+                                  {item.value}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                height: "5px",
+                                width: "100%",
+                                background: "var(--bg-elevated, rgba(255,255,255,0.08))",
+                                borderRadius: "3px",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  height: "100%",
+                                  width: `${Math.min(100, Math.max(0, item.value))}%`,
+                                  background: bandColor,
+                                  borderRadius: "3px",
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
             </>
           )}
 
@@ -311,18 +401,92 @@ export function MetricDrawer({
               </div>
 
               {rawReadinessDoc?.contributors && (
-                <div>
-                  <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-2)", textTransform: "uppercase", marginBottom: "8px" }}>
-                    Readiness Contributors
+                <div style={{ marginTop: "16px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--text-2)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Readiness Contributors
+                    </span>
+                    <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                      Worst on top
+                    </span>
                   </div>
-                  {Object.entries(rawReadinessDoc.contributors).map(([k, val]: [string, any]) => (
-                    <div className="contributor-item" key={k}>
-                      <span style={{ textTransform: "capitalize" }}>{k.replace(/_/g, " ")}</span>
-                      <span style={{ fontWeight: 600, color: val >= 85 ? "#2ecc71" : val >= 70 ? "#3498db" : "#e74c3c" }}>
-                        {val}
-                      </span>
-                    </div>
-                  ))}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {Object.entries(rawReadinessDoc.contributors)
+                      .map(([k, val]: [string, any]) => ({ key: k, name: k.replace(/_/g, " "), value: Number(val) }))
+                      .filter((item) => !isNaN(item.value) && item.value >= 0)
+                      .sort((a, b) => a.value - b.value)
+                      .map((item) => {
+                        const bandColor =
+                          item.value >= 85
+                            ? "var(--score-optimal, #30D158)"
+                            : item.value >= 70
+                            ? "var(--score-good, #66D4A8)"
+                            : item.value >= 60
+                            ? "var(--score-fair, #FFD60A)"
+                            : "var(--score-low, #FF6B5E)";
+                        const bandLabel =
+                          item.value >= 85 ? "Optimal" : item.value >= 70 ? "Good" : item.value >= 60 ? "Fair" : "Attention";
+                        return (
+                          <div
+                            key={item.key}
+                            style={{
+                              background: "var(--bg-hover, rgba(255,255,255,0.03))",
+                              padding: "8px 10px",
+                              borderRadius: "8px",
+                              border: "1px solid var(--divider)",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                marginBottom: "5px",
+                              }}
+                            >
+                              <span style={{ fontSize: "12.5px", textTransform: "capitalize", fontWeight: 500 }}>
+                                {item.name}
+                              </span>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                <span
+                                  style={{
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    color: bandColor,
+                                    background: `${bandColor}20`,
+                                    padding: "1px 5px",
+                                    borderRadius: "4px",
+                                  }}
+                                >
+                                  {bandLabel}
+                                </span>
+                                <span style={{ fontSize: "13px", fontWeight: 700, color: bandColor }}>
+                                  {item.value}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                height: "5px",
+                                width: "100%",
+                                background: "var(--bg-elevated, rgba(255,255,255,0.08))",
+                                borderRadius: "3px",
+                                overflow: "hidden",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  height: "100%",
+                                  width: `${Math.min(100, Math.max(0, item.value))}%`,
+                                  background: bandColor,
+                                  borderRadius: "3px",
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
               )}
             </>

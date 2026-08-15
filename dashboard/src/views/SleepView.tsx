@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from "../components/components";
 import { MetricTable, type MetricColumn } from "../components/halo";
 import type { SleepRecord } from "../types";
 import { DashboardBarChart, DashboardLineChart } from "./charts";
+import { ContributorsCard } from "../components/ContributorsCard";
 
 interface SleepViewProps {
   sleepChartData: any[];
@@ -25,18 +26,7 @@ export function SleepView({
 }: SleepViewProps) {
   const latestRawSleep = rawSleep && rawSleep.length > 0 ? rawSleep[rawSleep.length - 1] : null;
 
-  // 1. Process Contributors list sorted worst first
-  const contributorsList =
-    latestRawSleep && latestRawSleep.contributors
-      ? Object.entries(latestRawSleep.contributors)
-          .map(([name, value]) => ({
-            name: name.replace(/_/g, " "),
-            value: Number(value),
-          }))
-          .sort((a, b) => a.value - b.value)
-      : [];
-
-  // 2. Process Hypnogram (last night's stages time series)
+  // 1. Process Hypnogram (last night's stages time series)
   const hypnogramData: any[] = [];
   if (latestRawSleep && latestRawSleep.sleep_phase_5_min) {
     const stages = latestRawSleep.sleep_phase_5_min.split("").map(Number);
@@ -66,7 +56,7 @@ export function SleepView({
     });
   }
 
-  // 3. Format Sleep Debt chart data
+  // 2. Format Sleep Debt chart data
   const sleepDebtChartData = sleepDebt.map((d) => ({
     day: d.day.slice(-5), // Short date MM-DD
     debt: d.debt,
@@ -84,37 +74,13 @@ export function SleepView({
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px" }}>
         
-        {/* Contributor Sorted Bars */}
-        <Card>
-          <CardHeader
-            title="Contributors"
-            description="Worst sleeping parameters sorted on top"
-          />
-          <CardContent>
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "8px 0" }}>
-              {contributorsList.length === 0 ? (
-                <p style={{ opacity: 0.6, fontSize: "0.9rem" }}>No sleep stage contributor metrics available. Verify ring sync or wearable data for this date.</p>
-              ) : (
-                contributorsList.map((contrib) => {
-                  const val = contrib.value;
-                  const band = val >= 85 ? "optimal" : val >= 70 ? "fair" : "low";
-                  const color = band === "optimal" ? "var(--optimal)" : band === "fair" ? "var(--stress)" : "var(--low)";
-                  return (
-                    <div key={contrib.name}>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "4px" }}>
-                        <span style={{ textTransform: "capitalize" }}>{contrib.name}</span>
-                        <span style={{ fontWeight: 600, color }}>{val}</span>
-                      </div>
-                      <div style={{ height: "6px", width: "100%", background: "var(--divider)", borderRadius: "3px", overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${val}%`, background: color }} />
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Contributor Sorted Breakdown */}
+        <ContributorsCard
+          title="Contributors"
+          description="Worst sleeping parameters sorted on top"
+          contributors={latestRawSleep?.contributors || {}}
+          type="sleep"
+        />
 
         {/* Hypnogram Step Chart */}
         <Card>
