@@ -662,21 +662,31 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                       </Button>
                     </form>
                   ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                      <div style={{ fontSize: "13px", color: "var(--text-2)", background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px", padding: "12px 16px", lineHeight: "1.5" }}>
-                        {flags.ouraAppConfigured ? (
-                          <>
-                            <div>Your administrator has configured the Oura API application.</div>
-                            <div style={{ fontSize: "11.5px", color: "var(--text-3)", marginTop: "6px" }}>
-                              Note: If Oura shows <code>400 invalid_request</code>, ensure your Redirect URI in the Oura Developer portal matches: <code>{redirectUri}</code>
-                            </div>
-                          </>
-                        ) : (
-                          <span style={{ color: "var(--score-low, #eb5757)" }}>
-                            Oura API Developer credentials must be configured in settings below before you can link via OAuth.
-                          </span>
-                        )}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                      <div style={{ background: "var(--bg-hover)", border: "1px solid var(--divider)", borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, fontSize: "13px", color: flags.ouraAppConfigured ? "var(--score-optimal, #27ae60)" : "var(--score-fair, #f39c12)" }}>
+                          {flags.ouraAppConfigured ? "✓ Oura Developer App Configured" : "⚠️ Prerequisite: Oura Developer App Required"}
+                        </div>
+                        <p style={{ fontSize: "12.5px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
+                          {flags.ouraAppConfigured
+                            ? "Click below to link via OAuth. If Oura shows \"400 invalid_request\", verify that your Redirect URI in the Oura Developer Console matches the URL below exactly."
+                            : "OAuth requires the server administrator to register an application on Oura's Developer Portal first and enter the credentials in the section below."}
+                        </p>
+                        <div style={{ background: "var(--bg-card)", padding: "8px 12px", borderRadius: "8px", fontSize: "11.5px", fontFamily: "var(--f-mono)", color: "var(--text-default)", border: "1px solid var(--divider)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ wordBreak: "break-all" }}>{redirectUri}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(redirectUri);
+                              setSuccessMsg("Copied Redirect URI to clipboard!");
+                            }}
+                            style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: "0 0 0 8px", flexShrink: 0 }}
+                          >
+                            Copy URI
+                          </button>
+                        </div>
                       </div>
+
                       <Button
                         variant="primary"
                         onClick={handleConnectOura}
@@ -685,6 +695,10 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                       >
                         Link via OAuth Popup
                       </Button>
+
+                      <div style={{ textAlign: "center", fontSize: "12px", color: "var(--text-3)", lineHeight: "1.4" }}>
+                        💡 <strong>Don't want to create a developer app?</strong> Use the <strong>Personal Access Token</strong> tab above — it's instant, free, and lasts 10 years!
+                      </div>
                     </div>
                   )}
                 </div>
@@ -788,7 +802,38 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                 Configure Developer credentials to permit OAuth connections.
               </p>
 
-              <form className="halo-form" onSubmit={handleSaveSettings} style={{ marginTop: "16px" }}>
+              {/* Step-by-Step Setup Guide & Caution Callout */}
+              <div style={{ background: "var(--bg-hover)", border: "1px solid var(--divider-strong)", borderRadius: "12px", padding: "16px", marginTop: "16px", marginBottom: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, fontSize: "13px", color: "var(--score-fair, #f39c12)" }}>
+                  ⚠️ Caution: You Must Register an App on Oura First
+                </div>
+                <p style={{ fontSize: "12.5px", color: "var(--text-2)", margin: 0, lineHeight: "1.5" }}>
+                  Before OAuth can connect, you must create a free application in the Oura Cloud Developer portal.
+                </p>
+                <ol style={{ fontSize: "12px", color: "var(--text-2)", margin: 0, paddingLeft: "18px", lineHeight: "1.6" }}>
+                  <li>Open <a href="https://cloud.ouraring.com/oauth/applications" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", fontWeight: 600 }}>cloud.ouraring.com/oauth/applications</a> in your browser.</li>
+                  <li>Click <strong>+ New Application</strong>.</li>
+                  <li>Enter your app name and set <strong>Redirect URI</strong> to:
+                    <div style={{ background: "var(--bg-card)", padding: "4px 8px", borderRadius: "6px", fontFamily: "var(--f-mono)", fontSize: "11px", color: "var(--text-default)", border: "1px solid var(--divider)", marginTop: "4px", marginBottom: "4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>{redirectUri}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(redirectUri);
+                          setSuccessMsg("Copied Redirect URI to clipboard!");
+                        }}
+                        style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "10.5px", fontWeight: 600 }}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </li>
+                  <li>Check/enable all scopes (Personal, Daily, Heart Rate, Workout, Stress, etc.).</li>
+                  <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong> into the form below and click Save.</li>
+                </ol>
+              </div>
+
+              <form className="halo-form" onSubmit={handleSaveSettings}>
                 <div className="halo-field">
                   <label htmlFor="settings-client-id">Client ID</label>
                   <input
@@ -813,28 +858,6 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                     placeholder={secretConfigured ? "••••••••••••••••" : "Enter Oura Client Secret"}
                     required={!secretConfigured}
                   />
-                </div>
-
-                <div className="halo-field">
-                  <label>Redirect URI</label>
-                  <div style={{ display: "flex", gap: "8px", background: "var(--bg-hover)", borderRadius: "8px", padding: "8px 12px", border: "1px solid var(--divider)" }}>
-                    <input
-                      type="text"
-                      readOnly
-                      value={redirectUri}
-                      style={{ background: "none", border: "none", color: "var(--text-2)", fontSize: "12px", flex: 1, padding: 0, outline: "none" }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => navigator.clipboard.writeText(redirectUri)}
-                      style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: 0 }}
-                    >
-                      Copy
-                    </button>
-                  </div>
-                  <span style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px", display: "block" }}>
-                    Configure this Redirect URI in your Oura Developer portal account settings.
-                  </span>
                 </div>
 
                 <button type="submit" className="halo-btn halo-btn-primary halo-btn-block" disabled={savingSettings}>

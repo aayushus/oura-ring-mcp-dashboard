@@ -531,10 +531,14 @@ export function AuthScreen({ isFirstRun, signupsEnabled, onSuccess }: AuthScreen
                 {connectingOauth ? "Opening OAuth Window..." : "🔗 Connect via Oura OAuth Popup"}
               </button>
 
+              <div style={{ textAlign: "center", fontSize: "11px", color: "var(--text-3)", lineHeight: "1.4" }}>
+                Note: OAuth requires an Oura Developer App configured with Redirect URI: <code>{typeof window !== "undefined" ? `${window.location.origin}/api/auth/oura/callback` : "/api/auth/oura/callback"}</code>
+              </div>
+
               <button
                 type="button"
                 className="auth-btn-secondary"
-                style={{ background: "transparent", border: "none", color: "rgba(235, 240, 248, 0.5)", marginTop: "4px", fontSize: "12.5px" }}
+                style={{ background: "transparent", border: "none", color: "var(--text-3)", marginTop: "4px", fontSize: "12.5px" }}
                 onClick={() => onSuccess(createdUser)}
               >
                 Skip for now (configure later in Settings)
