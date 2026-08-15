@@ -435,33 +435,6 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
         </Alert>
       )}
 
-      {generatedKey && (
-        <Alert variant="success" title="New API Key Generated">
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-            <p>Make sure to copy your new MCP access token now. You will not be able to see it again!</p>
-            <div style={{ display: "flex", gap: "8px", background: "var(--bg-hover)", borderRadius: "8px", padding: "8px 12px", border: "1px solid var(--divider)" }}>
-              <input
-                type="text"
-                readOnly
-                value={generatedKey}
-                style={{ background: "none", border: "none", color: "var(--score-optimal, #27ae60)", fontSize: "13px", fontWeight: "bold", flex: 1, padding: 0, outline: "none" }}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText(generatedKey);
-                  setSuccessMsg("Copied key to clipboard!");
-                }}
-                style={{ background: "none", border: "none", color: "var(--accent, #b55fe6)", cursor: "pointer", fontSize: "11px", fontWeight: 600, padding: 0 }}
-              >
-                Copy
-              </button>
-            </div>
-            <Button variant="secondary" onClick={() => setGeneratedKey(null)} style={{ alignSelf: "flex-end", height: "26px", fontSize: "11px" }}>Close Warning</Button>
-          </div>
-        </Alert>
-      )}
-
       <div className="halo-grid-2">
         <div className="halo-stack-20">
           {/* Profile form */}
@@ -735,6 +708,94 @@ export function SettingsView({ user, flags, onRefreshFlags }: SettingsViewProps)
                 {generatingKey ? "Generating..." : "Generate Key"}
               </button>
             </form>
+
+            {/* In-Card Generated API Key Banner */}
+            {generatedKey && (
+              <div
+                style={{
+                  background: "var(--bg-hover)",
+                  border: "1px solid var(--score-optimal, #27ae60)",
+                  borderRadius: "12px",
+                  padding: "14px 16px",
+                  marginBottom: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--score-optimal, #27ae60)" }}>
+                    ✓ New API Key Generated
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setGeneratedKey(null)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--text-3)",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      padding: "2px 6px",
+                    }}
+                  >
+                    ✕ Dismiss
+                  </button>
+                </div>
+                <p style={{ fontSize: "12px", color: "var(--text-2)", margin: 0, lineHeight: "1.4" }}>
+                  Copy your new MCP access token now. You will not be able to see it again!
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    background: "var(--bg-card)",
+                    borderRadius: "8px",
+                    padding: "8px 12px",
+                    border: "1px solid var(--divider)",
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    type="text"
+                    readOnly
+                    value={generatedKey}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--score-optimal, #27ae60)",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      fontFamily: "var(--f-mono)",
+                      flex: 1,
+                      padding: 0,
+                      outline: "none",
+                      userSelect: "all",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedKey);
+                      setSuccessMsg("Copied key to clipboard!");
+                    }}
+                    style={{
+                      background: "var(--accent, #b55fe6)",
+                      border: "none",
+                      color: "#ffffff",
+                      borderRadius: "6px",
+                      padding: "6px 12px",
+                      cursor: "pointer",
+                      fontSize: "11.5px",
+                      fontWeight: 600,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Copy Key
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {apiKeys.length === 0 ? (
