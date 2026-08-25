@@ -304,7 +304,7 @@ describe("Dispersion Analysis", () => {
 
 describe("Smoothing", () => {
   describe("gaussianSmooth", () => {
-    it("smooths data", () => {
+    it("smooths jagged data", () => {
       const data = [1, 10, 1, 10, 1, 10, 1]; // jagged
       const smoothed = gaussianSmooth(data, 1);
 
@@ -312,15 +312,55 @@ describe("Smoothing", () => {
       const originalRange = max(data) - min(data);
       const smoothedRange = max(smoothed) - min(smoothed);
       expect(smoothedRange).toBeLessThan(originalRange);
+
+      // Values should remain in expected bounds
+      expect(Math.min(...smoothed)).toBeGreaterThan(1);
+      expect(Math.max(...smoothed)).toBeLessThan(10);
     });
 
-    it("returns original for sigma 0", () => {
+    it("returns original for sigma 0 or negative", () => {
       const data = [1, 2, 3];
       expect(gaussianSmooth(data, 0)).toEqual(data);
+      expect(gaussianSmooth(data, -1)).toEqual(data);
     });
 
     it("handles empty array", () => {
       expect(gaussianSmooth([], 1)).toEqual([]);
+    });
+
+    it("preserves constant values", () => {
+      const data = [10, 10, 10, 10, 10];
+      const smoothed = gaussianSmooth(data, 1);
+      smoothed.forEach(val => expect(val).toBeCloseTo(10));
+    });
+
+    it("preserves linear trends mostly", () => {
+      const data = [1, 2, 3, 4, 5];
+      const smoothed = gaussianSmooth(data, 1);
+      // The middle value should remain exactly the same due to symmetry
+      expect(smoothed[2]).toBeCloseTo(3);
+      // It should still be monotonically increasing
+      for (let i = 1; i < smoothed.length; i++) {
+        expect(smoothed[i]).toBeGreaterThan(smoothed[i-1]);
+      }
+    });
+
+    it("smooths more with larger sigma", () => {
+      const data = [1, 10, 1, 10, 1];
+      const smoothed1 = gaussianSmooth(data, 0.5);
+      const smoothed2 = gaussianSmooth(data, 2.0);
+
+      const range1 = max(smoothed1) - min(smoothed1);
+      const range2 = max(smoothed2) - min(smoothed2);
+
+      // Larger sigma should reduce the range more
+      expect(range2).toBeLessThan(range1);
+    });
+
+    it("handles single element array", () => {
+      const smoothed = gaussianSmooth([5], 1);
+      expect(smoothed.length).toBe(1);
+      expect(smoothed[0]).toBeCloseTo(5);
     });
   });
 
