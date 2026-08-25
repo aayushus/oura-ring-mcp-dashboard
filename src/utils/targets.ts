@@ -253,11 +253,8 @@ export function calculateBmr(profile: UserProfile): number {
 export async function runWeeklyTargetJob(userId: number = 1): Promise<void> {
   const profile = await getUserProfile(userId);
   if (!profile) {
-    console.log("[Target Engine] No user profile configured. Skipping targets calculation.");
     return;
   }
-
-  console.log("[Target Engine] Running weekly recompute target metrics...");
 
   const previousTargets = await getUserTargets(userId);
 
@@ -344,5 +341,4 @@ export async function runWeeklyTargetJob(userId: number = 1): Promise<void> {
     );
   }
 
-  console.log("[Target Engine] Target metrics recompute complete:", newTargets);
 }
