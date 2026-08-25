@@ -148,8 +148,6 @@ export async function syncData(
   };
   activeJobs.set(userId, job);
 
-  console.log(`[Sync] Syncing Oura data from ${startDate} to ${endDate} (${trigger})...`);
-
   try {
     // Fetch all endpoints concurrently; each settles independently and
     // updates the live job state as it lands.
