@@ -289,9 +289,6 @@ export async function syncData(
       });
     }
 
-    console.log(
-      `[Sync] Completed (${status}). ${job.syncedDays} days (${job.newDays} new), ${job.totalRecords} records.`
-    );
     return {
       success: status !== "error",
       status,
