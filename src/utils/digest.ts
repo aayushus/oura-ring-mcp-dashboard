@@ -151,7 +151,6 @@ export async function checkAndSendDigest(): Promise<void> {
       sent_at: new Date().toISOString(),
       had_data: 1,
     });
-    console.log(`[Digest] Successfully dispatched biometrics digest for ${today}`);
   } catch (err) {
     console.error("[Digest] Error generating daily morning digest:", err);
   }
