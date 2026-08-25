@@ -414,11 +414,11 @@ export function startSyncScheduler(legacyClient?: OuraClient): cron.ScheduledTas
       try {
         const connections = await getAllOuraConnections();
         console.log(`[Sync] Found ${connections.length} Oura connection(s) for Day 1 startup backfill.`);
-        const backfillStart = DAY_ONE_START;
-        const today = getToday();
-        await Promise.all(
-          connections.map((conn) => syncUserConnection(conn, backfillStart, today, "startup"))
-        );
+        for (const conn of connections) {
+          const backfillStart = DAY_ONE_START;
+          const today = getToday();
+          await syncUserConnection(conn, backfillStart, today, "startup");
+        }
       } catch (err) {
         console.error("[Sync] Startup backfill failed:", err);
       }
@@ -434,9 +434,9 @@ export function startSyncScheduler(legacyClient?: OuraClient): cron.ScheduledTas
       const start = getDaysAgo(2); // pull last 2 days to capture revisions/late syncs
       const end = getToday();
 
-      await Promise.all(
-        connections.map((conn) => syncUserConnection(conn, start, end, "scheduled"))
-      );
+      for (const conn of connections) {
+        await syncUserConnection(conn, start, end, "scheduled");
+      }
     } catch (err) {
       console.error("[Sync] Scheduled sync loop failed:", err);
     }

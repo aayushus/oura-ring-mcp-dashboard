@@ -156,4 +156,8 @@ describe("getNoDataMessage", () => {
     const message = getNoDataMessage("activity", "2024-01-15");
     expect(message).not.toContain("day you woke up");
   });
+  it("should format unknown json error gracefully", () => {
+    const error = new OuraApiError(400, "Bad Request", '{"foo": "bar"}');
+    expect(error.message).toContain("Check your date format");
+  });
 });
