@@ -18,7 +18,7 @@
  *   GET  /oauth/callback — Handles Oura's redirect after user authorizes
  */
 import express, { Request, Response } from "express";
-import { randomUUID } from "node:crypto";
+import { randomUUID, timingSafeEqual } from "node:crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { mcpAuthRouter } from "@modelcontextprotocol/sdk/server/auth/router.js";
@@ -150,9 +150,13 @@ export async function startHttpServer(
     }
 
     // 1. Static/legacy secret fallback
-    if (secret && token === secret) {
-      req.user = { id: 1, role: "admin" } as any;
-      return next();
+    if (secret && token) {
+      const tokenBuffer = Buffer.from(token);
+      const secretBuffer = Buffer.from(secret);
+      if (tokenBuffer.length === secretBuffer.length && timingSafeEqual(tokenBuffer, secretBuffer)) {
+        req.user = { id: 1, role: "admin" } as any;
+        return next();
+      }
     }
 
     // 2. Custom multi-user MCP API keys
