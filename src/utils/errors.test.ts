@@ -157,3 +157,36 @@ describe("getNoDataMessage", () => {
     expect(message).not.toContain("day you woke up");
   });
 });
+
+describe("formatError extra branches", () => {
+  it("should handle error instance without match", () => {
+    const error = new Error("Custom random error");
+    expect(formatError(error)).toBe("Custom random error");
+  });
+});
+
+describe("getErrorMessage and parseErrorBody branches", () => {
+  it("should handle 400 with invalid json", () => {
+    const error = new OuraApiError(400, "Bad Request", "short text body");
+    expect(error.message).toContain("short text body");
+  });
+
+  it("should return default message for 400 with long text body", () => {
+    const error = new OuraApiError(400, "Bad Request", "a".repeat(250));
+    expect(error.message).toContain("Check your date format");
+  });
+});
+
+describe("getNoDataMessage specific branches", () => {
+  it("should return start date if no end date provided", () => {
+    const message = getNoDataMessage("activity", "2024-01-01");
+    expect(message).toContain("2024-01-01");
+  });
+});
+
+describe("parseErrorBody extra coverage", () => {
+  it("should return null for json without specific fields", () => {
+    const error = new OuraApiError(400, "Bad Request", '{"foo": "bar"}');
+    expect(error.message).toContain("Check your date format");
+  });
+});
