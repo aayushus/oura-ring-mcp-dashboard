@@ -157,7 +157,6 @@ async function main() {
   if (useHttpTransport) {
     // Automatically run database migrations if PostgreSQL is active
     if (process.env.DATABASE_URL) {
-      console.log("[DB] PostgreSQL configuration active. Running migration check...");
       try {
         const { runMigration } = await import("./scripts/migrate-db.js");
         await runMigration();
