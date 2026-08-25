@@ -75,6 +75,11 @@ describe("OuraApiError", () => {
     expect(error.message).toContain("Check your date format");
   });
 
+  it("should handle JSON error body with no recognized fields", () => {
+    const error = new OuraApiError(400, "Bad Request", '{"foo": "bar"}');
+    expect(error.message).toContain("Check your date format");
+  });
+
   it("should handle non-JSON body for default case", () => {
     const error = new OuraApiError(418, "I'm a teapot", "Short error message");
     expect(error.message).toContain("Short error message");
