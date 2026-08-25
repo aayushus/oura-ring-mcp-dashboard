@@ -114,7 +114,7 @@ export class OuraClient {
     const result = (await response.json()) as any;
 
     // If endpoint returned paginated data with next_token, automatically retrieve subsequent pages
-    if (autoPaginate && result && Array.isArray(result.data) && result.next_token) {
+    if (autoPaginate && result && result.data !== null && Array.isArray(result.data) && result.next_token) {
       let nextToken: string | null = result.next_token;
       let pageCount = 0;
       const maxPages = 60; // Up to ~30,000 records across multi-year accounts
@@ -137,7 +137,9 @@ export class OuraClient {
 
         const nextJson = (await nextRes.json()) as any;
         if (Array.isArray(nextJson.data)) {
-          result.data.push(...nextJson.data);
+          // Use concat instead of push(...spread) to avoid call stack size errors on large arrays
+          // And to avoid modifying the original array reference which causes Invalid array length in mocked tests sharing object references
+          result.data = result.data.concat(nextJson.data);
         }
         nextToken = nextJson.next_token || null;
       }
@@ -262,7 +264,7 @@ export class OuraClient {
           { start_date: sStr, end_date: eStr },
           false
         );
-        if (res?.data) {
+        if (res && Array.isArray(res.data)) {
           allSamples.push(...res.data);
         }
       } catch (err) {
