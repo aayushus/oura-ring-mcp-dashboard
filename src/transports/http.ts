@@ -263,12 +263,21 @@ export async function startHttpServer(
       }
 
       // Fetch raw endpoints from database
-      const rawTags = await getRawDocuments("enhanced_tag", undefined, undefined, userId);
-      const rawSleep = await getRawDocuments("daily_sleep", undefined, undefined, userId);
-      const rawWorkouts = await getRawDocuments("workout", undefined, undefined, userId);
-      const rawCardioAge = await getRawDocuments("daily_cardiovascular_age", undefined, undefined, userId);
-      const rawVo2Max = await getRawDocuments("vO2_max", undefined, undefined, userId);
-      const rawResilience = await getRawDocuments("daily_resilience", undefined, undefined, userId);
+      const [
+        rawTags,
+        rawSleep,
+        rawWorkouts,
+        rawCardioAge,
+        rawVo2Max,
+        rawResilience,
+      ] = await Promise.all([
+        getRawDocuments("enhanced_tag", undefined, undefined, userId),
+        getRawDocuments("daily_sleep", undefined, undefined, userId),
+        getRawDocuments("workout", undefined, undefined, userId),
+        getRawDocuments("daily_cardiovascular_age", undefined, undefined, userId),
+        getRawDocuments("vO2_max", undefined, undefined, userId),
+        getRawDocuments("daily_resilience", undefined, undefined, userId),
+      ]);
 
       const tagEffects = calculateTagEffects(rawTags, history.sleep, history.readiness);
       const correlations = calculatePearsonCorrelations(history.sleep, history.readiness, history.activity);
@@ -553,11 +562,19 @@ export async function startHttpServer(
       const prevDay = date.toISOString().slice(0, 10);
 
       // Fetch raw datasets
-      const sleepDocs = await getRawDocuments("sleep", prevDay, day, userId);
-      const activityDocs = await getRawDocuments("daily_activity", prevDay, day, userId);
-      const heartrateDocs = await getRawDocuments("heartrate", prevDay, day, userId);
-      const workoutDocs = await getRawDocuments("workout", prevDay, day, userId);
-      const sessionDocs = await getRawDocuments("session", prevDay, day, userId);
+      const [
+        sleepDocs,
+        activityDocs,
+        heartrateDocs,
+        workoutDocs,
+        sessionDocs,
+      ] = await Promise.all([
+        getRawDocuments("sleep", prevDay, day, userId),
+        getRawDocuments("daily_activity", prevDay, day, userId),
+        getRawDocuments("heartrate", prevDay, day, userId),
+        getRawDocuments("workout", prevDay, day, userId),
+        getRawDocuments("session", prevDay, day, userId),
+      ]);
       
       res.json({
         day,
