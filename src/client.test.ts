@@ -129,6 +129,162 @@ describe("OuraClient", () => {
         "Access denied: Your token doesn't have permission for this data"
       );
     });
+
+    it("should automatically paginate via next_token", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 1 }],
+          next_token: "token123"
+        }),
+      });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 2 }],
+          next_token: null
+        }),
+      });
+
+      // Daily sleep is an endpoint that uses generic fetch
+      const result = await client.getDailySleep("2024-01-01", "2024-01-15");
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].id).toBe(1);
+      expect(result.data[1].id).toBe(2);
+    });
+
+    it("should automatically paginate via next_token with max 60 pages", async () => {
+      // Setup the first request
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 1 }],
+          next_token: "token1"
+        }),
+      });
+
+      // Setup exactly 60 more mocked requests to hit the pageCount < maxPages limit
+      for (let i = 0; i < 60; i++) {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({
+            data: [{ id: i + 2 }],
+            next_token: `token${i + 2}` // Keep sending next_token
+          }),
+        });
+      }
+
+      const result = await client.getDailySleep("2024-01-01", "2024-01-15");
+      // Original request (1) + 60 paginated requests (60) = 61 items
+      expect(result.data).toHaveLength(61);
+      // Ensure we hit the hard limit without querying again
+      expect(mockFetch).toHaveBeenCalledTimes(61);
+    });
+
+    it("should automatically paginate via next_token with params", async () => {
+      // Setup first request with next_token.
+      // Oura API returns pagination next_tokens in combination with user requests.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 1 }],
+          next_token: "token123"
+        }),
+      });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          // missing array to test logic
+          data: null,
+          next_token: "token456" // one more to test next_token exclusion
+        }),
+      });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          // missing array to test logic
+          data: null,
+          next_token: null
+        }),
+      });
+
+      // Pass some query params to the endpoint explicitly or use one that allows extra args
+      // We know heartrate takes start/end date natively
+      const result = await client.getDailySleep("2024-01-01", "2024-01-15");
+      expect(result.data).toHaveLength(1);
+
+      const calledUrl = mockFetch.mock.calls[1][0];
+      expect(calledUrl).toContain("start_date=2024-01-01");
+    });
+
+    it("should fallback to generic endpoint pagination without params", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 1 }],
+          next_token: "token123"
+        }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 2 }],
+          next_token: null
+        }),
+      });
+
+      const fetchMethod = (client as any).fetch.bind(client);
+      const res = await fetchMethod("test_endpoint_paginate", null);
+
+      expect(res.data).toHaveLength(2);
+      expect(mockFetch.mock.calls[1][0]).toContain("next_token=token123");
+      expect(mockFetch.mock.calls[1][0]).not.toContain("&"); // no other params
+    });
+
+    it("should automatically paginate via next_token with params having next_token key inside", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 1 }],
+          next_token: "token123"
+        }),
+      });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 2 }],
+          next_token: null
+        }),
+      });
+
+      const fetchMethod = (client as any).fetch.bind(client);
+      // Pass a param that has next_token key explicitly to hit `if (key !== "next_token")` line
+      const res = await fetchMethod("test_endpoint_paginate", { next_token: "initial" });
+
+      expect(res.data).toHaveLength(2);
+    });
+
+    it("should stop pagination if subsequent request fails", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: 1 }],
+          next_token: "token123"
+        }),
+      });
+
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      const result = await client.getDailySleep("2024-01-01", "2024-01-15");
+      expect(result.data).toHaveLength(1);
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -350,6 +506,30 @@ describe("OuraClient", () => {
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
     });
+
+    it("should handle large date ranges by chunking", async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(heartrateResponse),
+      });
+
+      const result = await client.getHeartRate("2023-10-01", "2024-01-15");
+      // over 100 days, should hit chunking logic
+      expect(result.data).toBeDefined();
+      expect(result.data.length).toBeGreaterThan(0);
+    });
+
+    it("should catch errors in chunking and continue", async () => {
+      // Return error for first chunk, success for second
+      mockFetch.mockRejectedValueOnce(new Error("Network Error"));
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: null }), // trigger missing data branch
+      });
+
+      const result = await client.getHeartRate("2023-11-01", "2024-01-15");
+      expect(result.data).toBeDefined();
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -511,7 +691,35 @@ describe("OuraClient", () => {
   // Tags endpoints
   // ─────────────────────────────────────────────────────────────
 
+  describe("Auth context and getTags", () => {
+    it("should allow setting access token manually", () => {
+      const newClient = new OuraClient({ accessToken: "initial" });
+      newClient.setAccessToken("updated");
+      expect(newClient.accessToken).toBe("updated");
+    });
+
+    it("should use requestContextStorage context if available", async () => {
+      const contextStore = await import("./auth/context.js");
+      const spy = vi.spyOn(contextStore, "getContextOuraClient").mockReturnValue(
+        new OuraClient({ accessToken: "context-token-123" })
+      );
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(tagsResponse),
+      });
+
+      await client.getTags("2024-01-15", "2024-01-15");
+
+      const calledHeaders = mockFetch.mock.calls[0][1].headers;
+      expect(calledHeaders.Authorization).toBe("Bearer context-token-123");
+
+      spy.mockRestore();
+    });
+  });
+
   describe("getTags", () => {
+
     it("should fetch tags data", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -587,6 +795,24 @@ describe("OuraClient", () => {
 
       expect(result.data[0].tag_type_code).toBe("tag_sleep_aid");
       expect(result.data[1].custom_name).toBe("Caffeine");
+    });
+
+    it("should fallback to generic endpoint without params", async () => {
+      // Setup some custom mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      });
+
+      const newClient = new OuraClient({ accessToken: "abc" });
+      // Call something that uses fetch but we hack params to null somehow
+      // or we can test internal method using cast
+      const fetchMethod = (newClient as any).fetch.bind(newClient);
+      const res = await fetchMethod("test_endpoint", null);
+
+      expect(res.data).toEqual([]);
+      const calledUrl = mockFetch.mock.calls[0][0];
+      expect(calledUrl).not.toContain("?");
     });
 
     it("should expand single-date queries by ±3 days (API workaround)", async () => {
