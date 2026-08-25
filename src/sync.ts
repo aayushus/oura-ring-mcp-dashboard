@@ -405,8 +405,6 @@ export const DAY_ONE_START = "2016-01-01"; // Earliest available Oura Ring API v
  * Initialize background cron scheduler to sync data automatically for all users
  */
 export function startSyncScheduler(legacyClient?: OuraClient): cron.ScheduledTask {
-  console.log("[Sync] Initializing background sync scheduler (4-hour intervals)...");
-
   // Perform initial backfill from Day 1 of account activation for all connected users
   if (process.env.NODE_ENV !== "test") {
     // Start backfill asynchronously
