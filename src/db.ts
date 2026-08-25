@@ -52,7 +52,6 @@ export async function getDb(): Promise<DatabaseWrapper> {
 
   const dbUrl = process.env.DATABASE_URL;
   if (dbUrl) {
-    console.log("[DB] Connecting to PostgreSQL database...");
     const pool = new pg.Pool({ connectionString: dbUrl });
 
     // Test connection
@@ -101,7 +100,6 @@ export async function getDb(): Promise<DatabaseWrapper> {
       }
     };
   } else {
-    console.log("[DB] Connecting to SQLite database...");
     await ensureConfigDir();
     const sqliteDb = await open({
       filename: DB_FILE,
