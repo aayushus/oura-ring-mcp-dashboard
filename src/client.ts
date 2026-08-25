@@ -234,6 +234,10 @@ export class OuraClient {
     const end = new Date(endDate);
     const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
+    if (diffDays < 0) {
+      return { data: [] };
+    }
+
     // Oura Heart Rate endpoint accepts max 30-day windows per request
     if (diffDays <= 30) {
       return this.fetch<OuraResponse<HeartRate>>("heartrate", {
