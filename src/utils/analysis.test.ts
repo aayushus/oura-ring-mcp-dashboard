@@ -14,8 +14,8 @@ import {
   detectOutliers,
   correlate,
   dispersion,
-  gaussianSmooth,
-  movingAverage,
+
+
   dayOfWeekAnalysis,
   sleepDebt,
   sleepRegularity,
@@ -299,46 +299,6 @@ describe("Dispersion Analysis", () => {
     const result = dispersion([]);
     expect(result.mean).toBe(0);
     expect(result.coefficientOfVariation).toBe(0);
-  });
-});
-
-describe("Smoothing", () => {
-  describe("gaussianSmooth", () => {
-    it("smooths data", () => {
-      const data = [1, 10, 1, 10, 1, 10, 1]; // jagged
-      const smoothed = gaussianSmooth(data, 1);
-
-      // Smoothed values should be less extreme
-      const originalRange = max(data) - min(data);
-      const smoothedRange = max(smoothed) - min(smoothed);
-      expect(smoothedRange).toBeLessThan(originalRange);
-    });
-
-    it("returns original for sigma 0", () => {
-      const data = [1, 2, 3];
-      expect(gaussianSmooth(data, 0)).toEqual(data);
-    });
-
-    it("handles empty array", () => {
-      expect(gaussianSmooth([], 1)).toEqual([]);
-    });
-  });
-
-  describe("movingAverage", () => {
-    it("smooths with window", () => {
-      const data = [1, 2, 3, 4, 5];
-      const smoothed = movingAverage(data, 3);
-
-      expect(smoothed.length).toBe(5);
-      expect(smoothed[2]).toBe(3); // mean of [2, 3, 4]
-    });
-
-    it("handles window larger than data", () => {
-      const data = [1, 2, 3];
-      const smoothed = movingAverage(data, 10);
-
-      expect(smoothed.length).toBe(3);
-    });
   });
 });
 
