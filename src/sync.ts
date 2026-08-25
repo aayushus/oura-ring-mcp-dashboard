@@ -349,6 +349,7 @@ export async function syncUserConnection(
 
     // Refresh OAuth token if expired and refresh_token is present
     if (conn.refresh_token && now.getTime() + 5 * 60 * 1000 >= expiresAt.getTime()) {
+      console.log(`[Sync] Refreshing Oura OAuth token for user ${conn.user_id}...`);
       const creds = await getOuraCredentials();
       if (!creds.clientId || !creds.clientSecret) {
         throw new Error("Oura application client credentials are not configured.");
@@ -380,6 +381,7 @@ export async function syncUserConnection(
         expiresAt: expiresStr,
         scopes: data.scope || conn.scopes,
       });
+      console.log(`[Sync] Token refreshed successfully for user ${conn.user_id}.`);
     }
 
     const client = new OuraClient({ accessToken });

@@ -48,6 +48,12 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("constructor", () => {
+    it("should allow setting access token later", () => {
+      const tempClient = new OuraClient({ accessToken: "temp" });
+      tempClient.setAccessToken("new-token");
+      expect(tempClient["accessToken"]).toBe("new-token");
+    });
+
     it("should create client with access token", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
@@ -59,6 +65,139 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should fetch without params if params are undefined", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ dummy: "test" }], next_token: "token123" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [], next_token: null }),
+      });
+
+      // Using private fetch method to test undefined params logic directly
+      await client["fetch"]("dummy", undefined, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const firstCallUrl = mockFetch.mock.calls[0][0];
+      expect(firstCallUrl).toBe(BASE_URL + "/dummy");
+      const secondCallUrl = mockFetch.mock.calls[1][0];
+      expect(secondCallUrl).toContain("next_token=token123");
+    });
+
+    it("should include extra query params during pagination", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-15" }], next_token: "token123" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-16" }], next_token: null }),
+      });
+
+      // Using private fetch method to test params logic directly
+      await client["fetch"]("dummy", { param1: "value1", next_token: "ignorethis" }, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const secondCallUrl = mockFetch.mock.calls[1][0];
+      expect(secondCallUrl).toContain("param1=value1");
+      expect(secondCallUrl).not.toContain("next_token=ignorethis");
+    });
+
+    it("should handle contextClient token fallback", async () => {
+      const { getContextOuraClient } = await import("./auth/context.js");
+      const clientWithContext = new OuraClient({ accessToken: "fallback" });
+
+      // Override the auth context to return a client
+      const vi = (await import("vitest")).vi;
+      vi.spyOn(await import("./auth/context.js"), "getContextOuraClient").mockReturnValueOnce({ accessToken: "context-token" } as any);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      });
+
+      await clientWithContext["fetch"]("dummy");
+
+      const headers = mockFetch.mock.calls[0][1].headers;
+      expect(headers.Authorization).toBe("Bearer context-token");
+    });
+
+    it("should handle chunk catch and continue without data object", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ source: "chunk1" }] }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ something_else: "no-data" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-03-01");
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(1);
+    });
+
+    it("should break pagination if subsequent request fails", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-15" }], next_token: "token123" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+      });
+
+      const result = await client.getSleep("2024-01-15", "2024-01-16");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+    });
+
+    it("should handle paginated response with data but no next_token inside loop", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-15" }], next_token: "token123" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: "not array", next_token: "token456" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-17" }], next_token: null }),
+      });
+
+      const result = await client.getSleep("2024-01-15", "2024-01-16");
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(2);
+    });
+
+    it("should automatically paginate if next_token is present", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-15" }], next_token: "token123" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ day: "2024-01-16" }], next_token: null }),
+      });
+
+      const result = await client.getSleep("2024-01-15", "2024-01-16");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(2);
+
+      const secondCallUrl = mockFetch.mock.calls[1][0];
+      expect(secondCallUrl).toContain("next_token=token123");
+      expect(secondCallUrl).toContain("start_date=2024-01-15");
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -337,6 +476,34 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("getHeartRate", () => {
+    it("should chunk requests over 30 days and handle chunk failure gracefully", async () => {
+      // Chunk 1: <start> to <start + 30 days> - success
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ source: "chunk1" }] }),
+      });
+      // Chunk 2: <start + 30 days> to <end> - fails
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: "Internal Server Error",
+        text: () => Promise.resolve("Internal Server Error"),
+      });
+
+
+      // Chunk 3
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-03-01");
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].source).toBe("chunk1");
+    });
+
     it("should fetch heart rate data", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
