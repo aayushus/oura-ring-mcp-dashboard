@@ -107,7 +107,12 @@ export class OuraClient {
     });
 
     if (!response.ok) {
-      const body = await response.text();
+      let body = response.statusText;
+      try {
+        body = await response.text();
+      } catch (err) {
+        // Fallback to status text if body cannot be read
+      }
       throw new OuraApiError(response.status, response.statusText, body);
     }
 

@@ -52,6 +52,13 @@ describe("OuraClient", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
     });
+
+    it("should allow setting a new access token", () => {
+      const newClient = new OuraClient({ accessToken: "old-token" });
+      newClient.setAccessToken("new-token");
+      // Need to test behavior to ensure it was updated
+      expect((newClient as any).accessToken).toBe("new-token");
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -72,6 +79,30 @@ describe("OuraClient", () => {
         expect.objectContaining({
           headers: {
             Authorization: `Bearer ${TEST_TOKEN}`,
+          },
+        })
+      );
+    });
+
+    it("should use context client access token if available", async () => {
+      const { requestContextStorage } = await import("./auth/context.js");
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      await requestContextStorage.run(
+        { userId: 123, ouraClient: new OuraClient({ accessToken: "context-token" }) },
+        async () => {
+          await client.getSleep("2024-01-15", "2024-01-15");
+        }
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-token`,
           },
         })
       );
@@ -128,6 +159,89 @@ describe("OuraClient", () => {
       await expect(client.getDailyActivity("2024-01-15", "2024-01-15")).rejects.toThrow(
         "Access denied: Your token doesn't have permission for this data"
       );
+    });
+
+    it("should fallback to statusText if response.text() fails when response is not ok", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: "Bad Request Fallback",
+        text: () => Promise.reject(new Error("Network error during text()")),
+      });
+
+      await expect(client.getSleep("2024-01-15", "2024-01-15")).rejects.toThrow(
+        "Bad Request Fallback"
+      );
+    });
+
+    it("should automatically paginate when next_token is present", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: [{ id: "item1" }],
+            next_token: "token123",
+          }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: [{ id: "item2" }],
+            next_token: null,
+          }),
+      });
+
+      // Pass some query params so that it hits lines 131-132 in the pagination logic loop
+      const res = await (client as any).fetch("dummy-endpoint", { param1: "value1", next_token: "ignored_original_token" });
+      expect(res.data).toHaveLength(2);
+      expect(res.data[0].id).toBe("item1");
+      expect(res.data[1].id).toBe("item2");
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("should break pagination if next fetch is not ok", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: [{ id: "item1" }],
+            next_token: "token123",
+          }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      const res = await (client as any).fetch("dummy-endpoint");
+      expect(res.data).toHaveLength(1);
+      expect(res.data[0].id).toBe("item1");
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("should handle paginated response where data is not an array", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: [{ id: "item1" }],
+            next_token: "token123",
+          }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            data: "not-an-array", // Missing or malformed data
+            next_token: null,
+          }),
+      });
+
+      const res = await (client as any).fetch("dummy-endpoint");
+      expect(res.data).toHaveLength(1); // Original data remains untouched
+      expect(res.data[0].id).toBe("item1");
+      expect(mockFetch).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -349,6 +463,56 @@ describe("OuraClient", () => {
       expect(result.data).toHaveLength(6);
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
+    });
+
+    it("should chunk requests for periods longer than 30 days", async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ bpm: 60 }] }),
+      });
+
+      const result = await client.getHeartRate("2023-11-01", "2024-01-15");
+
+      expect(result.data.length).toBeGreaterThan(0);
+      expect(mockFetch.mock.calls.length).toBeGreaterThan(1); // Multiple chunks fetched
+    });
+
+    it("should gracefully handle when chunk fetch succeeds but data is missing", async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({}), // missing data array
+      });
+
+      const result = await client.getHeartRate("2023-11-01", "2024-01-15");
+
+      expect(result.data).toHaveLength(0);
+      expect(mockFetch.mock.calls.length).toBeGreaterThan(1);
+    });
+
+    it("should handle chunk fetch failures gracefully and continue", async () => {
+      const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      // First chunk succeeds, second chunk fails
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 60 }] }),
+        })
+        .mockRejectedValueOnce(new Error("Network Error"))
+        .mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 65 }] }),
+        });
+
+      const result = await client.getHeartRate("2023-11-01", "2024-01-15");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[Client] Heart rate chunk"),
+        expect.any(Error)
+      );
+      expect(result.data.length).toBeGreaterThan(0);
+
+      consoleSpy.mockRestore();
     });
   });
 
