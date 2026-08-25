@@ -6,7 +6,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
 
-// Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
 import readinessResponse from "../tests/fixtures/oura-readiness-response.json" with { type: "json" };
 import activityResponse from "../tests/fixtures/oura-activity-response.json" with { type: "json" };
