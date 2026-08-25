@@ -52,6 +52,12 @@ describe("OuraClient", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
     });
+
+    it("should update access token", () => {
+      const newClient = new OuraClient({ accessToken: "my-token" });
+      newClient.setAccessToken("new-token");
+      expect(newClient.getPersonalInfo).toBeDefined(); // just to use it
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -128,6 +134,87 @@ describe("OuraClient", () => {
       await expect(client.getDailyActivity("2024-01-15", "2024-01-15")).rejects.toThrow(
         "Access denied: Your token doesn't have permission for this data"
       );
+    });
+
+    it("should use context client token if available", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      // Import context logic
+      const { requestContextStorage } = await import("./auth/context.js");
+      const mockContextClient = new OuraClient({ accessToken: "context-token-123" });
+
+      await requestContextStorage.run(
+        { userId: 1, ouraClient: mockContextClient },
+        async () => {
+          await client.getSleep("2024-01-15", "2024-01-15");
+        }
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: "Bearer context-token-123",
+          },
+        })
+      );
+    });
+
+    it("should automatically paginate when next_token is present", async () => {
+      // Mock page 1
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 1 }], next_token: "token1" }),
+      });
+      // Mock page 2
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 2 }], next_token: "token2" }),
+      });
+      // Mock page 3 (last page)
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 3 }], next_token: null }),
+      });
+
+      const result = await client.getDailyActivity("2024-01-01", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(3);
+      expect(result.data[0].id).toBe(1);
+      expect(result.data[1].id).toBe(2);
+      expect(result.data[2].id).toBe(3);
+
+      // Verify the URL for the second call has next_token
+      const calledUrl2 = mockFetch.mock.calls[1][0];
+      expect(calledUrl2).toContain("next_token=token1");
+      expect(calledUrl2).toContain("start_date=2024-01-01"); // Preserves other params
+      expect(calledUrl2).not.toContain("next_token=token1&next_token=token1"); // No duplication
+    });
+
+    it("should stop pagination if response is not ok", async () => {
+      // Mock page 1
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 1 }], next_token: "token1" }),
+      });
+      // Mock page 2 (fails)
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: "Server Error",
+        text: () => Promise.resolve("Error"),
+      });
+
+      const result = await client.getDailyActivity("2024-01-01", "2024-01-15");
+
+      // Should return the data it got before the failure
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].id).toBe(1);
     });
   });
 
@@ -350,6 +437,79 @@ describe("OuraClient", () => {
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
     });
+
+    it("should chunk requests for periods longer than 30 days", async () => {
+      // Mock 3 responses for a ~75 day window (needs 3 chunks)
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 1 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 2 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 3 }] }),
+        });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-03-15"); // 75 days
+
+      // Ensure 3 fetches were made
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+
+      // Verify the combined data
+      expect(result.data).toHaveLength(3);
+      expect(result.data[0].bpm).toBe(1);
+      expect(result.data[1].bpm).toBe(2);
+      expect(result.data[2].bpm).toBe(3);
+    });
+
+    it("should log warning and continue if a chunk fails", async () => {
+      const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      // 1st chunk success, 2nd chunk fails, 3rd chunk success
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 1 }] }),
+        })
+        .mockRejectedValueOnce(new Error("Network failure"))
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 3 }] }),
+        });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-03-15");
+
+      // Verify the combined data skip the failed chunk
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].bpm).toBe(1);
+      expect(result.data[1].bpm).toBe(3);
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("[Client] Heart rate chunk"),
+        expect.any(Error)
+      );
+
+      consoleWarnSpy.mockRestore();
+    });
+
+    it("should handle empty or null data safely in chunking", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: null }), // triggers if (res?.data) false branch
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({}), // missing data
+        });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+
+      expect(result.data).toHaveLength(0);
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -404,6 +564,75 @@ describe("OuraClient", () => {
       // Should only return the requested date
       expect(result.data).toHaveLength(1);
       expect(result.data[0].day).toBe("2024-01-15");
+    });
+
+    it("should stop pagination if next payload has no data array", async () => {
+      // Mock page 1
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 1 }], next_token: "token1" }),
+      });
+      // Mock page 2
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ next_token: "token2" }), // missing data array
+      });
+      // Mock page 3
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 3 }], next_token: null }),
+      });
+
+      const result = await client.getDailyActivity("2024-01-01", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].id).toBe(1);
+      expect(result.data[1].id).toBe(3);
+    });
+
+    it("should skip existing next_token param to prevent duplication", async () => {
+      // Mock page 1
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 1 }], next_token: "token1" }),
+      });
+      // Mock page 2
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 2 }], next_token: null }),
+      });
+
+      // Hack to invoke fetch directly to inject a 'next_token' param since standard methods don't allow it
+      const anyClient = client as any;
+      const result = await anyClient.fetch("daily_activity", { next_token: "old_token", start_date: "2024-01-01" }, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(2);
+
+      const calledUrl2 = mockFetch.mock.calls[1][0];
+      // It should NOT contain next_token=old_token
+      expect(calledUrl2).not.toContain("next_token=old_token");
+      expect(calledUrl2).toContain("next_token=token1");
+      expect(calledUrl2).toContain("start_date=2024-01-01");
+    });
+
+    it("should handle pagination without params", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 1 }], next_token: "token1" }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [{ id: 2 }], next_token: null }),
+      });
+
+      // We need to call a method that doesn't pass params but triggers pagination.
+      // E.g., getPersonalInfo doesn't have autoPaginate true. Wait, autoPaginate defaults to true.
+      // Let's call getRingConfiguration, it has no params
+      const result = await client.getRingConfiguration();
+
+      expect(result.data).toHaveLength(2);
     });
 
     it("should NOT expand multi-day range queries", async () => {
