@@ -64,12 +64,10 @@ export async function checkAndSendDigest(): Promise<void> {
     if (!sleepRecord) {
       if (!isPastThreeHours) {
         // Data not present yet, but within the 3-hour window -> wait (check next tick)
-        console.log(`[Digest] Sleep data not found for ${today}. Waiting for phone sync...`);
         return;
       }
 
       // Fallback after 3 hours
-      console.log(`[Digest] Sleep data still missing after 3 hours. Dispatching fallback alert.`);
       await sendFallbackDigest(today);
       return;
     }
