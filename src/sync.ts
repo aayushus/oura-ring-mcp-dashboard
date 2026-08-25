@@ -193,10 +193,11 @@ export async function syncData(
       }
     };
 
-    for (const endpoint of SYNC_ENDPOINTS) {
-      if (endpoint.key === "personal_info") continue;
-      await saveRawDocs(endpoint.key, results[endpoint.key]?.data);
-    }
+    await Promise.all(
+      SYNC_ENDPOINTS
+        .filter((endpoint) => endpoint.key !== "personal_info")
+        .map((endpoint) => saveRawDocs(endpoint.key, results[endpoint.key]?.data))
+    );
 
     const personalInfo = results["personal_info"];
     if (personalInfo) {
