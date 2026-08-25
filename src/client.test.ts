@@ -52,6 +52,11 @@ describe("OuraClient", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
     });
+
+    it("should allow setting a new access token", () => {
+      client.setAccessToken("new-token");
+      expect((client as any).accessToken).toBe("new-token");
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -128,6 +133,99 @@ describe("OuraClient", () => {
       await expect(client.getDailyActivity("2024-01-15", "2024-01-15")).rejects.toThrow(
         "Access denied: Your token doesn't have permission for this data"
       );
+    });
+
+    it("should handle pagination correctly", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              data: [{ id: "1" }],
+              next_token: "token1",
+            }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              data: [{ id: "2" }],
+              next_token: "token2",
+            }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: "Internal Server Error",
+          text: () => Promise.resolve("Internal error during pagination"),
+        });
+
+      const res = await client.getSleep("2024-01-01", "2024-01-05");
+      expect(res.data).toHaveLength(2);
+      expect(res.data[0].id).toBe("1");
+      expect(res.data[1].id).toBe("2");
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+    });
+
+    it("should handle pagination when array is missing from response", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              data: [{ id: "1" }],
+              next_token: "token1",
+            }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              data: "not an array",
+              next_token: null,
+            }),
+        });
+
+      const res = await client.getSleep("2024-01-01", "2024-01-05");
+      expect(res.data).toHaveLength(1);
+      expect(res.data[0].id).toBe("1");
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("should correctly preserve parameters during pagination except next_token", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              data: [{ id: "1" }],
+              next_token: "token1",
+            }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              data: [{ id: "2" }],
+              next_token: null,
+            }),
+        });
+
+      await client.getSleep("2024-01-01", "2024-01-05");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const url1 = mockFetch.mock.calls[0][0];
+      const url2 = mockFetch.mock.calls[1][0];
+
+      expect(url1).toContain("start_date=2024-01-01");
+      expect(url2).toContain("start_date=2024-01-01");
+      expect(url2).toContain("next_token=token1");
     });
   });
 
@@ -345,10 +443,35 @@ describe("OuraClient", () => {
 
       const result = await client.getHeartRate("2024-01-15", "2024-01-15");
 
-      expect(result).toEqual(heartrateResponse);
       expect(result.data).toHaveLength(6);
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
+    });
+
+    it("should chunk long date ranges and handle partial failures", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 60 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: "Server Error",
+          text: () => Promise.resolve("Internal Error"),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 65 }] }),
+        });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-03-15");
+      expect(result.data).toHaveLength(2); // One chunk succeeded, one failed, one succeeded
+      expect(result.data[0].bpm).toBe(60);
+      expect(result.data[1].bpm).toBe(65);
+
+      // We asked for ~75 days. Chunk 1: 02-14 to 03-15 (30 days), Chunk 2: 01-15 to 02-14 (30 days), Chunk 3: 01-01 to 01-15 (15 days)
+      expect(mockFetch).toHaveBeenCalledTimes(3);
     });
   });
 

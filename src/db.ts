@@ -52,7 +52,6 @@ export async function getDb(): Promise<DatabaseWrapper> {
 
   const dbUrl = process.env.DATABASE_URL;
   if (dbUrl) {
-    console.log("[DB] Connecting to PostgreSQL database...");
     const pool = new pg.Pool({ connectionString: dbUrl });
 
     // Test connection
@@ -101,7 +100,6 @@ export async function getDb(): Promise<DatabaseWrapper> {
       }
     };
   } else {
-    console.log("[DB] Connecting to SQLite database...");
     await ensureConfigDir();
     const sqliteDb = await open({
       filename: DB_FILE,
@@ -998,8 +996,6 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     }
   }
 
-  console.log("[DB] Upgrading schema to support multi-user authentication...");
-
   // 1. Create new authentication/settings tables
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -1055,7 +1051,6 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     const exists = await tableExists(db, tableName);
     if (!exists) return;
 
-    console.log(`[DB] Migrating table '${tableName}' to support user-scoping...`);
     const tempName = `temp_${tableName}`;
     
     // Rename old table
@@ -1287,6 +1282,4 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     "started_at, finished_at, trigger_source, start_date, end_date, status, synced_days, new_days, total_records, endpoints, error",
     "started_at, finished_at, trigger_source, start_date, end_date, status, synced_days, new_days, total_records, endpoints, error"
   );
-
-  console.log("[DB] Schema upgrade to support multi-user authentication completed successfully!");
 }
