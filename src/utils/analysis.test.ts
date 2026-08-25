@@ -330,7 +330,13 @@ describe("Smoothing", () => {
       const smoothed = movingAverage(data, 3);
 
       expect(smoothed.length).toBe(5);
-      expect(smoothed[2]).toBe(3); // mean of [2, 3, 4]
+      // Window size 3:
+      // index 0: [1, 2] -> 1.5
+      // index 1: [1, 2, 3] -> 2
+      // index 2: [2, 3, 4] -> 3
+      // index 3: [3, 4, 5] -> 4
+      // index 4: [4, 5] -> 4.5
+      expect(smoothed).toEqual([1.5, 2, 3, 4, 4.5]);
     });
 
     it("handles window larger than data", () => {
@@ -338,6 +344,16 @@ describe("Smoothing", () => {
       const smoothed = movingAverage(data, 10);
 
       expect(smoothed.length).toBe(3);
+    });
+
+    it("returns original for window <= 1", () => {
+      const data = [1, 2, 3];
+      expect(movingAverage(data, 1)).toEqual(data);
+      expect(movingAverage(data, 0)).toEqual(data);
+    });
+
+    it("handles empty array", () => {
+      expect(movingAverage([], 3)).toEqual([]);
     });
   });
 });
