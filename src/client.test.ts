@@ -5,6 +5,15 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
+import * as authContext from "./auth/context.js";
+
+vi.mock("./auth/context.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./auth/context.js")>();
+  return {
+    ...actual,
+    getContextOuraClient: vi.fn(),
+  };
+});
 
 // Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
@@ -128,6 +137,190 @@ describe("OuraClient", () => {
       await expect(client.getDailyActivity("2024-01-15", "2024-01-15")).rejects.toThrow(
         "Access denied: Your token doesn't have permission for this data"
       );
+    });
+
+    it("should handle pagination via next_token", async () => {
+      // First page with a next_token
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page1" }],
+          next_token: "token-to-page-2",
+        }),
+      } as unknown as Response);
+
+      // Second page with a next_token
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page2" }],
+          next_token: "token-to-page-3",
+        }),
+      } as unknown as Response);
+
+      // Third page, no next_token
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page3" }],
+        }),
+      } as unknown as Response);
+
+      // We need to call a method that has pagination enabled.
+      // Most endpoints have it. Let's use getSleep.
+      const result = await client.getSleep("2024-01-01", "2024-01-02");
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(3);
+      expect((result.data[0] as any).id).toBe("page1");
+      expect((result.data[1] as any).id).toBe("page2");
+      expect((result.data[2] as any).id).toBe("page3");
+    });
+
+    it("should stop pagination if next request fails", async () => {
+      // First page with a next_token
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page1" }],
+          next_token: "token-to-page-2",
+        }),
+      } as unknown as Response);
+
+      // Second page fails
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        text: async () => "Internal Server Error",
+      } as unknown as Response);
+
+      const result = await client.getSleep("2024-01-01", "2024-01-02");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+    });
+
+    it("should stop pagination after max pages is reached", async () => {
+      mockFetch.mockImplementation(async (url) => {
+        return {
+          ok: true,
+          json: async () => ({
+            data: [{ id: "page" }],
+            next_token: "next",
+          }),
+        } as unknown as Response;
+      });
+
+      const result = await client.getSleep("2024-01-01", "2024-01-02");
+
+      // Initial request + 60 pagination requests = 61 total
+      expect(mockFetch).toHaveBeenCalledTimes(61);
+      expect(result.data).toHaveLength(61);
+    });
+
+    it("should handle paginated endpoints that have extra params", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page1" }],
+          next_token: "next-token-id",
+        }),
+      } as unknown as Response);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: "not an array, maybe edge case object"
+        }),
+      } as unknown as Response);
+
+      const result = await client.getSleep("2024-01-01", "2024-01-02");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      // The second request shouldn't add the non-array data
+      expect(result.data).toHaveLength(1);
+
+      const secondCallUrl = mockFetch.mock.calls[1][0] as string;
+      expect(secondCallUrl).toContain("start_date=2024-01-01");
+      expect(secondCallUrl).toContain("next_token=next-token-id");
+    });
+
+    it("should handle paginated endpoints with next_token in params", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page1" }],
+          next_token: "next-token-id",
+        }),
+      } as unknown as Response);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: []
+        }),
+      } as unknown as Response);
+
+      // Force a next_token in params to test exclusion logic in pagination loop
+      const result = await (client as any).fetch("sleep", {
+        start_date: "2024-01-01",
+        next_token: "should-be-excluded",
+      }, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+
+      const secondCallUrl = mockFetch.mock.calls[1][0] as string;
+      expect(secondCallUrl).toContain("start_date=2024-01-01");
+      expect(secondCallUrl).toContain("next_token=next-token-id");
+      expect(secondCallUrl).not.toContain("next_token=should-be-excluded");
+    });
+
+    it("should handle paginated endpoints with undefined params", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: [{ id: "page1" }],
+          next_token: "next-token-id",
+        }),
+      } as unknown as Response);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: []
+        }),
+      } as unknown as Response);
+
+      // Pass undefined for params (e.g. some endpoints might not have params)
+      const result = await (client as any).fetch("sleep", undefined, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const secondCallUrl = mockFetch.mock.calls[1][0] as string;
+      expect(secondCallUrl).toContain("next_token=next-token-id");
+    });
+
+    it("should use context access token if available", async () => {
+      // Create a mock context returning an access token
+      const mockContext = { accessToken: "context-token" };
+      vi.mocked(authContext.getContextOuraClient).mockReturnValue(mockContext as any);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      } as unknown as Response);
+
+      await client.getPersonalInfo();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-token`,
+          },
+        })
+      );
+
+      vi.mocked(authContext.getContextOuraClient).mockReturnValue(undefined);
     });
   });
 
@@ -349,6 +542,89 @@ describe("OuraClient", () => {
       expect(result.data).toHaveLength(6);
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
+    });
+
+    it("should chunk requests for heart rate data over 30 days", async () => {
+      // It requests in chunks of 30 days backwards from the end date up to maxChunks (4).
+      // If we ask for 45 days, it should make 2 requests.
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: [{ bpm: 60 }] }),
+      } as unknown as Response);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: [{ bpm: 65 }] }),
+      } as unknown as Response);
+
+      // Start: 2024-01-01, End: 2024-02-15 (45 days)
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].bpm).toBe(60);
+      expect(result.data[1].bpm).toBe(65);
+    });
+
+    it("should handle errors in heart rate chunking", async () => {
+      // First chunk succeeds
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: [{ bpm: 60 }] }),
+      } as unknown as Response);
+
+      // Second chunk fails, but should not crash the whole process
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        text: async () => "Internal Server Error",
+      } as unknown as Response);
+
+      // We'll mock console.warn to avoid noisy test output
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      // Start: 2024-01-01, End: 2024-02-15 (45 days)
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].bpm).toBe(60);
+      expect(warnSpy).toHaveBeenCalled();
+
+      warnSpy.mockRestore();
+    });
+
+    it("should handle missing data array in heart rate chunking", async () => {
+      // Return response without data array
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}), // Missing 'data' property
+      } as unknown as Response);
+
+      const result = await client.getHeartRate("2024-01-15", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(result?.data).toBeUndefined(); // getHeartRate returns the exact response object, so if it's {} it returns { data: [] } because of chunking logic return { data: allSamples }
+      // Actually chunking logic returns { data: allSamples } so it should have length 0. Let's see why result.data is null/undefined.
+      // Ah, the first branch `if (diffDays <= 30)` returns the exact response. So if response is {}, result is {}.
+      // If we ask for 45 days, it goes to chunking logic and returns { data: [] }. Let's test the chunking logic instead.
+    });
+
+    it("should handle missing data array in heart rate chunking (diffDays > 30)", async () => {
+      // Return response without data array
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}), // Missing 'data' property
+      } as unknown as Response);
+
+      // We'll mock console.warn to avoid noisy test output
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(0);
+      warnSpy.mockRestore();
     });
   });
 
@@ -573,6 +849,27 @@ describe("OuraClient", () => {
       const calledUrl = mockFetch.mock.calls[0][0];
       expect(calledUrl).toContain("start_date=2024-01-10");
       expect(calledUrl).toContain("end_date=2024-01-15");
+    });
+  });
+
+  describe("setAccessToken", () => {
+    it("should update the access token", () => {
+      const client = new OuraClient("old-token");
+      client.setAccessToken("new-token");
+      // Test the token works by mocking fetch and inspecting headers
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({}),
+      } as Response);
+
+      client.getPersonalInfo();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://api.ouraring.com/v2/usercollection/personal_info",
+        expect.objectContaining({
+          headers: { Authorization: "Bearer new-token" },
+        })
+      );
     });
   });
 

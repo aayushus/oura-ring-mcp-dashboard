@@ -20,7 +20,7 @@
  * For backward compatibility, MCP_SECRET is still accepted as a static
  * bearer token (requires OURA_ACCESS_TOKEN env var for API calls).
  */
-import { randomUUID, randomBytes } from "node:crypto";
+import { randomUUID, randomBytes, timingSafeEqual } from "node:crypto";
 import { Response } from "express";
 import type {
   OAuthServerProvider,
@@ -305,12 +305,19 @@ export class OuraMcpOAuthProvider implements OAuthServerProvider {
 
   async verifyAccessToken(token: string): Promise<AuthInfo> {
     // Check static secret first (backward compat with MCP_SECRET)
-    if (this.staticSecret && token === this.staticSecret) {
-      return {
-        token,
-        clientId: "static-secret",
-        scopes: [],
-      };
+    if (this.staticSecret) {
+      const tokenBuf = Buffer.from(token);
+      const secretBuf = Buffer.from(this.staticSecret);
+      if (
+        tokenBuf.byteLength === secretBuf.byteLength &&
+        timingSafeEqual(tokenBuf, secretBuf)
+      ) {
+        return {
+          token,
+          clientId: "static-secret",
+          scopes: [],
+        };
+      }
     }
 
     const entry = this.accessTokens.get(token);
