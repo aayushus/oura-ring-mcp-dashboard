@@ -343,6 +343,4 @@ export async function runWeeklyTargetJob(userId: number = 1): Promise<void> {
       userId
     );
   }
-
-  console.log("[Target Engine] Target metrics recompute complete:", newTargets);
 }
