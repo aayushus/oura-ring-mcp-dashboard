@@ -430,7 +430,6 @@ export function startSyncScheduler(legacyClient?: OuraClient): cron.ScheduledTas
   const task = cron.schedule("0 */4 * * *", async () => {
     try {
       const connections = await getAllOuraConnections();
-      console.log(`[Sync] Running scheduled sync for ${connections.length} users...`);
       const start = getDaysAgo(2); // pull last 2 days to capture revisions/late syncs
       const end = getToday();
 
