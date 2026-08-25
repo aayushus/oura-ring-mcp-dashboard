@@ -1055,7 +1055,6 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     const exists = await tableExists(db, tableName);
     if (!exists) return;
 
-    console.log(`[DB] Migrating table '${tableName}' to support user-scoping...`);
     const tempName = `temp_${tableName}`;
     
     // Rename old table
