@@ -6,6 +6,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OuraClient } from "./client.js";
 
+import * as authContext from "./auth/context.js";
+
+
 // Import fixture data
 import sleepResponse from "../tests/fixtures/oura-sleep-response.json" with { type: "json" };
 import readinessResponse from "../tests/fixtures/oura-readiness-response.json" with { type: "json" };
@@ -77,6 +80,20 @@ describe("OuraClient", () => {
       );
     });
 
+
+    it("should use context client token if available", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      vi.spyOn(authContext, 'getContextOuraClient').mockReturnValueOnce({ accessToken: "context-token" } as any);
+
+      await client.getSleep("2024-01-01", "2024-01-15");
+      const callArgs = mockFetch.mock.calls[0][1];
+      expect(callArgs.headers.Authorization).toBe("Bearer context-token");
+    });
+
     it("should construct correct URL with query params", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -91,7 +108,116 @@ describe("OuraClient", () => {
       expect(calledUrl).toContain("end_date=2024-01-15");
     });
 
+
+    it("should set access token correctly", () => {
+      client.setAccessToken("new-token");
+      expect((client as any).accessToken).toBe("new-token");
+    });
+
+    it("should handle auto-pagination logic", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ day: "2024-01-01" }],
+          next_token: "token1"
+        }),
+      }).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ day: "2024-01-02" }],
+          next_token: null
+        }),
+      });
+
+      const res = await client.getSleep("2024-01-01", "2024-01-15");
+      expect(res.data).toHaveLength(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const url2 = mockFetch.mock.calls[1][0];
+      expect(url2).toContain("next_token=token1");
+    });
+
+    it("should abort pagination if next fetch is not ok", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ day: "2024-01-01" }],
+          next_token: "token1"
+        }),
+      }).mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: "Server Error",
+        text: () => Promise.resolve("Error"),
+      });
+
+      const res = await client.getSleep("2024-01-01", "2024-01-15");
+      expect(res.data).toHaveLength(1);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("should not crash if nextJson.data is not an array", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ day: "2024-01-01" }],
+          next_token: "token1"
+        }),
+      }).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: null, // not an array
+          next_token: null
+        }),
+      });
+
+      const res = await client.getSleep("2024-01-01", "2024-01-15");
+      expect(res.data).toHaveLength(1);
+    });
+
+    it("should handle auto-pagination logic when params is undefined", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: "1" }],
+          next_token: "token1"
+        }),
+      }).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ id: "2" }],
+          next_token: null
+        }),
+      });
+
+      const res = await client.getRingConfiguration();
+      expect(res.data).toHaveLength(2);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      const url2 = mockFetch.mock.calls[1][0];
+      expect(url2).toContain("next_token=token1");
+    });
+
+    it("should include next_token in params when paginating", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ day: "2024-01-01" }],
+          next_token: "token1"
+        }),
+      }).mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({
+          data: [{ day: "2024-01-02" }],
+          next_token: null
+        }),
+      });
+
+      await (client as any).fetch("sleep", { start_date: "2024-01-01", next_token: "ignored" });
+      const url2 = mockFetch.mock.calls[1][0];
+      expect(url2).toContain("next_token=token1");
+    });
+
     it("should throw error on non-ok response", async () => {
+
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
@@ -349,6 +475,38 @@ describe("OuraClient", () => {
       expect(result.data).toHaveLength(6);
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
+    });
+  });
+
+
+  describe("getHeartRate", () => {
+    it("should fetch heart rate chunks safely", async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(heartrateResponse),
+      });
+
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+      expect(result.data).toBeDefined();
+    });
+
+    it("should fetch heart rate chunks safely when res.data is falsy", async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: null }), // res?.data falsy branch
+      });
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+      expect(result.data).toBeDefined();
+    });
+
+    it("should catch and log errors in fetch chunks", async () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      mockFetch.mockRejectedValue(new Error("Network Failure"));
+
+      const result = await client.getHeartRate("2024-01-01", "2024-02-15");
+      expect(result.data).toHaveLength(0);
+      expect(consoleSpy).toHaveBeenCalled();
+      consoleSpy.mockRestore();
     });
   });
 
