@@ -1288,5 +1288,4 @@ async function runDbMigration(db: DatabaseWrapper): Promise<void> {
     "started_at, finished_at, trigger_source, start_date, end_date, status, synced_days, new_days, total_records, endpoints, error"
   );
 
-  console.log("[DB] Schema upgrade to support multi-user authentication completed successfully!");
 }
