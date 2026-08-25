@@ -381,7 +381,6 @@ export async function syncUserConnection(
         expiresAt: expiresStr,
         scopes: data.scope || conn.scopes,
       });
-      console.log(`[Sync] Token refreshed successfully for user ${conn.user_id}.`);
     }
 
     const client = new OuraClient({ accessToken });
