@@ -330,7 +330,13 @@ describe("Smoothing", () => {
       const smoothed = movingAverage(data, 3);
 
       expect(smoothed.length).toBe(5);
-      expect(smoothed[2]).toBe(3); // mean of [2, 3, 4]
+      // Window 3, half window 1
+      // i=0: slice [0, 2] -> [1, 2] -> mean 1.5
+      // i=1: slice [0, 3] -> [1, 2, 3] -> mean 2
+      // i=2: slice [1, 4] -> [2, 3, 4] -> mean 3
+      // i=3: slice [2, 5] -> [3, 4, 5] -> mean 4
+      // i=4: slice [3, 5] -> [4, 5] -> mean 4.5
+      expect(smoothed).toEqual([1.5, 2, 3, 4, 4.5]);
     });
 
     it("handles window larger than data", () => {
@@ -338,6 +344,17 @@ describe("Smoothing", () => {
       const smoothed = movingAverage(data, 10);
 
       expect(smoothed.length).toBe(3);
+    });
+
+    it("returns original array when window <= 1", () => {
+      const data = [1, 2, 3, 4, 5];
+      expect(movingAverage(data, 1)).toEqual(data);
+      expect(movingAverage(data, 0)).toEqual(data);
+      expect(movingAverage(data, -1)).toEqual(data);
+    });
+
+    it("handles empty array", () => {
+      expect(movingAverage([], 3)).toEqual([]);
     });
   });
 });
