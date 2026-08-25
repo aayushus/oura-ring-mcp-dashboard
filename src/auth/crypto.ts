@@ -1,12 +1,31 @@
 import crypto from "node:crypto";
 import { getAuthSecret } from "./config.js";
 
+const KDF_SALT = "oura-mcp-encryption-salt";
+const PBKDF2_ITERATIONS = 100000;
+const KEY_LENGTH = 32; // 256 bits
+
+let cachedKey: Buffer | null = null;
+let cachedLegacyKey: Buffer | null = null;
+
 /**
- * Derive a 256-bit encryption key from the persistent AUTH_SECRET using SHA-256
+ * Derive a 256-bit encryption key from the persistent AUTH_SECRET using PBKDF2
  */
 function getEncryptionKey(): Buffer {
+  if (cachedKey) return cachedKey;
   const secret = getAuthSecret();
-  return crypto.createHash("sha256").update(secret).digest();
+  cachedKey = crypto.pbkdf2Sync(secret, KDF_SALT, PBKDF2_ITERATIONS, KEY_LENGTH, "sha256");
+  return cachedKey;
+}
+
+/**
+ * Legacy key derivation for backwards compatibility with existing encrypted data
+ */
+function getLegacyEncryptionKey(): Buffer {
+  if (cachedLegacyKey) return cachedLegacyKey;
+  const secret = getAuthSecret();
+  cachedLegacyKey = crypto.createHash("sha256").update(secret).digest();
+  return cachedLegacyKey;
 }
 
 /**
@@ -32,7 +51,6 @@ export function encrypt(plaintext: string): string {
  * Decrypt ciphertext using AES-256-GCM
  */
 export function decrypt(encryptedBase64: string): string {
-  const key = getEncryptionKey();
   const combined = Buffer.from(encryptedBase64, "base64").toString("hex");
 
   if (combined.length < 56) {
@@ -43,11 +61,24 @@ export function decrypt(encryptedBase64: string): string {
   const tag = Buffer.from(combined.slice(24, 56), "hex");
   const ciphertext = combined.slice(56);
 
-  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
-  decipher.setAuthTag(tag);
+  try {
+    const key = getEncryptionKey();
+    const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(tag);
 
-  let decrypted = decipher.update(ciphertext, "hex", "utf8");
-  decrypted += decipher.final("utf8");
+    let decrypted = decipher.update(ciphertext, "hex", "utf8");
+    decrypted += decipher.final("utf8");
 
-  return decrypted;
+    return decrypted;
+  } catch (err) {
+    // Fallback to legacy SHA-256 key if PBKDF2 decryption fails
+    const legacyKey = getLegacyEncryptionKey();
+    const decipher = crypto.createDecipheriv("aes-256-gcm", legacyKey, iv);
+    decipher.setAuthTag(tag);
+
+    let decrypted = decipher.update(ciphertext, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    return decrypted;
+  }
 }
