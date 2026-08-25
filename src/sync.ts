@@ -413,7 +413,6 @@ export function startSyncScheduler(legacyClient?: OuraClient): cron.ScheduledTas
     (async () => {
       try {
         const connections = await getAllOuraConnections();
-        console.log(`[Sync] Found ${connections.length} Oura connection(s) for Day 1 startup backfill.`);
         for (const conn of connections) {
           const backfillStart = DAY_ONE_START;
           const today = getToday();
