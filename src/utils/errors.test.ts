@@ -5,6 +5,11 @@ import { describe, it, expect } from "vitest";
 import { OuraApiError, formatError, getNoDataMessage } from "./errors.js";
 
 describe("OuraApiError", () => {
+  it("should return null for json body without known error keys", () => {
+    const error = new OuraApiError(400, "Bad Request", '{"foo": "bar"}');
+    expect(error.message).toContain("Invalid request");
+  });
+
   it("should create error with status-specific message for 401", () => {
     const error = new OuraApiError(401, "Unauthorized", "");
     expect(error.message).toContain("Authentication failed");
