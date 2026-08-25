@@ -6,6 +6,7 @@
  * it becomes a "partial" sync with the failure named.
  */
 
+import { randomUUID } from "node:crypto";
 import cron from "node-cron";
 import { OuraClient, type SleepSession } from "./client.js";
 import {
@@ -188,7 +189,7 @@ export async function syncData(
       if (!dataArray) return;
       for (const doc of dataArray) {
         const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
-        const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
+        const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${randomUUID()}`;
         await upsertRawDocument(day, endpoint, docId, doc, userId);
       }
     };
