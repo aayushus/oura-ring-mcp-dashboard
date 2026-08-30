@@ -186,11 +186,13 @@ export async function syncData(
     // Store raw payloads for read-time logic
     const saveRawDocs = async (endpoint: string, dataArray: any[] | undefined) => {
       if (!dataArray) return;
-      for (const doc of dataArray) {
-        const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
-        const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
-        await upsertRawDocument(day, endpoint, docId, doc, userId);
-      }
+      await Promise.all(
+        dataArray.map(async (doc) => {
+          const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
+          const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
+          await upsertRawDocument(day, endpoint, docId, doc, userId);
+        })
+      );
     };
 
     for (const endpoint of SYNC_ENDPOINTS) {
