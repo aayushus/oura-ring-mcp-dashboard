@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { checkAndSendDigest } from "../src/utils/digest.js";
+import { checkAndSendDigest, startDigestScheduler, stopDigestScheduler } from "../src/utils/digest.js";
 import * as db from "../src/db.js";
+import cron from "node-cron";
 import fs from "fs";
 
 vi.mock("../src/db.js", () => ({
@@ -17,6 +18,12 @@ vi.mock("nodemailer", () => ({
       sendMail: vi.fn().mockResolvedValue({ messageId: "123" }),
     })),
   },
+}));
+
+vi.mock("node-cron", () => ({
+  default: {
+    schedule: vi.fn(),
+  }
 }));
 
 describe("Morning Digest Job", () => {
@@ -145,5 +152,36 @@ describe("Morning Digest Job", () => {
     consoleSpy.mockRestore();
     vi.useRealTimers();
     process.env = originalEnv;
+  });
+});
+
+describe("Digest Scheduler", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should start and stop the scheduler", () => {
+    const mockTask = {
+      stop: vi.fn()
+    };
+    (cron.schedule as any).mockReturnValue(mockTask);
+
+    // Start the scheduler
+    startDigestScheduler();
+    expect(cron.schedule).toHaveBeenCalledWith("*/15 * * * *", expect.any(Function));
+
+    // Calling start again should not create another schedule
+    (cron.schedule as any).mockClear();
+    startDigestScheduler();
+    expect(cron.schedule).not.toHaveBeenCalled();
+
+    // Stop the scheduler
+    stopDigestScheduler();
+    expect(mockTask.stop).toHaveBeenCalled();
+
+    // Calling stop again should not throw
+    mockTask.stop.mockClear();
+    stopDigestScheduler();
+    expect(mockTask.stop).not.toHaveBeenCalled();
   });
 });
