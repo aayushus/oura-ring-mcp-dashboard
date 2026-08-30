@@ -78,7 +78,7 @@
     "update-openapi": "bash scripts/update-openapi-spec.sh",
     "generate-types": "npx openapi-typescript oura-openapi.json -o src/types/oura-api.ts",
     "update-types": "pnpm update-openapi && pnpm generate-types",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "keywords": [
     "mcp",
