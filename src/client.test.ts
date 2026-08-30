@@ -52,6 +52,12 @@ describe("OuraClient", () => {
       const newClient = new OuraClient({ accessToken: "my-token" });
       expect(newClient).toBeInstanceOf(OuraClient);
     });
+
+    it("should update access token", () => {
+      const newClient = new OuraClient({ accessToken: "my-token" });
+      newClient.setAccessToken("new-token");
+      expect((newClient as any).accessToken).toBe("new-token");
+    });
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -59,6 +65,114 @@ describe("OuraClient", () => {
   // ─────────────────────────────────────────────────────────────
 
   describe("fetch behavior", () => {
+    it("should use context client access token if available", async () => {
+      // Mock the context client
+      const authContext = await import("./auth/context.js");
+      const spy = vi.spyOn(authContext, "getContextOuraClient").mockReturnValue({
+        accessToken: "context-token",
+      } as any);
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(sleepResponse),
+      });
+
+      await client.getSleep("2024-01-15", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer context-token`,
+          },
+        })
+      );
+
+      spy.mockRestore();
+    });
+
+    it("should handle auto-pagination when next_token is present", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ id: "1" }], next_token: "token123" }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ id: "2" }], next_token: null }),
+        });
+
+      const result = await client.getDailySleep("2024-01-01", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].id).toBe("1");
+      expect(result.data[1].id).toBe("2");
+
+      // Verify that next_token was not appended multiple times, and params were forwarded
+      const calledUrl = mockFetch.mock.calls[1][0];
+      expect(calledUrl).toContain("start_date=2024-01-01");
+      expect(calledUrl).toContain("next_token=token123");
+    });
+
+    it("should handle auto-pagination when next_token is present but data is not array", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ id: "1" }], next_token: "token123" }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: "not-an-array", next_token: null }),
+        });
+
+      // Pass no params to cover the `if (params)` branch in client.ts
+      // We will just directly use `fetch` method.
+      const result = await (client as any).fetch("daily_sleep", undefined, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+    });
+
+    it("should handle auto-pagination when next_token is present and params contains next_token", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ id: "1" }], next_token: "token123" }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ id: "2" }], next_token: null }),
+        });
+
+      const result = await (client as any).fetch("daily_sleep", { start_date: "2024-01-01", next_token: "old_token" }, true);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(2);
+
+      const calledUrl = mockFetch.mock.calls[1][0];
+      // Should not append old_token
+      expect(calledUrl).toContain("next_token=token123");
+      expect(calledUrl).not.toContain("next_token=old_token");
+    });
+
+    it("should break pagination if a subsequent request fails", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ id: "1" }], next_token: "token123" }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+        });
+
+      const result = await client.getDailySleep("2024-01-01", "2024-01-15");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+    });
+
     it("should include Authorization header with Bearer token", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -349,6 +463,71 @@ describe("OuraClient", () => {
       expect(result.data).toHaveLength(6);
       expect(result.data[0].bpm).toBe(55);
       expect(result.data[0].source).toBe("sleep");
+    });
+
+    it("should split requests over 30 days into multiple chunks", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 70 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 71 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 72 }] }),
+        });
+
+      // Span 60 days
+      const result = await client.getHeartRate("2023-11-01T00:00:00Z", "2024-01-01T23:59:59Z");
+
+      // Note: Because it calculates chunks backwards, we expect 3 calls for 60 days
+      // (current day to -29 days, -30 to -59 days, and then the remainder)
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      expect(result.data).toHaveLength(3);
+    });
+
+    it("should catch and log errors for individual chunks", async () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 70 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+        });
+
+      // Span ~40 days
+      const result = await client.getHeartRate("2023-11-20T00:00:00Z", "2024-01-01T23:59:59Z");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
+      expect(warnSpy).toHaveBeenCalled();
+
+      warnSpy.mockRestore();
+    });
+
+    it("should handle null or undefined data array in chunk", async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: [{ bpm: 70 }] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ data: null }),
+        });
+
+      // Span ~40 days
+      const result = await client.getHeartRate("2023-11-20T00:00:00Z", "2024-01-01T23:59:59Z");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(result.data).toHaveLength(1);
     });
   });
 
