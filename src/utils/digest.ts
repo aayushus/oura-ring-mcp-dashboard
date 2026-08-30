@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import cron from "node-cron";
 import os from "os";
 import nodemailer from "nodemailer";
 import {
@@ -267,10 +268,10 @@ function logToFile(data: any) {
 }
 
 // Background scheduler ticker setup
-let digestIntervalId: NodeJS.Timeout | null = null;
+let digestTask: cron.ScheduledTask | null = null;
 
 export function startDigestScheduler(): void {
-  if (digestIntervalId) return;
+  if (digestTask) return;
 
   console.log("[Digest] Initializing Daily Morning Digest Scheduler (checks every 15 minutes)...");
   
@@ -280,16 +281,16 @@ export function startDigestScheduler(): void {
   });
 
   // Tick every 15 minutes
-  digestIntervalId = setInterval(() => {
+  digestTask = cron.schedule("*/15 * * * *", () => {
     checkAndSendDigest().catch((err) => {
       console.error("[Digest] Error generating daily morning digest:", err);
     });
-  }, 15 * 60 * 1000);
+  });
 }
 
 export function stopDigestScheduler(): void {
-  if (digestIntervalId) {
-    clearInterval(digestIntervalId);
-    digestIntervalId = null;
+  if (digestTask) {
+    digestTask.stop();
+    digestTask = null;
   }
 }
