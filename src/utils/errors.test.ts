@@ -70,6 +70,11 @@ describe("OuraApiError", () => {
     expect(error.message).toContain("Validation failed");
   });
 
+  it("should return null when parsed JSON lacks known error fields", () => {
+    const error = new OuraApiError(400, "Bad Request", '{"unrelated": "data"}');
+    expect(error.message).toContain("Check your date format");
+  });
+
   it("should use default message for 400 when body has no useful message", () => {
     const error = new OuraApiError(400, "Bad Request", "");
     expect(error.message).toContain("Check your date format");
