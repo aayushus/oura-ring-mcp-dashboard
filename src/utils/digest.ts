@@ -165,7 +165,7 @@ async function sendFallbackDigest(date: string): Promise<void> {
   `;
   
   await sendEmail("Oura Morning Digest — Action Required", fallbackHtml);
-  logToFile({
+  await logToFile({
     date,
     message: "No sleep data yet — open the Oura app to sync.",
     timestamp: new Date().toISOString(),
@@ -218,7 +218,7 @@ async function dispatchDigest(digest: DigestDetails): Promise<void> {
   `;
 
   await sendEmail(subject, html);
-  logToFile(digest);
+  await logToFile(digest);
 }
 
 // SMTP Email Sender Utility
@@ -248,19 +248,23 @@ async function sendEmail(subject: string, html: string): Promise<void> {
   });
 }
 
-function logToFile(data: any) {
+async function logToFile(data: any): Promise<void> {
   try {
     let logs: any[] = [];
     const dir = path.dirname(DIGEST_FILE_LOG);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    if (fs.existsSync(DIGEST_FILE_LOG)) {
-      const content = fs.readFileSync(DIGEST_FILE_LOG, "utf8");
+    await fs.promises.mkdir(dir, { recursive: true });
+
+    try {
+      const content = await fs.promises.readFile(DIGEST_FILE_LOG, "utf8");
       logs = JSON.parse(content);
+    } catch (err: any) {
+      if (err.code !== "ENOENT") {
+        throw err;
+      }
     }
+
     logs.push(data);
-    fs.writeFileSync(DIGEST_FILE_LOG, JSON.stringify(logs, null, 2), "utf8");
+    await fs.promises.writeFile(DIGEST_FILE_LOG, JSON.stringify(logs, null, 2), "utf8");
   } catch (err) {
     console.error("[Digest] Failed to write digest log file:", err);
   }
