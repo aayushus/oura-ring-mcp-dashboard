@@ -11,6 +11,7 @@ import { OuraClient, type SleepSession } from "./client.js";
 import {
   upsertSleep,
   upsertReadiness,
+  upsertReadinessBulk,
   upsertActivity,
   upsertStress,
   upsertRawDocument,
@@ -231,17 +232,19 @@ export async function syncData(
     }
 
     // 2. Process Readiness
+    const readinessRecords = [];
     for (const read of results["daily_readiness"]?.data ?? []) {
       days.add(read.day);
       const session = sessionsByDay.get(read.day);
-      await upsertReadiness({
+      readinessRecords.push({
         day: read.day,
         score: read.score ?? 0,
         hrv: session?.average_hrv ?? 0,
         rhr: session?.lowest_heart_rate ?? 0,
         temperature_deviation: read.temperature_deviation ?? 0,
-      }, userId);
+      });
     }
+    await upsertReadinessBulk(readinessRecords, userId);
 
     // 3. Process Activity
     for (const act of results["daily_activity"]?.data ?? []) {
