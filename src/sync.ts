@@ -7,7 +7,7 @@
  */
 
 import cron from "node-cron";
-import { OuraClient, type SleepSession } from "./client.js";
+import { OuraClient, type SleepSession, type DailySleep, type DailyReadiness, type DailyActivity, type DailyStress } from "./client.js";
 import {
   upsertSleep,
   upsertReadiness,
@@ -216,7 +216,7 @@ export async function syncData(
     const sleepScores = results["daily_sleep"]?.data ?? [];
     const sleepSessions: SleepSession[] = (results["sleep"]?.data as SleepSession[]) ?? [];
     const sessionsByDay = new Map<string, SleepSession>(sleepSessions.map((s) => [s.day, s]));
-    for (const score of sleepScores) {
+    await Promise.all(sleepScores.map(async (score: DailySleep) => {
       days.add(score.day);
       const session = sessionsByDay.get(score.day);
       await upsertSleep({
@@ -228,10 +228,10 @@ export async function syncData(
         light: session?.light_sleep_duration ?? 0,
         efficiency: session?.efficiency ?? score.contributors?.efficiency ?? 0,
       }, userId);
-    }
+    }));
 
     // 2. Process Readiness
-    for (const read of results["daily_readiness"]?.data ?? []) {
+    await Promise.all((results["daily_readiness"]?.data ?? []).map(async (read: DailyReadiness) => {
       days.add(read.day);
       const session = sessionsByDay.get(read.day);
       await upsertReadiness({
@@ -241,10 +241,10 @@ export async function syncData(
         rhr: session?.lowest_heart_rate ?? 0,
         temperature_deviation: read.temperature_deviation ?? 0,
       }, userId);
-    }
+    }));
 
     // 3. Process Activity
-    for (const act of results["daily_activity"]?.data ?? []) {
+    await Promise.all((results["daily_activity"]?.data ?? []).map(async (act: DailyActivity) => {
       days.add(act.day);
       await upsertActivity({
         day: act.day,
@@ -253,17 +253,17 @@ export async function syncData(
         active_calories: act.active_calories ?? 0,
         total_calories: act.total_calories ?? 0,
       }, userId);
-    }
+    }));
 
     // 4. Process Stress
-    for (const str of results["daily_stress"]?.data ?? []) {
+    await Promise.all((results["daily_stress"]?.data ?? []).map(async (str: DailyStress) => {
       days.add(str.day);
       await upsertStress({
         day: str.day,
         stress_duration: str.stress_high ?? 0,
         recovery_duration: str.recovery_high ?? 0,
       }, userId);
-    }
+    }));
 
     const failed = job.endpoints.filter((e) => e.status === "error");
     const status: SyncJob["status"] =
