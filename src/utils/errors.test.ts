@@ -70,6 +70,11 @@ describe("OuraApiError", () => {
     expect(error.message).toContain("Validation failed");
   });
 
+  it("should use default message when JSON error body has no recognized fields", () => {
+    const error = new OuraApiError(400, "Bad Request", '{"unrelated": "field"}');
+    expect(error.message).toContain("Check your date format");
+  });
+
   it("should use default message for 400 when body has no useful message", () => {
     const error = new OuraApiError(400, "Bad Request", "");
     expect(error.message).toContain("Check your date format");
@@ -100,6 +105,12 @@ describe("formatError", () => {
     expect(formatError(error)).toContain("Unable to connect");
   });
 
+  it("should handle exact network errors (fetch failed)", () => {
+    const error = new Error("fetch failed");
+    expect(formatError(error)).toContain("Network error");
+    expect(formatError(error)).toContain("Unable to connect");
+  });
+
   it("should handle network errors (ENOTFOUND)", () => {
     const error = new Error("ENOTFOUND api.ouraring.com");
     expect(formatError(error)).toContain("Network error");
@@ -112,6 +123,11 @@ describe("formatError", () => {
 
   it("should handle timeout errors (timeout in message)", () => {
     const error = new Error("Request timeout");
+    expect(formatError(error)).toContain("timed out");
+  });
+
+  it("should handle exact timeout errors (timeout)", () => {
+    const error = new Error("timeout");
     expect(formatError(error)).toContain("timed out");
   });
 
