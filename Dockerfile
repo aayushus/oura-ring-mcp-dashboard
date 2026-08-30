@@ -13,7 +13,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 RUN node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json')); delete pkg.scripts.prepare; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
 
 # Install dependencies (runs postinstall scripts to build/download sqlite3 binary)
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-workspace
 
 # Copy dashboard package files and install dashboard dependencies
 COPY dashboard/package.json dashboard/package-lock.json* ./dashboard/
@@ -38,7 +38,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 RUN node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('package.json')); delete pkg.scripts.prepare; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
 
 # Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile --ignore-workspace
 
 # Copy built files
 COPY --from=builder /app/dist ./dist
