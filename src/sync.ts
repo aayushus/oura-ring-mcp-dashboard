@@ -186,11 +186,11 @@ export async function syncData(
     // Store raw payloads for read-time logic
     const saveRawDocs = async (endpoint: string, dataArray: any[] | undefined) => {
       if (!dataArray) return;
-      for (const doc of dataArray) {
+      await Promise.all(dataArray.map(doc => {
         const day = doc.day ?? doc.start_day ?? doc.timestamp?.split("T")[0] ?? doc.start_datetime?.split("T")[0] ?? getToday();
         const docId = doc.id ?? doc.timestamp ?? doc.start_datetime ?? `gen-${Math.random()}`;
-        await upsertRawDocument(day, endpoint, docId, doc, userId);
-      }
+        return upsertRawDocument(day, endpoint, docId, doc, userId);
+      }));
     };
 
     for (const endpoint of SYNC_ENDPOINTS) {
@@ -216,10 +216,10 @@ export async function syncData(
     const sleepScores = results["daily_sleep"]?.data ?? [];
     const sleepSessions: SleepSession[] = (results["sleep"]?.data as SleepSession[]) ?? [];
     const sessionsByDay = new Map<string, SleepSession>(sleepSessions.map((s) => [s.day, s]));
-    for (const score of sleepScores) {
+    await Promise.all(sleepScores.map((score: any) => {
       days.add(score.day);
       const session = sessionsByDay.get(score.day);
-      await upsertSleep({
+      return upsertSleep({
         day: score.day,
         score: score.score ?? 0,
         duration: session?.total_sleep_duration ?? 0,
@@ -228,42 +228,42 @@ export async function syncData(
         light: session?.light_sleep_duration ?? 0,
         efficiency: session?.efficiency ?? score.contributors?.efficiency ?? 0,
       }, userId);
-    }
+    }));
 
     // 2. Process Readiness
-    for (const read of results["daily_readiness"]?.data ?? []) {
+    await Promise.all((results["daily_readiness"]?.data ?? []).map((read: any) => {
       days.add(read.day);
       const session = sessionsByDay.get(read.day);
-      await upsertReadiness({
+      return upsertReadiness({
         day: read.day,
         score: read.score ?? 0,
         hrv: session?.average_hrv ?? 0,
         rhr: session?.lowest_heart_rate ?? 0,
         temperature_deviation: read.temperature_deviation ?? 0,
       }, userId);
-    }
+    }));
 
     // 3. Process Activity
-    for (const act of results["daily_activity"]?.data ?? []) {
+    await Promise.all((results["daily_activity"]?.data ?? []).map((act: any) => {
       days.add(act.day);
-      await upsertActivity({
+      return upsertActivity({
         day: act.day,
         score: act.score ?? 0,
         steps: act.steps ?? 0,
         active_calories: act.active_calories ?? 0,
         total_calories: act.total_calories ?? 0,
       }, userId);
-    }
+    }));
 
     // 4. Process Stress
-    for (const str of results["daily_stress"]?.data ?? []) {
+    await Promise.all((results["daily_stress"]?.data ?? []).map((str: any) => {
       days.add(str.day);
-      await upsertStress({
+      return upsertStress({
         day: str.day,
         stress_duration: str.stress_high ?? 0,
         recovery_duration: str.recovery_high ?? 0,
       }, userId);
-    }
+    }));
 
     const failed = job.endpoints.filter((e) => e.status === "error");
     const status: SyncJob["status"] =
