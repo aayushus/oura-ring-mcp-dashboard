@@ -102,6 +102,38 @@ describe("Targets Engine", () => {
     // Male: 10*70 + 6.25*175 - 5*30 + 5 = 700 + 1093.75 - 150 + 5 = 1648.75
     expect(calculateBmr(mockProfile)).toBe(1648.75);
   });
+
+  it("should calculate recommended bedtime with latency and awake time", () => {
+    const sleepNeedSeconds = 8 * 3600; // 8 hours = 480 mins
+    const sessions = [
+      { latency: 600, awake_time: 1200 }, // latency 10m, awake 20m
+      { latency: 600, awake_time: 1200 },
+      { latency: 600, awake_time: 1200 },
+    ];
+    // Wake time: 07:00 (420m)
+    // Bedtime = 420 - 480 - 10 - 20 = -90 -> 22:30
+    expect(calculateRecommendedBedtime(mockProfile, sleepNeedSeconds, sessions)).toBe("22:30");
+  });
+
+  it("should calculate recommended bedtime when sleep sessions are empty", () => {
+    const sleepNeedSeconds = 8 * 3600; // 8 hours = 480 mins
+    // Wake time: 07:00 (420m)
+    // Medians are 0. Bedtime = 420 - 480 = -60 -> 23:00
+    expect(calculateRecommendedBedtime(mockProfile, sleepNeedSeconds, [])).toBe("23:00");
+  });
+
+  it("should ignore sleep sessions missing latency or awake_time when calculating medians", () => {
+    const sleepNeedSeconds = 8 * 3600; // 8 hours = 480 mins
+    const sessions = [
+      { latency: 600, awake_time: 1200 }, // Valid: 10m, 20m
+      { awake_time: 1800 },               // Missing latency, awake 30m
+      { latency: 1200 },                  // Latency 20m, missing awake
+    ];
+    // Latencies: [600, 1200] -> median 900s (15m)
+    // Awake times: [1200, 1800] -> median 1500s (25m)
+    // Bedtime = 420 - 480 - 15 - 25 = -100 -> 22:20
+    expect(calculateRecommendedBedtime(mockProfile, sleepNeedSeconds, sessions)).toBe("22:20");
+  });
 });
 
 describe("runWeeklyTargetJob", () => {
