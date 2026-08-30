@@ -456,9 +456,15 @@ export function registerResources(server: McpServer, client: OuraClient): void {
 
       // Activity baseline
       if (activityData.length >= 5) {
-        const scores = activityData.map((a) => a.score).filter((s): s is number => s != null);
-        const steps = activityData.map((a) => a.steps).filter((s): s is number => s != null);
-        const calories = activityData.map((a) => a.active_calories).filter((c): c is number => c != null);
+        const { scores, steps, calories } = activityData.reduce(
+          (acc, a) => {
+            if (a.score != null) acc.scores.push(a.score);
+            if (a.steps != null) acc.steps.push(a.steps);
+            if (a.active_calories != null) acc.calories.push(a.active_calories);
+            return acc;
+          },
+          { scores: [] as number[], steps: [] as number[], calories: [] as number[] }
+        );
 
         sections.push("## Activity");
         sections.push(`- Days analyzed: ${activityData.length}`);
