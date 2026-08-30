@@ -1,4 +1,5 @@
-allowBuilds:
+pnpm:
+  onlyBuiltDependencies:
   - sqlite3
 
 overrides:
