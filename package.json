@@ -96,6 +96,7 @@
     "@node-rs/argon2": "^2.1.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
+    "escape-html": "^1.0.3",
     "express": "^5.2.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^9.0.5",
@@ -110,6 +111,7 @@
   "devDependencies": {
     "@modelcontextprotocol/inspector": "^0.19.0",
     "@types/cookie-parser": "^1.4.10",
+    "@types/escape-html": "^1.0.4",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.5",
     "@types/node-cron": "^3.0.11",
