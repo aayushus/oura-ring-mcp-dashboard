@@ -377,6 +377,37 @@ export async function upsertSleep(record: SleepRecord, userId: number = 1): Prom
   );
 }
 
+export async function upsertReadinessBulk(records: ReadinessRecord[], userId: number = 1): Promise<void> {
+  if (records.length === 0) return;
+  const db = await getDb();
+
+  // We chunk to avoid exceeding SQLite's maximum variable limits
+  const chunkSize = 200;
+  for (let i = 0; i < records.length; i += chunkSize) {
+    const chunk = records.slice(i, i + chunkSize);
+    const placeholders = chunk.map(() => "(?, ?, ?, ?, ?, ?)").join(", ");
+    const params = chunk.flatMap((r) => [
+      userId,
+      r.day,
+      r.score,
+      r.hrv,
+      r.rhr,
+      r.temperature_deviation,
+    ]);
+
+    await db.run(
+      `INSERT INTO readiness_history (user_id, day, score, hrv, rhr, temperature_deviation)
+       VALUES ${placeholders}
+       ON CONFLICT(user_id, day) DO UPDATE SET
+         score = excluded.score,
+         hrv = excluded.hrv,
+         rhr = excluded.rhr,
+         temperature_deviation = excluded.temperature_deviation`,
+      params
+    );
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 // Readiness Operations
 // ─────────────────────────────────────────────────────────────
