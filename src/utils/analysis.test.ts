@@ -187,11 +187,38 @@ describe("Outlier Detection", () => {
       expect(result.outliers.length).toBe(0);
     });
 
-    it("handles small datasets", () => {
+    it("handles empty and very small datasets edge cases", () => {
+      // 0 elements
+      expect(detectOutliersIQR([])).toEqual({
+        outliers: [],
+        lowerBound: 0,
+        upperBound: 0,
+        method: "iqr",
+      });
+
+      // 1 element
+      expect(detectOutliersIQR([5])).toEqual({
+        outliers: [],
+        lowerBound: 5,
+        upperBound: 5,
+        method: "iqr",
+      });
+
+      // 2 elements
+      expect(detectOutliersIQR([10, 20])).toEqual({
+        outliers: [],
+        lowerBound: 10,
+        upperBound: 20,
+        method: "iqr",
+      });
+
+      // 3 elements
       const data = [1, 2, 3];
       const result = detectOutliersIQR(data);
 
       expect(result.outliers.length).toBe(0);
+      expect(result.lowerBound).toBe(1);
+      expect(result.upperBound).toBe(3);
     });
   });
 
