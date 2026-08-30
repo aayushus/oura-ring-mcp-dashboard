@@ -63,6 +63,10 @@ describe("Basic Statistics", () => {
     it("returns 0 for single value", () => {
       expect(sampleStandardDeviation([5])).toBe(0);
     });
+
+    it("returns 0 for empty array", () => {
+      expect(sampleStandardDeviation([])).toBe(0);
+    });
   });
 
   describe("quantile", () => {
@@ -455,6 +459,12 @@ describe("Sleep-Specific Metrics", () => {
 });
 
 describe("Edge Cases", () => {
+  it("handles empty arrays", () => {
+    const data: number[] = [];
+    expect(mean(data)).toBe(0);
+    expect(standardDeviation(data)).toBe(0);
+  });
+
   it("handles all zeros", () => {
     const data = [0, 0, 0, 0, 0];
     expect(mean(data)).toBe(0);
